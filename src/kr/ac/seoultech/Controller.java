@@ -5,6 +5,7 @@ import kr.ac.seoultech.*;
 
 public class Controller {
     // Getting the numbers and the MESH from Tetris
+    public static final int DEADLINEGAP = Tetris.DEADLINEGAP;
     public static final int MOVE = Tetris.MOVE;
     public static final int SIZE = Tetris.SIZE;
     public static int XMAX = Tetris.XMAX;
@@ -50,73 +51,73 @@ public class Controller {
                 d = new Rectangle(SIZE-1, SIZE-1);
         if (block < 15) {
             a.setX(XMAX / 2 - SIZE);
-            a.setY(SIZE * 2);
+            a.setY(SIZE * (DEADLINEGAP - 1));
             b.setX(XMAX / 2 - SIZE);
-            b.setY(SIZE * 3);
+            b.setY(SIZE * (DEADLINEGAP));
             c.setX(XMAX / 2);
-            c.setY(SIZE * 3);
+            c.setY(SIZE * (DEADLINEGAP));
             d.setX(XMAX / 2 + SIZE);
-            d.setY(SIZE * 3);
+            d.setY(SIZE * (DEADLINEGAP));
             name = "j";
         } else if (block < 30) {
             a.setX(XMAX / 2 + SIZE);
-            a.setY(SIZE * 2);
+            a.setY(SIZE * (DEADLINEGAP - 1));
             b.setX(XMAX / 2 - SIZE);
-            b.setY(SIZE * 3);
+            b.setY(SIZE * (DEADLINEGAP));
             c.setX(XMAX / 2);
-            c.setY(SIZE * 3);
+            c.setY(SIZE * (DEADLINEGAP));
             d.setX(XMAX / 2 + SIZE);
-            d.setY(SIZE * 3);
+            d.setY(SIZE * (DEADLINEGAP));
             name = "l";
         } else if (block < 45) {
             a.setX(XMAX / 2 - SIZE);
-            a.setY(SIZE * 2);
+            a.setY(SIZE * (DEADLINEGAP - 1));
             b.setX(XMAX / 2);
-            b.setY(SIZE * 2);
+            b.setY(SIZE * (DEADLINEGAP - 1));
             c.setX(XMAX / 2 - SIZE);
-            c.setY(SIZE * 3);
+            c.setY(SIZE * (DEADLINEGAP));
             d.setX(XMAX / 2);
-            d.setY(SIZE * 3);
+            d.setY(SIZE * (DEADLINEGAP));
             name = "o";
         } else if (block < 60) {
             a.setX(XMAX / 2 + SIZE);
-            a.setY(SIZE * 2);
+            a.setY(SIZE * (DEADLINEGAP - 1));
             b.setX(XMAX / 2);
-            b.setY(SIZE * 2);
+            b.setY(SIZE * (DEADLINEGAP - 1));
             c.setX(XMAX / 2);
-            c.setY(SIZE * 3);
+            c.setY(SIZE * (DEADLINEGAP));
             d.setX(XMAX / 2 - SIZE);
-            d.setY(SIZE * 3);
+            d.setY(SIZE * (DEADLINEGAP));
             name = "s";
         } else if (block < 75) {
             a.setX(XMAX / 2 - SIZE);
-            a.setY(SIZE * 2);
+            a.setY(SIZE * (DEADLINEGAP - 1));
             b.setX(XMAX / 2);
-            b.setY(SIZE * 2);
+            b.setY(SIZE * (DEADLINEGAP - 1));
             c.setX(XMAX / 2);
-            c.setY(SIZE * 3);
+            c.setY(SIZE * (DEADLINEGAP));
             d.setX(XMAX / 2 + SIZE);
-            d.setY(SIZE * 2);
+            d.setY(SIZE * (DEADLINEGAP - 1));
             name = "t";
         } else if (block < 90) {
             a.setX(XMAX / 2);
-            a.setY(SIZE * 2);
+            a.setY(SIZE * (DEADLINEGAP - 1));
             b.setX(XMAX / 2 - SIZE);
-            b.setY(SIZE * 2);
+            b.setY(SIZE * (DEADLINEGAP - 1));
             c.setX(XMAX / 2 );
-            c.setY(SIZE * 3);
+            c.setY(SIZE * (DEADLINEGAP));
             d.setX(XMAX / 2 + SIZE);
-            d.setY(SIZE * 3);
+            d.setY(SIZE * (DEADLINEGAP));
             name = "z";
         } else {
             a.setX(XMAX / 2 - SIZE - SIZE);
-            a.setY(SIZE * 2);
+            a.setY(SIZE * (DEADLINEGAP - 1));
             b.setX(XMAX / 2 - SIZE);
-            b.setY(SIZE * 2);
+            b.setY(SIZE * (DEADLINEGAP - 1));
             c.setX(XMAX / 2);
-            c.setY(SIZE * 2);
+            c.setY(SIZE * (DEADLINEGAP - 1));
             d.setX(XMAX / 2 + SIZE);
-            d.setY(SIZE * 2);
+            d.setY(SIZE * (DEADLINEGAP - 1));
             name = "i";
         }
         return new Form(a, b, c, d, name);
