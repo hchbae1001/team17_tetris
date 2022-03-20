@@ -19,7 +19,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import kr.ac.seoultech.*;
 
-public class Tetris extends Application {
+public class Tetris extends Application{
     // The variables
     // 데드라인은 최소한 2 이상 ,하지만 일자 블럭 생성 직후부터 회전이 가능하려면 4 이상을 사용해야 함
     public static final int DEADLINEGAP = 4;
