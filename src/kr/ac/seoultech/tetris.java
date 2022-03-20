@@ -6,6 +6,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -20,20 +21,25 @@ import kr.ac.seoultech.*;
 
 public class Tetris extends Application {
     // The variables
+    // 데드라인은 최소한 2 이상 ,하지만 일자 블럭 생성 직후부터 회전이 가능하려면 4 이상을 사용해야 함
+    public static final int DEADLINEGAP = 4;
     public static final int MOVE = 25;
     public static final int SIZE = 25;
     public static int XMAX = SIZE * 10;
-    public static int YMAX = SIZE * 23;
+    public static int YMAX = SIZE * (20 + DEADLINEGAP);
     public static int[][] MESH = new int[XMAX / SIZE][YMAX / SIZE];
     private static Pane group = new Pane();
     private static Form object;
     private static Scene scene = new Scene(group, XMAX + 150, YMAX);
     public static int score = 0;
-    private static int top = 0;
+    private static boolean top = false;
     private static boolean game = true;
     private static Form nextObj = Controller.makeRect();
     private static Pane nextObjPane = new Pane();
     private static int linesNo = 0;
+
+    private static int dropPeriod = 1000;
+    private static int bonusScore = 10;
 
     private static boolean downPressed = false;
 
@@ -46,7 +52,7 @@ public class Tetris extends Application {
         for (int[] a : MESH) {
             Arrays.fill(a, 0);
         }
-        Line deadLine = new Line(0, SIZE * 3, XMAX, SIZE * 3);
+        Line deadLine = new Line(0, SIZE * DEADLINEGAP, XMAX, SIZE * DEADLINEGAP);
         deadLine.setStroke(Color.RED);
         Line line = new Line(XMAX, 0, XMAX, YMAX);
         Text scoretext = new Text("Score: ");
@@ -79,38 +85,26 @@ public class Tetris extends Application {
         stage.setScene(scene);
         stage.setTitle("T E T R I S");
         stage.show();
+        startTimer(scoretext, level);
 
+        /*
         Timer fall = new Timer();
         TimerTask task = new TimerTask() {
             public void run() {
                 Platform.runLater(new Runnable() {
                     public void run() {
-                        top = 0;
-                        for(int i = 0; i<XMAX / SIZE; i++){
-                            if(MESH[i][3] == 1){
-                                top = 1;
-                                break;
-                            }
-                        }
+                        // 데드라인을 넘어가는 경우(GAME OVER)는 MoveDown에서 다음 블럭이 생성되기 직전에 판정한다.
+                        // 마지막 결과가 나온 뒤에는 game 변수가 false 가 된다.
 
-
-
-                        if (top == 1) {
-                            // GAME OVER
-                            Text over = new Text("GAME OVER");
-                            over.setFill(Color.RED);
-                            over.setStyle("-fx-font: 50 arial;");
-                            over.setY(250);
-                            over.setX(10);
-                            group.getChildren().add(over);
-                            game = false;
-                        }
                         // Exit
-                        if (top == 15) {
-                            //System.exit(0);
-                        }
+                        //if (top && !game) {
+                        //    //System.exit(0);
+                        //}
 
-                        if (game) {
+                        if (!top && game) {
+                            if(dropPeriod > 100) {
+                                sppedUp();
+                            }
                             MoveDown(object);
                             scoretext.setText("Score: " + Integer.toString(score));
                             level.setText("Lines: " + Integer.toString(linesNo));
@@ -119,14 +113,17 @@ public class Tetris extends Application {
                 });
             }
         };
-        fall.schedule(task, 0, 300);
+        fall.scheduleAtFixedRate(task, 0, dropPeriod);
+
+         */
     }
 
+    // 블럭 이동 키입력
     private void moveOnKeyPress(Form form) {
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                if(!downPressed) {
+                if(!downPressed && !top) {
                     switch (event.getCode()) {
                         case RIGHT:
                             Controller.MoveRight(form);
@@ -456,7 +453,7 @@ public class Tetris extends Application {
                     if (node instanceof Rectangle)
                         rects.add(node);
                 }
-                score += 50;
+                score += (bonusScore*100*lines.size());
                 linesNo++;
 
                 for (Node node : rects) {
@@ -515,7 +512,7 @@ public class Tetris extends Application {
     }
 
     private void MoveDown(Form form) {
-        score++;
+        score = score + bonusScore;
         if (form.a.getY() == YMAX - SIZE || form.b.getY() == YMAX - SIZE || form.c.getY() == YMAX - SIZE
                 || form.d.getY() == YMAX - SIZE || moveA(form) || moveB(form) || moveC(form) || moveD(form)) {
             MESH[(int) form.a.getX() / SIZE][(int) form.a.getY() / SIZE] = 1;
@@ -524,9 +521,14 @@ public class Tetris extends Application {
             MESH[(int) form.d.getX() / SIZE][(int) form.d.getY() / SIZE] = 1;
             RemoveRows(group);
 
+            checkGameover(form);
+            if(top)
+                return;
             Form a = nextObj;
             nextObj = Controller.makeRect();
             object = a;
+            // 블럭 생성 직후 겹치는 여부 확인
+            isOverlap(object);
             group.getChildren().addAll(a.a, a.b, a.c, a.d);
             nextObjPane.getChildren().addAll(nextObj.a, nextObj.b, nextObj.c, nextObj.d);
             moveOnKeyPress(a);
@@ -550,9 +552,30 @@ public class Tetris extends Application {
 
     private void DirectlyMoveDown(Form form) {
         while(true) {
-            score++;
+            score = score + bonusScore;
             if (form.a.getY() == YMAX - SIZE || form.b.getY() == YMAX - SIZE || form.c.getY() == YMAX - SIZE
                     || form.d.getY() == YMAX - SIZE || moveA(form) || moveB(form) || moveC(form) || moveD(form)) {
+
+                // 수정 필요성 있음
+                MESH[(int) form.a.getX() / SIZE][(int) form.a.getY() / SIZE] = 1;
+                MESH[(int) form.b.getX() / SIZE][(int) form.b.getY() / SIZE] = 1;
+                MESH[(int) form.c.getX() / SIZE][(int) form.c.getY() / SIZE] = 1;
+                MESH[(int) form.d.getX() / SIZE][(int) form.d.getY() / SIZE] = 1;
+                RemoveRows(group);
+
+                checkGameover(form);
+                if(top)
+                    return;
+                Form a = nextObj;
+                nextObj = Controller.makeRect();
+                object = a;
+                // 블럭 생성 직후 겹치는 여부 확인
+                isOverlap(object);
+                group.getChildren().addAll(a.a, a.b, a.c, a.d);
+                nextObjPane.getChildren().addAll(nextObj.a, nextObj.b, nextObj.c, nextObj.d);
+                moveOnKeyPress(a);
+                downPressed = false;
+                // 수정 필요성 있음
 
                 break;
             }
@@ -602,5 +625,89 @@ public class Tetris extends Application {
             yb = rect.getY() + y * MOVE < YMAX;
         return xb && yb && MESH[((int) rect.getX() / SIZE) + x][((int) rect.getY() / SIZE) - y] == 0;
     }
+
+    private void isOverlap(Form form){
+        while (MESH[(int) form.a.getX() / SIZE][((int) form.a.getY() / SIZE)] == 1 || MESH[(int) form.b.getX() / SIZE][((int) form.b.getY() / SIZE)] == 1 ||
+                MESH[(int) form.c.getX() / SIZE][((int) form.c.getY() / SIZE)] == 1 || MESH[(int) form.d.getX() / SIZE][((int) form.d.getY() / SIZE)] == 1){
+            object.a.setY(object.a.getY() - MOVE);
+            object.b.setY(object.b.getY() - MOVE);
+            object.c.setY(object.c.getY() - MOVE);
+            object.d.setY(object.d.getY() - MOVE);
+            showGameover();
+            top = true;
+        }
+    }
+
+    private void checkGameover(Form form){
+        // 블럭이 데드라인을 넘어가면 top을 true로 만들어 GAME OVER 판정
+        for (int i = 0; i < XMAX / SIZE; i++) {
+            if (MESH[i][DEADLINEGAP - 1] == 1) {
+                top = true;
+                showGameover();
+                break;
+            }
+        }
+    }
+
+    private void showGameover(){
+        Text over = new Text("GAME OVER");
+        over.setFill(Color.RED);
+        over.setStyle("-fx-font: 50 arial;");
+        over.setY(250);
+        over.setX(10);
+        group.getChildren().add(over);
+        game = false;
+    }
+
+    private void sppedUp() {
+
+        bonusScore += 10;
+        dropPeriod -= 100;
+        if(dropPeriod < 100)
+            dropPeriod = 100;
+        //System.out.println(dropPeriod);
+        //System.out.println(score / 1000);
+        //System.out.println(bonusScore / 10);
+
+    }
+
+    private void startTimer(Text scoretext, Text level){
+        Timer fall = new Timer();
+        TimerTask task = new TimerTask() {
+            public void run() {
+                Platform.runLater(new Runnable() {
+                    public void run() {
+                        // 데드라인을 넘어가는 경우(GAME OVER)는 MoveDown에서 다음 블럭이 생성되기 직전에 판정한다.
+                        // 마지막 결과가 나온 뒤에는 game 변수가 false 가 된다.
+
+                        // Exit
+                        //if (top && !game) {
+                        //    //System.exit(0);
+                        //}
+
+                        if (!top && game) {
+
+                            if (score / 10000 >= bonusScore / 10) {
+                                if(dropPeriod > 100) {
+                                    sppedUp();
+                                    fall.cancel(); // cancel time
+                                    startTimer(scoretext, level);   // start the time again with a new delay time
+                                }
+                            } else {
+                                MoveDown(object);
+                                scoretext.setText("Score: " + Integer.toString(score));
+                                level.setText("Lines: " + Integer.toString(linesNo));
+                            }
+
+
+                        }
+                    }
+                });
+            }
+        };
+        fall.scheduleAtFixedRate(task, 0, dropPeriod);
+    }
+
+
 
 }
