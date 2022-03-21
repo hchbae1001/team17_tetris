@@ -40,6 +40,7 @@ public class Tetris extends Application{
 
     private static int dropPeriod = 1000;
     private static int bonusScore = 10;
+    private static final int limitDropPeriod = 100;
 
     private static boolean downPressed = false;
 
@@ -663,8 +664,8 @@ public class Tetris extends Application{
 
         bonusScore += 10;
         dropPeriod -= 100;
-        if(dropPeriod < 100)
-            dropPeriod = 100;
+        if(dropPeriod < limitDropPeriod)
+            dropPeriod = limitDropPeriod;
         //System.out.println(dropPeriod);
         //System.out.println(score / 1000);
         //System.out.println(bonusScore / 10);
@@ -686,14 +687,16 @@ public class Tetris extends Application{
                         //}
 
                         if (!top && game) {
+                            System.out.println(dropPeriod);
 
-                            if (score / 10000 >= bonusScore / 10) {
-                                if(dropPeriod > 100) {
+                            if (score / 10000 >= bonusScore / 10 && dropPeriod != limitDropPeriod) {
+                                if(dropPeriod > limitDropPeriod) {
                                     sppedUp();
                                     fall.cancel(); // cancel time
                                     startTimer(scoretext, level);   // start the time again with a new delay time
                                 }
                             } else {
+
                                 MoveDown(object);
                                 scoretext.setText("Score: " + Integer.toString(score));
                                 level.setText("Lines: " + Integer.toString(linesNo));
