@@ -14,7 +14,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
+//import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import kr.ac.seoultech.*;
@@ -30,11 +30,11 @@ public class Tetris extends Application{
     public static int[][] MESH = new int[XMAX / SIZE][YMAX / SIZE];
     private static Pane group = new Pane();
     private static Form object;
-    private static Scene scene = new Scene(group, XMAX + 150, YMAX);
+    private static Scene scene = new Scene(group, XMAX + 150, YMAX - SIZE);
     public static int score = 0;
     private static boolean top = false;
     private static boolean game = true;
-    private static Form nextObj = Controller.makeRect();
+    private static Form nextObj = Controller.makeRect("o");
     private static Pane nextObjPane = new Pane();
     private static int linesNo = 0;
 
@@ -48,12 +48,13 @@ public class Tetris extends Application{
         launch(args);
     }
 
+
     @Override
     public void start(Stage stage) throws Exception {
         for (int[] a : MESH) {
             Arrays.fill(a, 0);
         }
-        Line deadLine = new Line(0, SIZE * DEADLINEGAP, XMAX, SIZE * DEADLINEGAP);
+        Line deadLine = new Line(0, SIZE * (DEADLINEGAP - 1), XMAX, SIZE * (DEADLINEGAP - 1));
         deadLine.setStroke(Color.RED);
         Line line = new Line(XMAX, 0, XMAX, YMAX);
         Text scoretext = new Text("Score: ");
@@ -72,11 +73,12 @@ public class Tetris extends Application{
         nextText.setFill(Color.GREEN);
         group.getChildren().addAll(scoretext, line, deadLine, level, nextText);
 
+
         Form a = nextObj;
         group.getChildren().addAll(a.a, a.b, a.c, a.d);
         moveOnKeyPress(a);
         object = a;
-        nextObj = Controller.makeRect();
+        nextObj = Controller.makeRect("o");
         nextObjPane.getChildren().addAll(nextObj.a, nextObj.b, nextObj.c, nextObj.d);
         nextObjPane.setLayoutY(200);
         nextObjPane.setLayoutX(XMAX / 2 + SIZE * 3);
@@ -147,10 +149,10 @@ public class Tetris extends Application{
 
     private void MoveTurn(Form form) {
         int f = form.form;
-        Rectangle a = form.a;
-        Rectangle b = form.b;
-        Rectangle c = form.c;
-        Rectangle d = form.d;
+        NewShape a = form.a;
+        NewShape b = form.b;
+        NewShape c = form.c;
+        NewShape d = form.d;
         switch (form.getName()) {
             case "j":
                 if (f == 1 && cB(a, 1, -1) && cB(c, -1, -1) && cB(d, -2, -2)) {
@@ -451,14 +453,14 @@ public class Tetris extends Application{
         if (lines.size() > 0)
             do {
                 for (Node node : pane.getChildren()) {
-                    if (node instanceof Rectangle)
+                    if (node instanceof NewShape)
                         rects.add(node);
                 }
                 score += (bonusScore*100*lines.size());
                 linesNo++;
 
                 for (Node node : rects) {
-                    Rectangle a = (Rectangle) node;
+                    NewShape a = (NewShape) node;
                     if (a.getY() == lines.get(0) * SIZE) {
                         MESH[(int) a.getX() / SIZE][(int) a.getY() / SIZE] = 0;
                         pane.getChildren().remove(node);
@@ -467,7 +469,7 @@ public class Tetris extends Application{
                 }
 
                 for (Node node : newrects) {
-                    Rectangle a = (Rectangle) node;
+                    NewShape a = (NewShape) node;
                     if (a.getY() < lines.get(0) * SIZE) {
                         MESH[(int) a.getX() / SIZE][(int) a.getY() / SIZE] = 0;
                         a.setY(a.getY() + SIZE);
@@ -477,11 +479,11 @@ public class Tetris extends Application{
                 rects.clear();
                 newrects.clear();
                 for (Node node : pane.getChildren()) {
-                    if (node instanceof Rectangle)
+                    if (node instanceof NewShape)
                         rects.add(node);
                 }
                 for (Node node : rects) {
-                    Rectangle a = (Rectangle) node;
+                    NewShape a = (NewShape) node;
                     try {
                         MESH[(int) a.getX() / SIZE][(int) a.getY() / SIZE] = 1;
                     } catch (ArrayIndexOutOfBoundsException e) {
@@ -491,23 +493,23 @@ public class Tetris extends Application{
             } while (lines.size() > 0);
     }
 
-    private void MoveDown(Rectangle rect) {
+    private void MoveDown(NewShape rect) {
         if (rect.getY() + MOVE < YMAX)
             rect.setY(rect.getY() + MOVE);
 
     }
 
-    private void MoveRight(Rectangle rect) {
+    private void MoveRight(NewShape rect) {
         if (rect.getX() + MOVE <= XMAX - SIZE)
             rect.setX(rect.getX() + MOVE);
     }
 
-    private void MoveLeft(Rectangle rect) {
+    private void MoveLeft(NewShape rect) {
         if (rect.getX() - MOVE >= 0)
             rect.setX(rect.getX() - MOVE);
     }
 
-    private void MoveUp(Rectangle rect) {
+    private void MoveUp(NewShape rect) {
         if (rect.getY() - MOVE > 0)
             rect.setY(rect.getY() - MOVE);
     }
@@ -526,7 +528,7 @@ public class Tetris extends Application{
             if(top)
                 return;
             Form a = nextObj;
-            nextObj = Controller.makeRect();
+            nextObj = Controller.makeRect("o");
             object = a;
             // 블럭 생성 직후 겹치는 여부 확인
             isOverlap(object);
@@ -568,7 +570,7 @@ public class Tetris extends Application{
                 if(top)
                     return;
                 Form a = nextObj;
-                nextObj = Controller.makeRect();
+                nextObj = Controller.makeRect("o");
                 object = a;
                 // 블럭 생성 직후 겹치는 여부 확인
                 isOverlap(object);
@@ -613,7 +615,7 @@ public class Tetris extends Application{
         return (MESH[(int) form.d.getX() / SIZE][((int) form.d.getY() / SIZE) + 1] == 1);
     }
 
-    private boolean cB(Rectangle rect, int x, int y) {
+    private boolean cB(NewShape rect, int x, int y) {
         boolean xb = false;
         boolean yb = false;
         if (x >= 0)

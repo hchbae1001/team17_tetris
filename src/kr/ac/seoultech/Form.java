@@ -1,27 +1,32 @@
 package kr.ac.seoultech;
 
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
+//import javafx.scene.shape.Polygon;
+//import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 
 public class Form {
-    public Rectangle a;
-    public Rectangle b;
-    public Rectangle c;
-    public Rectangle d;
+    public NewShape a;
+    public NewShape b;
+    public NewShape c;
+    public NewShape d;
+
+
     Color color;
     private String name;
     public int form = 1;
     // (colorBlindMode = true) == 색각이상자 모드
     public boolean colorBlindMode = true;
 
-    public Form(Rectangle a, Rectangle b, Rectangle c, Rectangle d) {
+    public Form(NewShape a, NewShape b, NewShape c, NewShape d) {
         this.a = a;
         this.b = b;
         this.c = c;
         this.d = d;
     }
 
-    public Form(Rectangle a, Rectangle b, Rectangle c, Rectangle d, String name) {
+    public Form(NewShape a, NewShape b, NewShape c, NewShape d, String name) {
         this.a = a;
         this.b = b;
         this.c = c;
