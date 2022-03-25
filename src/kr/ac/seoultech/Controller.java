@@ -1,6 +1,8 @@
 package kr.ac.seoultech;
 
-import javafx.scene.shape.Rectangle;
+//import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
+//import javafx.scene.text.Text;
 import kr.ac.seoultech.*;
 
 public class Controller {
@@ -44,11 +46,11 @@ public class Controller {
         }
     }
 
-    public static Form makeRect() {
+    public static Form makeRect(String shape) {
         int block = (int) (Math.random() * 100);
         String name;
-        Rectangle a = new Rectangle(SIZE-1, SIZE-1), b = new Rectangle(SIZE-1, SIZE-1), c = new Rectangle(SIZE-1, SIZE-1),
-                d = new Rectangle(SIZE-1, SIZE-1);
+        NewShape a = new NewShape(SIZE-1, SIZE-1, shape), b = new NewShape(SIZE-1, SIZE-1, shape), c = new NewShape(SIZE-1, SIZE-1, shape),
+                d = new NewShape(SIZE-1, SIZE-1, shape);
         if (block < 15) {
             a.setX(XMAX / 2 - SIZE);
             a.setY(SIZE * (DEADLINEGAP - 1));
