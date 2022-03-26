@@ -1,15 +1,14 @@
 package kr.ac.seoultech;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -45,6 +44,7 @@ public class Tetris extends Application{
     private static boolean downPressed = false;
 
     public static void main(String[] args) {
+        Leaderboard.loadScores();
         launch(args);
     }
 
@@ -83,6 +83,7 @@ public class Tetris extends Application{
         nextObjPane.setLayoutY(200);
         nextObjPane.setLayoutX(XMAX / 2 + SIZE * 3);
         group.getChildren().addAll(nextObjPane);
+
 
 
         stage.setScene(scene);
@@ -659,7 +660,24 @@ public class Tetris extends Application{
         over.setY(250);
         over.setX(10);
         group.getChildren().add(over);
+        if(Leaderboard.topScores.get(9)<score)
+        {
+            String name="";
+            TextInputDialog dialog = new TextInputDialog("name");
+            dialog.setTitle("Leaderboard");
+            dialog.setHeaderText(null);
+            dialog.setContentText("이름을 입력해주세요");
+
+            Optional<String> result=dialog.showAndWait();
+
+            if(result.isPresent())
+            {
+                name = result.get();
+                Leaderboard.addScore(score,name);
+            }
+        }
         game = false;
+        Leaderboard.saveScores();
     }
 
     private void sppedUp() {

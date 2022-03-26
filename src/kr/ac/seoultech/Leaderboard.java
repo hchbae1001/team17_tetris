@@ -5,31 +5,13 @@ import java.util.ArrayList;
 
 public class Leaderboard {
 
-    private static Leaderboard lBoard;
-    private String filePath;
-    private String fileName;
-    private String noName;
+    private static String filePath = new File("").getAbsolutePath();
+    private static String fileName = "Scores";
 
-    private ArrayList<Integer> topScores;
-    private ArrayList<String> topUser;
+    public static ArrayList<Integer> topScores = new ArrayList<Integer>();
+    public static ArrayList<String> topUser = new ArrayList<String>();
 
-    private Leaderboard(){
-        filePath = new File("").getAbsolutePath();
-        fileName = "Scores";
-        noName = "___";
-
-        topScores = new ArrayList<Integer>();
-        topUser = new ArrayList<String>();
-    }
-
-    public static Leaderboard getInstance(){
-        if(lBoard == null){
-            lBoard=new Leaderboard();
-        }
-        return lBoard;
-    }
-
-    public void addScore(int score, String name){
+    public static void addScore(int score, String name){
         for(int i=0;i<topScores.size();i++)
         {
             if(score >=topScores.get(i)){
@@ -42,7 +24,7 @@ public class Leaderboard {
         }
     }
 
-    public void loadScores(){
+    public static void loadScores(){
         try{
             File f = new File(filePath, fileName);
             if(!f.isFile()){
@@ -68,7 +50,7 @@ public class Leaderboard {
         }
     }
 
-    public void saveScores(){
+    public static void saveScores(){
         FileWriter output = null;
 
         try{
@@ -86,7 +68,7 @@ public class Leaderboard {
         }
     }
 
-    private void createSaveData(){
+    private static void createSaveData(){
         FileWriter output = null;
 
         try{
@@ -102,18 +84,6 @@ public class Leaderboard {
         catch(Exception e){
             e.printStackTrace();
         }
-    }
-
-    public int getHighScore(){
-        return topScores.get(0);
-    }
-    public String getHighUser(){return topUser.get(0);}
-
-    public ArrayList<Integer> getTopScores() {
-        return topScores;
-    }
-    public ArrayList<String> getTopUser(){
-        return topUser;
     }
 
 }
