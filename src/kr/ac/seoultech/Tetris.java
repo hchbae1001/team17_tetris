@@ -692,7 +692,6 @@ public class Tetris extends Application{
                 Leaderboard.addScore(score,name);
             }
         }
-        game = false;
         Leaderboard.saveScores();
     }
 
