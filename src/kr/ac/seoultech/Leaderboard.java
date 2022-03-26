@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 public class Leaderboard {
 
+
     private static String filePath = new File("").getAbsolutePath();
     private static String fileName = "Scores";
 
@@ -50,6 +51,7 @@ public class Leaderboard {
         }
     }
 
+
     public static void saveScores(){
         FileWriter output = null;
 
@@ -67,6 +69,7 @@ public class Leaderboard {
             e.printStackTrace();
         }
     }
+
 
     private static void createSaveData(){
         FileWriter output = null;
