@@ -24,8 +24,8 @@ public class Tetris extends Application{
     public static final int DEADLINEGAP = 4;
     public static final int MOVE = 25;
     public static final int SIZE = 25;
-    public static int XMAX = SIZE * 10;
-    public static int YMAX = SIZE * (20 + DEADLINEGAP);
+    public static final int XMAX = SIZE * 10;
+    public static final int YMAX = SIZE * (20 + DEADLINEGAP);
     public static int[][] MESH = new int[XMAX / SIZE][YMAX / SIZE];
     private static Pane group = new Pane();
     private static Form object;
@@ -692,20 +692,14 @@ public class Tetris extends Application{
                 Leaderboard.addScore(score,name);
             }
         }
-        game = false;
         Leaderboard.saveScores();
     }
 
-    private void sppedUp() {
-
+    public void speedUp() {
         bonusScore += 10;
         dropPeriod -= 100;
         if(dropPeriod < limitDropPeriod)
             dropPeriod = limitDropPeriod;
-        //System.out.println(dropPeriod);
-        //System.out.println(score / 1000);
-        //System.out.println(bonusScore / 10);
-
     }
 
     private void startTimer(){
@@ -727,7 +721,7 @@ public class Tetris extends Application{
 
                             if (score / 10000 >= bonusScore / 10 && dropPeriod != limitDropPeriod) {
                                 if(dropPeriod > limitDropPeriod) {
-                                    sppedUp();
+                                    speedUp();
                                     fall.cancel(); // cancel time
                                     startTimer();   // start the time again with a new delay time
                                 }

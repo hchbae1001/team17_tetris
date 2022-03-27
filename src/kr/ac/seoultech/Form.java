@@ -19,12 +19,8 @@ public class Form {
     // (colorBlindMode = true) == 색각이상자 모드
     public boolean colorBlindMode = true;
 
-    public Form(NewShape a, NewShape b, NewShape c, NewShape d) {
-        this.a = a;
-        this.b = b;
-        this.c = c;
-        this.d = d;
-    }
+
+
 
     public Form(NewShape a, NewShape b, NewShape c, NewShape d, String name) {
         this.a = a;
