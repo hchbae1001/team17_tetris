@@ -37,6 +37,10 @@ public class Tetris extends Application{
     private static Pane nextObjPane = new Pane();
     private static int linesNo = 0;
 
+    private static Text scoretext = new Text("Score: ");
+
+    private static Text level = new Text("Lines: ");
+
     private static int dropPeriod = 1000;
     private static int bonusScore = 10;
     private static final int limitDropPeriod = 100;
@@ -57,11 +61,9 @@ public class Tetris extends Application{
         Line deadLine = new Line(0, SIZE * (DEADLINEGAP - 1), XMAX, SIZE * (DEADLINEGAP - 1));
         deadLine.setStroke(Color.RED);
         Line line = new Line(XMAX, 0, XMAX, YMAX);
-        Text scoretext = new Text("Score: ");
         scoretext.setStyle("-fx-font: 20 arial;");
         scoretext.setY(50);
         scoretext.setX(XMAX + 5);
-        Text level = new Text("Lines: ");
         level.setStyle("-fx-font: 20 arial;");
         level.setY(100);
         level.setX(XMAX + 5);
@@ -89,7 +91,7 @@ public class Tetris extends Application{
         stage.setScene(scene);
         stage.setTitle("T E T R I S");
         stage.show();
-        startTimer(scoretext, level);
+        startTimer();
 
         /*
         Timer fall = new Timer();
@@ -533,6 +535,9 @@ public class Tetris extends Application{
             object = a;
             // 블럭 생성 직후 겹치는 여부 확인
             isOverlap(object);
+
+            if(top)
+                return;
             group.getChildren().addAll(a.a, a.b, a.c, a.d);
             nextObjPane.getChildren().addAll(nextObj.a, nextObj.b, nextObj.c, nextObj.d);
             moveOnKeyPress(a);
@@ -575,6 +580,9 @@ public class Tetris extends Application{
                 object = a;
                 // 블럭 생성 직후 겹치는 여부 확인
                 isOverlap(object);
+
+                if(top)
+                    return;
                 group.getChildren().addAll(a.a, a.b, a.c, a.d);
                 nextObjPane.getChildren().addAll(nextObj.a, nextObj.b, nextObj.c, nextObj.d);
                 moveOnKeyPress(a);
@@ -631,14 +639,20 @@ public class Tetris extends Application{
     }
 
     private void isOverlap(Form form){
+        boolean isEOG = false;
         while (MESH[(int) form.a.getX() / SIZE][((int) form.a.getY() / SIZE)] == 1 || MESH[(int) form.b.getX() / SIZE][((int) form.b.getY() / SIZE)] == 1 ||
                 MESH[(int) form.c.getX() / SIZE][((int) form.c.getY() / SIZE)] == 1 || MESH[(int) form.d.getX() / SIZE][((int) form.d.getY() / SIZE)] == 1){
+            isEOG = true;
             object.a.setY(object.a.getY() - MOVE);
             object.b.setY(object.b.getY() - MOVE);
             object.c.setY(object.c.getY() - MOVE);
             object.d.setY(object.d.getY() - MOVE);
-            showGameover();
             top = true;
+        }
+        if(isEOG){
+            group.getChildren().addAll(object.a, object.b, object.c, object.d);
+            nextObjPane.getChildren().addAll(nextObj.a, nextObj.b, nextObj.c, nextObj.d);
+            showGameover();
         }
     }
 
@@ -654,6 +668,8 @@ public class Tetris extends Application{
     }
 
     private void showGameover(){
+        game = false;
+        updateScoretext();
         Text over = new Text("GAME OVER");
         over.setFill(Color.RED);
         over.setStyle("-fx-font: 50 arial;");
@@ -676,7 +692,6 @@ public class Tetris extends Application{
                 Leaderboard.addScore(score,name);
             }
         }
-        game = false;
         Leaderboard.saveScores();
     }
 
@@ -692,7 +707,7 @@ public class Tetris extends Application{
 
     }
 
-    private void startTimer(Text scoretext, Text level){
+    private void startTimer(){
         Timer fall = new Timer();
         TimerTask task = new TimerTask() {
             public void run() {
@@ -713,13 +728,12 @@ public class Tetris extends Application{
                                 if(dropPeriod > limitDropPeriod) {
                                     sppedUp();
                                     fall.cancel(); // cancel time
-                                    startTimer(scoretext, level);   // start the time again with a new delay time
+                                    startTimer();   // start the time again with a new delay time
                                 }
                             } else {
 
                                 MoveDown(object);
-                                scoretext.setText("Score: " + Integer.toString(score));
-                                level.setText("Lines: " + Integer.toString(linesNo));
+                                updateScoretext();
                             }
 
 
@@ -729,6 +743,11 @@ public class Tetris extends Application{
             }
         };
         fall.scheduleAtFixedRate(task, 0, dropPeriod);
+    }
+
+    private void updateScoretext(){
+        scoretext.setText("Score: " + Integer.toString(score));
+        level.setText("Lines: " + Integer.toString(linesNo));
     }
 
 
