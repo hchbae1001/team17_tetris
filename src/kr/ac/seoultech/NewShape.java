@@ -6,9 +6,6 @@ public class NewShape extends Text{
 
     public static final int MOVE = Tetris.MOVE;
     public static final int SIZE = Tetris.SIZE;
-    public static int XMAX = Tetris.XMAX;
-    public static int YMAX = Tetris.YMAX;
-
 
 
     public NewShape() {
