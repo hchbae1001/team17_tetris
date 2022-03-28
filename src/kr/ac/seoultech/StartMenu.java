@@ -143,6 +143,12 @@ public class StartMenu extends Application {
                     case SPACE:
                         switch (menuSelected){
                             case "start":
+                                Tetris tetris = new Tetris();
+                                try{
+                                    tetris.start(window);
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
                                 //Todo Tetris와 연결
                                 System.out.println("start");
                                 break;
