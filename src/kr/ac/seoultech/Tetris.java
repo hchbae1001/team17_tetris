@@ -48,13 +48,13 @@ public class Tetris extends Application{
     private static boolean downPressed = false;
 
     public static void main(String[] args) {
-        Leaderboard.loadScores();
         launch(args);
     }
 
 
     @Override
     public void start(Stage stage) throws Exception {
+        Leaderboard.loadScores();        
         for (int[] a : MESH) {
             Arrays.fill(a, 0);
         }
