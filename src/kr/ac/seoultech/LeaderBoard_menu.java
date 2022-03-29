@@ -24,10 +24,7 @@ public class LeaderBoard_menu extends Application {
     public static Text[] Ranking_score = new Text[10];
     public static Text[] Ranking_user = new Text[10];
 
-
-
-
-    Stage window;
+    public static Stage window;
 
     public void LeaderBoardPress(){
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {

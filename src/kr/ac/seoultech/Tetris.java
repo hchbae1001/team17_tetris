@@ -720,19 +720,17 @@ public class Tetris extends Application{
             {
                 name = result.get();
                 Leaderboard.addScore(score,name);
-                /*
                 for(int i=9;i>=0;i--)
                 {
                     if(Leaderboard.topScores.get(i)==score&&Leaderboard.topUser.get(i)==name)
                         break;
                 }
-                */
             }
         }
         Leaderboard.saveScores(Leaderboard.fileName);
 
-        //window.setScene(LeaderBoard_menu.scene);
-        window.close();
+        window.setScene(LeaderBoard_menu.scene);
+        //window.close();
     }
 
     public void speedUp() {
