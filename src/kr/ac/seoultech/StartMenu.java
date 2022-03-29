@@ -22,31 +22,25 @@ public class StartMenu extends Application {
     public static final int XMAX = SIZE * 10;
     public static final int YMAX = SIZE * (20 + DEADLINEGAP);
     public static int[][] MESH = new int[XMAX / SIZE][YMAX / SIZE];
-    private static Pane group = new Pane();
-    private static Scene scene = new Scene(group, XMAX + 150, YMAX - SIZE);
+    final private static Pane group = new Pane();
+    public static Scene scene = new Scene(group, XMAX + 150, YMAX - SIZE);
     private static Form menu;
-    //옵션 기록용 file
-    private static String filepath = new File("").getAbsolutePath();
-    private static String fileName = "Option";
     //페이지 내 표시할 것들
-    private static Text menu3_start = new Text("START");
-    private static Text menu2_setting = new Text("Setting");
-    private static Text menu1_scoreBoard = new Text("Score Board");
-    private static Text menu0_Exit = new Text("Exit");
-
+    final private static Text menu3_start = new Text("START");
+    final private static Text menu2_setting = new Text("Setting");
+    final private static Text menu1_scoreBoard = new Text("Score Board");
+    final private static Text menu0_Exit = new Text("Exit");
+    private static boolean isSettingOn = false;
     //count = 3 -> start 에 커서
     private static Integer count = 3;
     private static String menuSelected = "";
-    private static Integer result = 0;
 
-    private static ArrayList<String> select = new ArrayList<String>(Arrays.asList(
+    final private static ArrayList<String> select = new ArrayList<String>(Arrays.asList(
             "exit", "scoreBoard", "setting",  "start"));
-    private static Integer menu_max = select.size();
+    final private static Integer menu_max = select.size();
     Stage window;
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        window = primaryStage;
+    private void startMenuSetting(){
         menu3_start.setStyle("-fx-font: 20 arial");
         menu3_start.setX(XMAX / 2);
         menu3_start.setY(YMAX / 2 + 50);
@@ -67,27 +61,32 @@ public class StartMenu extends Application {
         menu0_Exit.setY(YMAX / 2 + 200);
         menu0_Exit.setFill(Color.BLACK);
 
-
         group.getChildren().addAll(
                 menu3_start,menu2_setting,menu1_scoreBoard,menu0_Exit
         );
+
         //초기 시작 시, Start 에 커서
         menuSelected = select.get(count);
+    }
 
-
-
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        window = primaryStage;
+        startMenuSetting();
         menuPress(menu);
 
         primaryStage.setScene(scene);
         primaryStage.setTitle("T E T R I S");
         primaryStage.show();
     }
+
     private void colorReset(){
         menu3_start.setFill(Color.BLACK);
         menu2_setting.setFill(Color.BLACK);
         menu1_scoreBoard.setFill(Color.BLACK);
         menu0_Exit.setFill(Color.BLACK);
     }
+
     private void menuColoring(){
         switch (count){
             case 3:
@@ -109,6 +108,7 @@ public class StartMenu extends Application {
         }
     }
     private void menuPress(Form form){
+        Setting settingMenu = new Setting();
         scene.setOnKeyPressed((new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
@@ -149,11 +149,23 @@ public class StartMenu extends Application {
                                 }catch (Exception e){
                                     e.printStackTrace();
                                 }
-                                //Todo Tetris와 연결
-                                System.out.println("start");
                                 break;
                             case "setting":
-                                //Todo 설정창 구현 후 연동 필요
+                                if(!isSettingOn){
+                                    try{
+                                        settingMenu.start(window);
+                                        isSettingOn = true;
+                                    }catch (Exception e){
+                                        e.printStackTrace();
+                                    }
+                                }else{
+                                    try{
+                                        window.setScene(Setting.scene);
+                                    }catch (Exception e){
+                                        e.printStackTrace();
+                                    }
+                                }
+
                                 System.out.println("setting");
                                 break;
                             case "scoreBoard":

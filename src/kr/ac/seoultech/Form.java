@@ -14,10 +14,10 @@ public class Form {
 
 
     Color color;
-    private String name;
+    final private String name;
     public int form = 1;
     // (colorBlindMode = true) == 색각이상자 모드
-    public boolean colorBlindMode = true;
+    public static boolean colorBlindMode = false;
 
 
 
@@ -31,21 +31,21 @@ public class Form {
 
         switch (name) {
             case "j":
-                if(colorBlindMode = false){
+                if(!colorBlindMode){
                     color = Color.SLATEGRAY;
                 }else{
                     color = Color.YELLOW;
                 }
                 break;
             case "l":
-                if(colorBlindMode = false){
+                if(!colorBlindMode){
                     color = Color.BLACK;
                 }else{
                     color = Color.BLACK;
                 }
                 break;
             case "o":
-                if(colorBlindMode = false){
+                if(!colorBlindMode){
                     color = Color.RED;
                 }else{
                     //red -> vermilion
@@ -54,7 +54,7 @@ public class Form {
                 break;
             case "s":
                 //99% 의 색각이상자 (적록색맹)을 위한 채도 변경
-                if(colorBlindMode = false){
+                if(!colorBlindMode){
                     color = Color.GREEN;
                 }else{
                     //green -> bluish green
@@ -62,7 +62,7 @@ public class Form {
                 }
                 break;
             case "t":
-                if(colorBlindMode = false){
+                if(!colorBlindMode){
                     color = Color.BLUE;
                 }else{
                     //blue -> skyblue
@@ -70,14 +70,14 @@ public class Form {
                 }
                 break;
             case "z":
-                if(colorBlindMode = false){
+                if(!colorBlindMode){
                     color = Color.PURPLE;
                 }else{
                     color = Color.rgb(150,9,85);
                 }
                 break;
             case "i":
-                if(colorBlindMode = false){
+                if(!colorBlindMode){
                     color = Color.SANDYBROWN;
                 }else{
                     color = Color.ORANGE;
