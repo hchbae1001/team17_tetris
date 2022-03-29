@@ -4,7 +4,6 @@ import java.util.*;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -16,7 +15,6 @@ import javafx.scene.shape.Line;
 //import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import kr.ac.seoultech.*;
 
 public class Tetris extends Application{
     // The variables
@@ -54,7 +52,7 @@ public class Tetris extends Application{
 
     @Override
     public void start(Stage stage) throws Exception {
-        Leaderboard.loadScores();
+        Leaderboard.loadScores(Leaderboard.fileName);
         for (int[] a : MESH) {
             Arrays.fill(a, 0);
         }
@@ -692,7 +690,7 @@ public class Tetris extends Application{
                 Leaderboard.addScore(score,name);
             }
         }
-        Leaderboard.saveScores();
+        Leaderboard.saveScores(Leaderboard.fileName);
     }
 
     public void speedUp() {
