@@ -27,6 +27,11 @@ public class Tetris extends Application{
     public static final int XMAX = SIZE * 10;
     public static final int YMAX = SIZE * (20 + DEADLINEGAP);
     public static int[][] MESH = new int[XMAX / SIZE][YMAX / SIZE];
+    public static final int BonusRate = 10;
+    public static final int SpeedUpRate = 50;
+    public enum Difficulty{ Easy, Normal, Hard }
+    public static Difficulty level = Difficulty.Hard;
+
     private static Pane group = new Pane();
     private static Form object;
     private static Scene scene = new Scene(group, XMAX + 150, YMAX - SIZE);
@@ -36,16 +41,14 @@ public class Tetris extends Application{
     private static Form nextObj = Controller.makeRect("o");
     private static Pane nextObjPane = new Pane();
     private static int linesNo = 0;
-
     private static Text scoretext = new Text("Score: ");
-
-    private static Text level = new Text("Lines: ");
+    private static Text linetesxt = new Text("Lines: ");
 
     private static int dropPeriod = 1000;
     private static int bonusScore = 10;
-    private static final int limitDropPeriod = 100;
+    private static int limitDropPeriod = 300;
+    private static boolean directKeyPressed = false;
 
-    private static boolean downPressed = false;
 
     public static void main(String[] args) {
         launch(args);
@@ -55,6 +58,16 @@ public class Tetris extends Application{
     @Override
     public void start(Stage stage) throws Exception {
         Leaderboard.loadScores();
+
+        if(level == Difficulty.Easy){
+            limitDropPeriod = 300;
+        }
+        else if(level == Difficulty.Normal) {
+            limitDropPeriod = 200;
+        }else{
+            limitDropPeriod = 100;
+        }
+
         for (int[] a : MESH) {
             Arrays.fill(a, 0);
         }
@@ -64,16 +77,16 @@ public class Tetris extends Application{
         scoretext.setStyle("-fx-font: 20 arial;");
         scoretext.setY(50);
         scoretext.setX(XMAX + 5);
-        level.setStyle("-fx-font: 20 arial;");
-        level.setY(100);
-        level.setX(XMAX + 5);
-        level.setFill(Color.GREEN);
+        linetesxt.setStyle("-fx-font: 20 arial;");
+        linetesxt.setY(100);
+        linetesxt.setX(XMAX + 5);
+        linetesxt.setFill(Color.GREEN);
         Text nextText = new Text("Next Block");
         nextText.setStyle("-fx-font: 20 arial;");
         nextText.setY(150);
         nextText.setX(XMAX + 5);
         nextText.setFill(Color.GREEN);
-        group.getChildren().addAll(scoretext, line, deadLine, level, nextText);
+        group.getChildren().addAll(scoretext, line, deadLine, linetesxt, nextText);
 
 
         Form a = nextObj;
@@ -93,35 +106,6 @@ public class Tetris extends Application{
         stage.show();
         startTimer();
 
-        /*
-        Timer fall = new Timer();
-        TimerTask task = new TimerTask() {
-            public void run() {
-                Platform.runLater(new Runnable() {
-                    public void run() {
-                        // 데드라인을 넘어가는 경우(GAME OVER)는 MoveDown에서 다음 블럭이 생성되기 직전에 판정한다.
-                        // 마지막 결과가 나온 뒤에는 game 변수가 false 가 된다.
-
-                        // Exit
-                        //if (top && !game) {
-                        //    //System.exit(0);
-                        //}
-
-                        if (!top && game) {
-                            if(dropPeriod > 100) {
-                                sppedUp();
-                            }
-                            MoveDown(object);
-                            scoretext.setText("Score: " + Integer.toString(score));
-                            level.setText("Lines: " + Integer.toString(linesNo));
-                        }
-                    }
-                });
-            }
-        };
-        fall.scheduleAtFixedRate(task, 0, dropPeriod);
-
-         */
     }
 
     // 블럭 이동 키입력
@@ -129,14 +113,17 @@ public class Tetris extends Application{
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                if(!downPressed && !top) {
+                if(!directKeyPressed && !top) {
                     switch (event.getCode()) {
+                        case SPACE:
+                            directKeyPressed = true;
+                            DirectlyMoveDown(form);
+                            break;
                         case RIGHT:
                             Controller.MoveRight(form);
                             break;
                         case DOWN:
-                            downPressed = true;
-                            DirectlyMoveDown(form);
+                            MoveDown(form);
                             break;
                         case LEFT:
                             Controller.MoveLeft(form);
@@ -541,7 +528,7 @@ public class Tetris extends Application{
             group.getChildren().addAll(a.a, a.b, a.c, a.d);
             nextObjPane.getChildren().addAll(nextObj.a, nextObj.b, nextObj.c, nextObj.d);
             moveOnKeyPress(a);
-            downPressed = false;
+            directKeyPressed = false;
         }
 
         if (form.a.getY() + MOVE < YMAX && form.b.getY() + MOVE < YMAX && form.c.getY() + MOVE < YMAX
@@ -586,7 +573,7 @@ public class Tetris extends Application{
                 group.getChildren().addAll(a.a, a.b, a.c, a.d);
                 nextObjPane.getChildren().addAll(nextObj.a, nextObj.b, nextObj.c, nextObj.d);
                 moveOnKeyPress(a);
-                downPressed = false;
+                directKeyPressed = false;
                 // 수정 필요성 있음
 
                 break;
@@ -696,8 +683,18 @@ public class Tetris extends Application{
     }
 
     public void speedUp() {
-        bonusScore += 10;
-        dropPeriod -= 100;
+        if(level == Difficulty.Easy){
+            bonusScore += BonusRate;
+            dropPeriod -= SpeedUpRate * 0.8;
+        }
+        else if(level == Difficulty.Normal) {
+            bonusScore += BonusRate;
+            dropPeriod -= SpeedUpRate;
+        }else{
+            bonusScore += BonusRate;
+            dropPeriod -= SpeedUpRate * 1.2;
+        }
+
         if(dropPeriod < limitDropPeriod)
             dropPeriod = limitDropPeriod;
     }
@@ -719,7 +716,7 @@ public class Tetris extends Application{
                         if (!top && game) {
                             System.out.println(dropPeriod);
 
-                            if (score / 10000 >= bonusScore / 10 && dropPeriod != limitDropPeriod) {
+                            if (score / 5000 >= bonusScore / BonusRate && dropPeriod != limitDropPeriod) {
                                 if(dropPeriod > limitDropPeriod) {
                                     speedUp();
                                     fall.cancel(); // cancel time
@@ -742,7 +739,7 @@ public class Tetris extends Application{
 
     private void updateScoretext(){
         scoretext.setText("Score: " + Integer.toString(score));
-        level.setText("Lines: " + Integer.toString(linesNo));
+        linetesxt.setText("Lines: " + Integer.toString(linesNo));
     }
 
 
