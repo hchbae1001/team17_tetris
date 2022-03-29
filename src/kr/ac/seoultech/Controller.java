@@ -47,11 +47,19 @@ public class Controller {
     }
 
     public static Form makeRect(String shape) {
-        int block = (int) (Math.random() * 100);
+        int block;
+        if(Tetris.level == Tetris.Difficulty.Easy){
+            block = (int) (Math.random() * 72);
+        }
+        else if(Tetris.level == Tetris.Difficulty.Normal) {
+            block = (int) (Math.random() * 70);
+        }else{
+            block = (int) (Math.random() * 68);
+        }
         String name;
         NewShape a = new NewShape(SIZE-1, SIZE-1, shape), b = new NewShape(SIZE-1, SIZE-1, shape), c = new NewShape(SIZE-1, SIZE-1, shape),
                 d = new NewShape(SIZE-1, SIZE-1, shape);
-        if (block < 15) {
+        if (block < 10) {
             a.setX(XMAX / 2 - SIZE);
             a.setY(SIZE * (DEADLINEGAP - 1));
             b.setX(XMAX / 2 - SIZE);
@@ -61,7 +69,7 @@ public class Controller {
             d.setX(XMAX / 2 + SIZE);
             d.setY(SIZE * (DEADLINEGAP));
             name = "j";
-        } else if (block < 30) {
+        } else if (block < 20) {
             a.setX(XMAX / 2 + SIZE);
             a.setY(SIZE * (DEADLINEGAP - 1));
             b.setX(XMAX / 2 - SIZE);
@@ -71,7 +79,7 @@ public class Controller {
             d.setX(XMAX / 2 + SIZE);
             d.setY(SIZE * (DEADLINEGAP));
             name = "l";
-        } else if (block < 45) {
+        } else if (block < 30) {
             a.setX(XMAX / 2 - SIZE);
             a.setY(SIZE * (DEADLINEGAP - 1));
             b.setX(XMAX / 2);
@@ -81,7 +89,7 @@ public class Controller {
             d.setX(XMAX / 2);
             d.setY(SIZE * (DEADLINEGAP));
             name = "o";
-        } else if (block < 60) {
+        } else if (block < 40) {
             a.setX(XMAX / 2 + SIZE);
             a.setY(SIZE * (DEADLINEGAP - 1));
             b.setX(XMAX / 2);
@@ -91,7 +99,7 @@ public class Controller {
             d.setX(XMAX / 2 - SIZE);
             d.setY(SIZE * (DEADLINEGAP));
             name = "s";
-        } else if (block < 75) {
+        } else if (block < 50) {
             a.setX(XMAX / 2 - SIZE);
             a.setY(SIZE * (DEADLINEGAP - 1));
             b.setX(XMAX / 2);
@@ -101,7 +109,7 @@ public class Controller {
             d.setX(XMAX / 2 + SIZE);
             d.setY(SIZE * (DEADLINEGAP - 1));
             name = "t";
-        } else if (block < 90) {
+        } else if (block < 60) {
             a.setX(XMAX / 2);
             a.setY(SIZE * (DEADLINEGAP - 1));
             b.setX(XMAX / 2 - SIZE);
