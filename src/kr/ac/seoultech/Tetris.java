@@ -47,7 +47,7 @@ public class Tetris extends Application{
     private static int dropPeriod = 1000;
     private static int bonusScore = 10;
     private static int limitDropPeriod = 300;
-    private static boolean downPressed = false;
+    private static boolean directKeyPressed = false;
 
 
     public static void main(String[] args) {
@@ -113,14 +113,17 @@ public class Tetris extends Application{
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                if(!downPressed && !top) {
+                if(!directKeyPressed && !top) {
                     switch (event.getCode()) {
+                        case SPACE:
+                            directKeyPressed = true;
+                            DirectlyMoveDown(form);
+                            break;
                         case RIGHT:
                             Controller.MoveRight(form);
                             break;
                         case DOWN:
-                            downPressed = true;
-                            DirectlyMoveDown(form);
+                            MoveDown(form);
                             break;
                         case LEFT:
                             Controller.MoveLeft(form);
@@ -525,7 +528,7 @@ public class Tetris extends Application{
             group.getChildren().addAll(a.a, a.b, a.c, a.d);
             nextObjPane.getChildren().addAll(nextObj.a, nextObj.b, nextObj.c, nextObj.d);
             moveOnKeyPress(a);
-            downPressed = false;
+            directKeyPressed = false;
         }
 
         if (form.a.getY() + MOVE < YMAX && form.b.getY() + MOVE < YMAX && form.c.getY() + MOVE < YMAX
@@ -570,7 +573,7 @@ public class Tetris extends Application{
                 group.getChildren().addAll(a.a, a.b, a.c, a.d);
                 nextObjPane.getChildren().addAll(nextObj.a, nextObj.b, nextObj.c, nextObj.d);
                 moveOnKeyPress(a);
-                downPressed = false;
+                directKeyPressed = false;
                 // 수정 필요성 있음
 
                 break;
