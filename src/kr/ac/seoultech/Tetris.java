@@ -28,7 +28,7 @@ public class Tetris extends Application{
     public static final int BonusRate = 10;
     public static final int SpeedUpRate = 50;
     public enum Difficulty{ Easy, Normal, Hard }
-    public static Difficulty level = Difficulty.Hard;
+    public static Difficulty level = Difficulty.Easy;
     private static Pane group = new Pane();
     private static Form object;
     public static Scene scene;
@@ -54,7 +54,8 @@ public class Tetris extends Application{
 
     @Override
     public void start(Stage stage) throws Exception {
-
+        System.out.println(level);
+        window = stage;
         XMAX = SIZE * 10;
         YMAX = SIZE * (20 + DEADLINEGAP);
         scene = new Scene(group, XMAX + 150, YMAX - SIZE);
@@ -684,6 +685,7 @@ public class Tetris extends Application{
             }
         }
         Leaderboard.saveScores(Leaderboard.fileName);
+        window.close();
     }
 
     public void speedUp() {

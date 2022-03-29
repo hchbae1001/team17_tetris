@@ -21,10 +21,8 @@ public class Setting extends Application {
     public static int SIZE = 25;
     public static final int XMAX = SIZE * 10;
     public static final int YMAX = SIZE * (20 + DEADLINEGAP);
-
     final private static Pane group = new Pane();
     public static Scene scene = new Scene(group, XMAX + 150, YMAX - SIZE);
-
     Tetris tetris = new Tetris();
     StartMenu startMenu = new StartMenu();
 
@@ -240,15 +238,18 @@ public class Setting extends Application {
                     case SPACE:
                             switch (menuSelected){
                                 case "difficulty":
-                                    if(diffcultyBool.getText().equals("Easy")){
-                                        //중간
-                                        diffcultyBool.setText("Normal");
-                                    }else if(diffcultyBool.getText().equals("Normal")){
-                                        //어려움
-                                        diffcultyBool.setText("Hard");
-                                    }else{
+                                    if(diffcultyBool.getText().equals("Hard")){
                                         //쉬움
+                                        Tetris.level = Tetris.Difficulty.Easy;
                                         diffcultyBool.setText("Easy");
+                                    }else if(diffcultyBool.getText().equals("Easy")){
+                                        //중간
+                                        Tetris.level = Tetris.Difficulty.Normal;
+                                        diffcultyBool.setText("Normal");
+                                    }else{
+                                        //어려움
+                                        Tetris.level = Tetris.Difficulty.Hard;
+                                        diffcultyBool.setText("Hard");
                                     }
                                     break;
 
