@@ -8,6 +8,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -46,6 +47,8 @@ public class Tetris extends Application{
     private static int bonusScore = 10;
     private static int limitDropPeriod = 300;
     private static boolean directKeyPressed = false;
+
+    Stage window;
 
 
     public static void main(String[] args) {
@@ -96,8 +99,6 @@ public class Tetris extends Application{
         nextObjPane.setLayoutY(200);
         nextObjPane.setLayoutX(XMAX / 2 + SIZE * 3);
         group.getChildren().addAll(nextObjPane);
-
-
 
         stage.setScene(scene);
         stage.setTitle("T E T R I S");
@@ -675,9 +676,18 @@ public class Tetris extends Application{
             {
                 name = result.get();
                 Leaderboard.addScore(score,name);
+                /*
+                for(int i=9;i>=0;i--)
+                {
+                    if(Leaderboard.topScores.get(i)==score&&Leaderboard.topUser.get(i)==name)
+                        break;
+                }
+                */
             }
         }
         Leaderboard.saveScores(Leaderboard.fileName);
+
+        //window.setScene(LeaderBoard_menu.scene);
     }
 
     public void speedUp() {
