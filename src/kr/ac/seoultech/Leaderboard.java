@@ -6,8 +6,8 @@ import java.util.ArrayList;
 public class Leaderboard {
 
 
-    private static String filePath = new File("").getAbsolutePath();
-    private static String fileName = "Scores";
+    public static String filePath = new File("").getAbsolutePath();
+    public static String fileName = "Scores";
 
     public static ArrayList<Integer> topScores = new ArrayList<Integer>();
     public static ArrayList<String> topUser = new ArrayList<String>();
@@ -25,16 +25,17 @@ public class Leaderboard {
         }
     }
 
-    public static void loadScores(){
+    public static void loadScores(String filename){
         try{
-            File f = new File(filePath, fileName);
+            File f = new File(filePath, filename);
             if(!f.isFile()){
-                createSaveData();
+                createSaveData(filename);
             }
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
 
             topScores.clear();
+            topUser.clear();
 
             String[] scores = reader.readLine().split("-");
             String[] name = reader.readLine().split("-");
@@ -52,11 +53,11 @@ public class Leaderboard {
     }
 
 
-    public static void saveScores(){
+    public static void saveScores(String filename){
         FileWriter output = null;
 
         try{
-            File f = new File(filePath, fileName);
+            File f = new File(filePath, filename);
             output = new FileWriter(f);
             BufferedWriter writer = new BufferedWriter(output);
 
@@ -71,11 +72,11 @@ public class Leaderboard {
     }
 
 
-    private static void createSaveData(){
+    public static void createSaveData(String filename){
         FileWriter output = null;
 
         try{
-            File f = new File(filePath, fileName);
+            File f = new File(filePath, filename);
             output = new FileWriter(f);
             BufferedWriter writer = new BufferedWriter(output);
 
