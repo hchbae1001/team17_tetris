@@ -48,7 +48,7 @@ public class Setting extends Application {
     public static Text diffcultyBool = new Text("Easy");
     public static Text itemModeBool = new Text("FALSE");
     public static Text colorBlindBool = new Text("FALSE");
-    public static Text keySettingBool = new Text("WASD");
+    public static Text keySettingBool = new Text("Arrow Keys");
     public static Text sizeSettingBool = new Text("size25");
     public static Text resetScoreBoardBool =new Text("RESET");
     public static Text resetBool = new Text("RESET");
@@ -141,21 +141,11 @@ public class Setting extends Application {
                 diffcultyBool,itemModeBool,colorBlindBool,keySettingBool,sizeSettingBool,resetBool,resetScoreBoardBool
         );
     }
-    private void setSetting(){
-        diffcultyBool.setText(StartMenu.settings.get(0));
-        itemModeBool.setText(StartMenu.settings.get(1));
-        colorBlindBool.setText(StartMenu.settings.get(2));
-        keySettingBool.setText(StartMenu.settings.get(3));
-        sizeSettingBool.setText(StartMenu.settings.get(4));
-        for(int i = 0; i < 5; i++){
-            savedSetting.add(StartMenu.settings.get(i));
-        }
-    }
+
     @Override
     public void start(Stage settingStage){
         window = settingStage;
         settingMenuSetting();
-        setSetting();
         settingPress(settingForm);
 
         settingStage.setScene(scene);
@@ -174,6 +164,39 @@ public class Setting extends Application {
             String[] settings = br.readLine().split("-");
             for(int i = 0; i < settings.length ; i++){
                 StartMenu.settings.add(settings[i]);
+            }
+            Setting.diffcultyBool.setText(StartMenu.settings.get(0));
+            Setting.itemModeBool.setText(StartMenu.settings.get(1));
+            Setting.colorBlindBool.setText(StartMenu.settings.get(2));
+            Setting.keySettingBool.setText(StartMenu.settings.get(3));
+            Setting.sizeSettingBool.setText(StartMenu.settings.get(4));
+            for(int i = 0; i < 5; i++){
+                savedSetting.add(StartMenu.settings.get(i));
+            }
+            switch (StartMenu.settings.get(4)){
+                case "size25":
+                    Tetris.SIZE = 25;
+                    Tetris.MOVE = 25;
+                    break;
+                case "size30":
+                    Tetris.SIZE = 30;
+                    Tetris.MOVE = 30;
+                    break;
+                case "size35":
+                    Tetris.SIZE = 35;
+                    Tetris.MOVE = 35;
+                    break;
+            }
+            switch (StartMenu.settings.get(0)){
+                case "Easy":
+                    Tetris.level = Tetris.Difficulty.Easy;
+                    break;
+                case "Normal":
+                    Tetris.level = Tetris.Difficulty.Normal;
+                    break;
+                case "Hard":
+                    Tetris.level = Tetris.Difficulty.Hard;
+                    break;
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -393,3 +416,4 @@ public class Setting extends Application {
         createSettingFile();
     }
 }
+

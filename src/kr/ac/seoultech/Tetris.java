@@ -95,7 +95,12 @@ public class Tetris extends Application{
 
         Form a = nextObj;
         group.getChildren().addAll(a.a, a.b, a.c, a.d);
-        moveOnKeyPress(a);
+        if(Setting.keySettingBool.getText().equals("Arrow Keys")){
+            moveOnKeyPressArrow(a);
+        }else{
+            moveOnKeyPressWASD(a);
+        }
+
         object = a;
         nextObj = Controller.makeRect("o");
         nextObjPane.getChildren().addAll(nextObj.a, nextObj.b, nextObj.c, nextObj.d);
@@ -112,33 +117,37 @@ public class Tetris extends Application{
         startTimer();
 
     }
-
+    private void moveOnKeyPressArrow(Form form){
+        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                switch (event.getCode()) {
+                    case SPACE:
+                        directKeyPressed = true;
+                        DirectlyMoveDown(form);
+                        break;
+                    case RIGHT:
+                        Controller.MoveRight(form);
+                        break;
+                    case DOWN:
+                        MoveDown(form);
+                        break;
+                    case LEFT:
+                        Controller.MoveLeft(form);
+                        break;
+                    case UP:
+                        MoveTurn(form);
+                        break;
+                }
+            }
+        });
+    }
     // 블럭 이동 키입력
-    private void moveOnKeyPress(Form form) {
+    private void moveOnKeyPressWASD(Form form) {
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
                 if(!directKeyPressed && !top) {
-                    if(Setting.keySettingBool.equals("Arrow keys")){
-                        switch (event.getCode()) {
-                            case SPACE:
-                                directKeyPressed = true;
-                                DirectlyMoveDown(form);
-                                break;
-                            case RIGHT:
-                                Controller.MoveRight(form);
-                                break;
-                            case DOWN:
-                                MoveDown(form);
-                                break;
-                            case LEFT:
-                                Controller.MoveLeft(form);
-                                break;
-                            case UP:
-                                MoveTurn(form);
-                                break;
-                        }
-                    }else{
                         switch (event.getCode()) {
                             case SPACE:
                                 directKeyPressed = true;
@@ -156,7 +165,6 @@ public class Tetris extends Application{
                             case W:
                                 MoveTurn(form);
                                 break;
-                        }
 
                     }
 
@@ -555,7 +563,11 @@ public class Tetris extends Application{
                 return;
             group.getChildren().addAll(a.a, a.b, a.c, a.d);
             nextObjPane.getChildren().addAll(nextObj.a, nextObj.b, nextObj.c, nextObj.d);
-            moveOnKeyPress(a);
+            if(Setting.keySettingBool.getText().equals("Arrow Keys")){
+                moveOnKeyPressArrow(a);
+            }else{
+                moveOnKeyPressWASD(a);
+            }
             directKeyPressed = false;
         }
 
@@ -600,7 +612,11 @@ public class Tetris extends Application{
                     return;
                 group.getChildren().addAll(a.a, a.b, a.c, a.d);
                 nextObjPane.getChildren().addAll(nextObj.a, nextObj.b, nextObj.c, nextObj.d);
-                moveOnKeyPress(a);
+                if(Setting.keySettingBool.getText().equals("Arrow Keys")){
+                    moveOnKeyPressArrow(a);
+                }else{
+                    moveOnKeyPressWASD(a);
+                }
                 directKeyPressed = false;
                 // 수정 필요성 있음
 
