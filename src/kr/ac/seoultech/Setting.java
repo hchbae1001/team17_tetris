@@ -60,7 +60,7 @@ public class Setting extends Application {
     final private static Integer menu_max = select.size();
     private static Integer count = menu_max - 1;
     Stage window;
-
+    private static Boolean resetConfigCheck = false;
 
     private void settingMenuSetting(){
 
@@ -390,6 +390,7 @@ public class Setting extends Application {
                                     break;
                                 case "config":
                                     resetConfig();
+                                    resetConfigCheck = true;
                                     System.out.println("Reset Configuration");
                                     break;
                             }
@@ -397,7 +398,11 @@ public class Setting extends Application {
 
                     case BACK_SPACE:
                         try{
-                            saveSettings();
+                            if(resetConfigCheck){
+                                resetConfigCheck = false;
+                            }else{
+                                saveSettings();
+                            }
                             window.setScene(StartMenu.scene);
                         }catch (Exception e){
                             e.printStackTrace();
@@ -414,6 +419,11 @@ public class Setting extends Application {
         keySettingBool.setText("Arrow Keys");
         sizeSettingBool.setText("size 25");
         createSettingFile();
+        Tetris.level = Tetris.Difficulty.Easy;
+        Form.colorBlindMode = false;
+        StartMenu.settings.set(3,"Arrow Keys");
+        Tetris.SIZE = 25;
+        Tetris.MOVE = 25;
     }
 }
 
