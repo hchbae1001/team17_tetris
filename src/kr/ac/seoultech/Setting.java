@@ -25,6 +25,9 @@ public class Setting extends Application {
     final private static Pane group = new Pane();
     public static Scene scene = new Scene(group, XMAX + 150, YMAX - SIZE);
 
+    Tetris tetris = new Tetris();
+    StartMenu startMenu = new StartMenu();
+
     private static Form settingForm;
     //옵션 기록용 file
     final private static String filepath = new File("").getAbsolutePath();
@@ -41,24 +44,37 @@ public class Setting extends Application {
     public static Text resetScoreBoard = new Text("Reset Score Board :");
     public static Text sizeSetting = new Text("Size Setting :");
     public static Text resetConfig = new Text("Reset Config :");
-
+    public static Text difficulty = new Text("Difficulty");
+    public static Text itemMode = new Text("Item Mode");
 
     public static Text colorBlindBool = new Text("FALSE");
     public static Text keySettingBool = new Text("WASD");
     public static Text sizeSettingBool = new Text("size1");
     public static Text resetScoreBoardBool =new Text("RESET");
     public static Text resetBool = new Text("RESET");
-
+    public static Text diffcultyBool = new Text("Easy");
+    public static Text itemModeBool = new Text("FALSE");
     private static String menuSelected = "";
 
     final private static ArrayList<String> select = new ArrayList<String>(Arrays.asList(
-            "config","score", "size",  "key" ,"color"));
+            "config","score", "size",  "key" ,"color","item","difficulty"));
     final private static Integer menu_max = select.size();
     private static Integer count = menu_max - 1;
     Stage window;
 
 
     private void settingMenuSetting(){
+
+        difficulty.setStyle("-fx-font: 20 arial");
+        difficulty.setX(XMAX / 2 - 100);
+        difficulty.setY(YMAX / 2 - 100);
+        difficulty.setFill(Color.BLACK);
+
+        itemMode.setStyle("-fx-font: 20 arial");
+        itemMode.setX(XMAX / 2 - 100);
+        itemMode.setY(YMAX / 2 - 50);
+        itemMode.setFill(Color.BLACK);
+
         colorBlindText.setStyle("-fx-font: 20 arial");
         colorBlindText.setX(XMAX / 2 - 100);
         colorBlindText.setY(YMAX / 2);
@@ -83,7 +99,19 @@ public class Setting extends Application {
         resetConfig.setX(XMAX / 2 - 100);
         resetConfig.setY(YMAX / 2 + 200);
         resetConfig.setFill(Color.BLACK);
+
+
         //
+        diffcultyBool.setStyle("-fx-font: 20 arial");
+        diffcultyBool.setX(XMAX / 2 + 150);
+        diffcultyBool.setY(YMAX / 2 - 100);
+        diffcultyBool.setFill(Color.RED);
+
+        itemModeBool.setStyle("-fx-font: 20 arial");
+        itemModeBool.setX(XMAX / 2 + 150);
+        itemModeBool.setY(YMAX / 2 - 50);
+        itemModeBool.setFill(Color.BLACK);
+
         colorBlindBool.setStyle("-fx-font: 20 arial");
         colorBlindBool.setX(XMAX / 2 + 150);
         colorBlindBool.setY(YMAX / 2);
@@ -110,8 +138,8 @@ public class Setting extends Application {
         resetBool.setFill(Color.BLACK);
 
         group.getChildren().addAll(
-          colorBlindText, keySetting, resetConfig, resetScoreBoard, sizeSetting,
-                colorBlindBool,keySettingBool,sizeSettingBool,resetBool,resetScoreBoardBool
+          difficulty,itemMode, colorBlindText, keySetting, resetConfig, resetScoreBoard, sizeSetting,
+                diffcultyBool,itemModeBool,colorBlindBool,keySettingBool,sizeSettingBool,resetBool,resetScoreBoardBool
         );
     }
     @Override
@@ -127,6 +155,8 @@ public class Setting extends Application {
     }
 
     private void colorReset(){
+        diffcultyBool.setFill(Color.BLACK);
+        itemModeBool.setFill(Color.BLACK);
         colorBlindBool.setFill(Color.BLACK);
         keySettingBool.setFill(Color.BLACK);
         sizeSettingBool.setFill(Color.BLACK);
@@ -135,6 +165,14 @@ public class Setting extends Application {
     }
     private void menuColoring(){
         switch (count){
+            case 6:
+                colorReset();
+                diffcultyBool.setFill(Color.RED);
+                break;
+            case 5:
+                colorReset();
+                itemModeBool.setFill(Color.RED);
+                break;
             case 4:
                 colorReset();
                 colorBlindBool.setFill(Color.RED);
@@ -190,10 +228,31 @@ public class Setting extends Application {
                         break;
 
                     case SPACE:
-                        System.out.println("space");
                             switch (menuSelected){
-                                case "color":
+                                case "difficulty":
+                                    if(diffcultyBool.getText().equals("Easy")){
+                                        //중간
+                                        diffcultyBool.setText("Normal");
+                                    }else if(diffcultyBool.getText().equals("Normal")){
+                                        //어려움
+                                        diffcultyBool.setText("Hard");
+                                    }else{
+                                        //쉬움
+                                        diffcultyBool.setText("Easy");
+                                    }
+                                    break;
 
+                                case "item":
+                                    if(itemModeBool.getText().equals("TRUE")){
+                                        //아이템모드 비활성화
+                                        itemModeBool.setText("FALSE");
+                                    }else{
+                                        //아이템모드 활성화
+                                        itemModeBool.setText("TRUE");
+                                    }
+                                    break;
+
+                                case "color":
                                     if(colorBlindBool.getText().equals("FALSE")){
                                         colorBlindBool.setText("TRUE");
                                         Form.colorBlindMode = true;
