@@ -30,6 +30,7 @@ public class StartMenu extends Application {
     final private static Text menu1_scoreBoard = new Text("Score Board");
     final private static Text menu0_Exit = new Text("Exit");
     private static boolean isSettingOn = false;
+    private static boolean isLeaderboardOn = false;
     //count = 3 -> start 에 커서
     private static Integer count = 3;
     private static String menuSelected = "";
@@ -110,6 +111,7 @@ public class StartMenu extends Application {
     }
     private void menuPress(Form form){
         Setting settingMenu = new Setting();
+        LeaderBoard_menu leaderboard = new LeaderBoard_menu();
         scene.setOnKeyPressed((new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
@@ -170,7 +172,16 @@ public class StartMenu extends Application {
                                 System.out.println("setting");
                                 break;
                             case "scoreBoard":
-                                //Todo scoreboard 연동
+                                if(!isLeaderboardOn){
+                                    try {
+                                        leaderboard.start(window);
+                                        isLeaderboardOn = true;
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }else{
+                                    window.setScene(LeaderBoard_menu.scene);
+                                }
                                 System.out.println("scoreBoard");
                                 break;
                             case "exit":
