@@ -119,24 +119,47 @@ public class Tetris extends Application{
             @Override
             public void handle(KeyEvent event) {
                 if(!directKeyPressed && !top) {
-                    switch (event.getCode()) {
-                        case SPACE:
-                            directKeyPressed = true;
-                            DirectlyMoveDown(form);
-                            break;
-                        case RIGHT:
-                            Controller.MoveRight(form);
-                            break;
-                        case DOWN:
-                            MoveDown(form);
-                            break;
-                        case LEFT:
-                            Controller.MoveLeft(form);
-                            break;
-                        case UP:
-                            MoveTurn(form);
-                            break;
+                    if(Setting.keySettingBool.equals("Arrow keys")){
+                        switch (event.getCode()) {
+                            case SPACE:
+                                directKeyPressed = true;
+                                DirectlyMoveDown(form);
+                                break;
+                            case RIGHT:
+                                Controller.MoveRight(form);
+                                break;
+                            case DOWN:
+                                MoveDown(form);
+                                break;
+                            case LEFT:
+                                Controller.MoveLeft(form);
+                                break;
+                            case UP:
+                                MoveTurn(form);
+                                break;
+                        }
+                    }else{
+                        switch (event.getCode()) {
+                            case SPACE:
+                                directKeyPressed = true;
+                                DirectlyMoveDown(form);
+                                break;
+                            case D:
+                                Controller.MoveRight(form);
+                                break;
+                            case S:
+                                MoveDown(form);
+                                break;
+                            case A:
+                                Controller.MoveLeft(form);
+                                break;
+                            case W:
+                                MoveTurn(form);
+                                break;
+                        }
+
                     }
+
                 }
             }
         });

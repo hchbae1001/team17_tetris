@@ -20,7 +20,7 @@ public class StartMenu extends Application {
     public static final int SIZE = Setting.SIZE;
     public static final int XMAX = SIZE * 10;
     public static final int YMAX = SIZE * (20 + DEADLINEGAP);
-
+    public static ArrayList<String> settings = new ArrayList<String>();
     final private static Pane group = new Pane();
     public static Scene scene = new Scene(group, XMAX + 150, YMAX - SIZE);
     private static Form menu;
@@ -71,6 +71,7 @@ public class StartMenu extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        Setting.loadSetting();
         window = primaryStage;
         startMenuSetting();
         menuPress(menu);

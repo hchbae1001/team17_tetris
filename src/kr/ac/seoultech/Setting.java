@@ -10,7 +10,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.awt.*;
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -28,8 +28,8 @@ public class Setting extends Application {
 
     private static Form settingForm;
     //옵션 기록용 file
-    final private static String filepath = new File("").getAbsolutePath();
-    final private static String fileName = "Option";
+    final private static String filePath = new File("").getAbsolutePath();
+    final private static String fileName = "Setting";
 
     //색약모드 controll
 
@@ -45,15 +45,16 @@ public class Setting extends Application {
     public static Text difficulty = new Text("Difficulty");
     public static Text itemMode = new Text("Item Mode");
 
+    public static Text diffcultyBool = new Text("Easy");
+    public static Text itemModeBool = new Text("FALSE");
     public static Text colorBlindBool = new Text("FALSE");
     public static Text keySettingBool = new Text("WASD");
     public static Text sizeSettingBool = new Text("size25");
     public static Text resetScoreBoardBool =new Text("RESET");
     public static Text resetBool = new Text("RESET");
-    public static Text diffcultyBool = new Text("Easy");
-    public static Text itemModeBool = new Text("FALSE");
-    private static String menuSelected = "";
 
+    private static String menuSelected = "";
+    public static ArrayList<String> savedSetting = new ArrayList<String>();
     final private static ArrayList<String> select = new ArrayList<String>(Arrays.asList(
             "config","score", "size",  "key" ,"color","item","difficulty"));
     final private static Integer menu_max = select.size();
@@ -140,10 +141,21 @@ public class Setting extends Application {
                 diffcultyBool,itemModeBool,colorBlindBool,keySettingBool,sizeSettingBool,resetBool,resetScoreBoardBool
         );
     }
+    private void setSetting(){
+        diffcultyBool.setText(StartMenu.settings.get(0));
+        itemModeBool.setText(StartMenu.settings.get(1));
+        colorBlindBool.setText(StartMenu.settings.get(2));
+        keySettingBool.setText(StartMenu.settings.get(3));
+        sizeSettingBool.setText(StartMenu.settings.get(4));
+        for(int i = 0; i < 5; i++){
+            savedSetting.add(StartMenu.settings.get(i));
+        }
+    }
     @Override
     public void start(Stage settingStage){
         window = settingStage;
         settingMenuSetting();
+        setSetting();
         settingPress(settingForm);
 
         settingStage.setScene(scene);
@@ -152,15 +164,58 @@ public class Setting extends Application {
         settingStage.show();
 
     }
-    public void changeStageSize(Stage stage, Integer size){
-        Integer x = size * 10 + 150;
-        Integer y = size * (20 + DEADLINEGAP) - size;
-        stage.setWidth(x);
-        stage.setHeight(y);
-//        StartMenu.window.setWidth(x);
-//        StartMenu.window.setHeight(y);
-//        Tetris.window.setWidth(x);
-//        Tetris.window.setWidth(y);
+    public static void loadSetting(){
+        try{
+            File f = new File(filePath,fileName);
+            if(!f.isFile()){
+                createSettingFile();
+            }
+            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
+            String[] settings = br.readLine().split("-");
+            for(int i = 0; i < settings.length ; i++){
+                StartMenu.settings.add(settings[i]);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    private static void createSettingFile(){
+        FileWriter output = null;
+        try{
+            File f = new File(filePath,fileName);
+            output = new FileWriter(f);
+            BufferedWriter writer = new BufferedWriter(output);
+            writer.write(
+                    "Easy" + "-"+ //diffuculty
+                    "FALSE" + "-"+ //item mode
+                    "FALSE" + "-"+ //color blind mode
+                    "Arrow Keys" + "-"+ //key setting
+                    "size25" //tetris size setting
+            );
+            writer.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private static void saveSettings(){
+        FileWriter output = null;
+        try{
+            File f = new File(filePath,fileName);
+            output = new FileWriter(f);
+            BufferedWriter writer = new BufferedWriter(output);
+            writer.write(
+                    savedSetting.get(0) +"-"+
+                    savedSetting.get(1) +"-"+
+                    savedSetting.get(2) +"-"+
+                    savedSetting.get(3) +"-"+
+                    savedSetting.get(4) +"-"
+            );
+            writer.close();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
     }
     private void colorReset(){
         diffcultyBool.setFill(Color.BLACK);
@@ -242,14 +297,17 @@ public class Setting extends Application {
                                         //쉬움
                                         Tetris.level = Tetris.Difficulty.Easy;
                                         diffcultyBool.setText("Easy");
+                                        savedSetting.set(0,"Easy");
                                     }else if(diffcultyBool.getText().equals("Easy")){
                                         //중간
                                         Tetris.level = Tetris.Difficulty.Normal;
                                         diffcultyBool.setText("Normal");
+                                        savedSetting.set(0,"Normal");
                                     }else{
                                         //어려움
                                         Tetris.level = Tetris.Difficulty.Hard;
                                         diffcultyBool.setText("Hard");
+                                        savedSetting.set(0,"Hard");
                                     }
                                     break;
 
@@ -257,9 +315,11 @@ public class Setting extends Application {
                                     if(itemModeBool.getText().equals("TRUE")){
                                         //아이템모드 비활성화
                                         itemModeBool.setText("FALSE");
+                                        savedSetting.set(1,"FALSE");
                                     }else{
                                         //아이템모드 활성화
                                         itemModeBool.setText("TRUE");
+                                        savedSetting.set(1,"TRUE");
                                     }
                                     break;
 
@@ -267,17 +327,21 @@ public class Setting extends Application {
                                     if(colorBlindBool.getText().equals("FALSE")){
                                         colorBlindBool.setText("TRUE");
                                         Form.colorBlindMode = true;
+                                        savedSetting.set(2,"TRUE");
                                     }else{
                                         colorBlindBool.setText("FALSE");
                                         Form.colorBlindMode = false;
+                                        savedSetting.set(2,"FALSE");
                                     }
 
                                     break;
                                 case "key":
                                     if(keySettingBool.getText().equals("WASD")){
-                                        keySettingBool.setText("방향키");
+                                        keySettingBool.setText("Arrow Keys");
+                                        savedSetting.set(3,"Arrow Keys");
                                     }else{
                                         keySettingBool.setText("WASD");
+                                        savedSetting.set(3,"WASD");
                                     }
                                     break;
                                 case "size":
@@ -285,20 +349,24 @@ public class Setting extends Application {
                                         Tetris.SIZE = 25;
                                         Tetris.MOVE = 25;
                                         sizeSettingBool.setText("size25");
+                                        savedSetting.set(4,"size25");
                                     }else if(sizeSettingBool.getText().equals("size25")){
                                         Tetris.SIZE = 30;
                                         Tetris.MOVE = 30;
                                         sizeSettingBool.setText("size30");
+                                        savedSetting.set(4,"size30");
                                     }else{
                                         Tetris.SIZE = 35;
                                         Tetris.MOVE = 35;
                                         sizeSettingBool.setText("size35");
+                                        savedSetting.set(4,"size35");
                                     }
                                     break;
                                 case "score":
                                     System.out.println("ScoreBoardReset");
                                     break;
                                 case "config":
+                                    resetConfig();
                                     System.out.println("Reset Configuration");
                                     break;
                             }
@@ -306,6 +374,7 @@ public class Setting extends Application {
 
                     case BACK_SPACE:
                         try{
+                            saveSettings();
                             window.setScene(StartMenu.scene);
                         }catch (Exception e){
                             e.printStackTrace();
@@ -314,5 +383,13 @@ public class Setting extends Application {
                 }
             }
         }));
+    }
+    public void resetConfig(){
+        diffcultyBool.setText("Easy");
+        itemModeBool.setText("FALSE");
+        colorBlindBool.setText("FALSE");
+        keySettingBool.setText("Arrow Keys");
+        sizeSettingBool.setText("size 25");
+        createSettingFile();
     }
 }
