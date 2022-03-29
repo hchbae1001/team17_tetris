@@ -22,18 +22,19 @@ public class Tetris extends Application{
     // The variables
     // 데드라인은 최소한 2 이상 ,하지만 일자 블럭 생성 직후부터 회전이 가능하려면 4 이상을 사용해야 함
     public static final int DEADLINEGAP = 4;
-    public static final int MOVE = 25;
-    public static final int SIZE = 25;
-    public static final int XMAX = SIZE * 10;
-    public static final int YMAX = SIZE * (20 + DEADLINEGAP);
-    public static int[][] MESH = new int[XMAX / SIZE][YMAX / SIZE];
+    public static int MOVE = Setting.MOVE;
+    public static int SIZE = Setting.SIZE;
+    public static int XMAX = SIZE * 10;
+    public static int YMAX = SIZE * (20 - DEADLINEGAP);
+    public static int[][] MESH;
     private static Pane group = new Pane();
     private static Form object;
-    private static Scene scene = new Scene(group, XMAX + 150, YMAX - SIZE);
+//    private static Scene scene = new Scene(group, XMAX + 150, YMAX - SIZE);
+    public static Scene scene;
     public static int score = 0;
     private static boolean top = false;
     private static boolean game = true;
-    private static Form nextObj = Controller.makeRect("o");
+    private static Form nextObj;
     private static Pane nextObjPane = new Pane();
     private static int linesNo = 0;
 
@@ -50,10 +51,16 @@ public class Tetris extends Application{
     public static void main(String[] args) {
         launch(args);
     }
-
+    public static Stage window;
 
     @Override
     public void start(Stage stage) throws Exception {
+        XMAX = SIZE * 10;
+        YMAX = SIZE * (20 + DEADLINEGAP);
+        scene = new Scene(group, XMAX + 150, YMAX - SIZE);
+        MESH = new int[XMAX / SIZE][YMAX / SIZE];
+        nextObj = Controller.makeRect("o");
+
         Leaderboard.loadScores();
         for (int[] a : MESH) {
             Arrays.fill(a, 0);
@@ -83,13 +90,14 @@ public class Tetris extends Application{
         nextObj = Controller.makeRect("o");
         nextObjPane.getChildren().addAll(nextObj.a, nextObj.b, nextObj.c, nextObj.d);
         nextObjPane.setLayoutY(200);
-        nextObjPane.setLayoutX(XMAX / 2 + SIZE * 3);
+        nextObjPane.setLayoutX(XMAX / 2 + SIZE * 2);
         group.getChildren().addAll(nextObjPane);
 
 
 
         stage.setScene(scene);
         stage.setTitle("T E T R I S");
+        stage.setResizable(false);
         stage.show();
         startTimer();
 

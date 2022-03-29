@@ -17,11 +17,10 @@ import kr.ac.seoultech.*;
 public class StartMenu extends Application {
 
     public static final int DEADLINEGAP = 4;
-    public static final int MOVE = 25;
-    public static final int SIZE = 25;
+    public static final int SIZE = Setting.SIZE;
     public static final int XMAX = SIZE * 10;
     public static final int YMAX = SIZE * (20 + DEADLINEGAP);
-    public static int[][] MESH = new int[XMAX / SIZE][YMAX / SIZE];
+
     final private static Pane group = new Pane();
     public static Scene scene = new Scene(group, XMAX + 150, YMAX - SIZE);
     private static Form menu;
@@ -38,7 +37,8 @@ public class StartMenu extends Application {
     final private static ArrayList<String> select = new ArrayList<String>(Arrays.asList(
             "exit", "scoreBoard", "setting",  "start"));
     final private static Integer menu_max = select.size();
-    Stage window;
+
+    public static Stage window;
 
     private void startMenuSetting(){
         menu3_start.setStyle("-fx-font: 20 arial");
@@ -74,7 +74,7 @@ public class StartMenu extends Application {
         window = primaryStage;
         startMenuSetting();
         menuPress(menu);
-
+        primaryStage.setResizable(false);
         primaryStage.setScene(scene);
         primaryStage.setTitle("T E T R I S");
         primaryStage.show();

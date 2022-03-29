@@ -16,11 +16,11 @@ import java.util.Arrays;
 
 public class Setting extends Application {
     public static final int DEADLINEGAP = 4;
-    public static final int MOVE = 25;
-    public static final int SIZE = 25;
+
+    public static int MOVE = 25;
+    public static int SIZE = 25;
     public static final int XMAX = SIZE * 10;
     public static final int YMAX = SIZE * (20 + DEADLINEGAP);
-    public static int[][] MESH = new int[XMAX / SIZE][YMAX / SIZE];
 
     final private static Pane group = new Pane();
     public static Scene scene = new Scene(group, XMAX + 150, YMAX - SIZE);
@@ -42,14 +42,14 @@ public class Setting extends Application {
     public static Text colorBlindText = new Text("Color Blind Mode :");
     public static Text keySetting = new Text("Key Setting :");
     public static Text resetScoreBoard = new Text("Reset Score Board :");
-    public static Text sizeSetting = new Text("Size Setting :");
+    public static Text sizeSetting = new Text("Tetris Size Setting :");
     public static Text resetConfig = new Text("Reset Config :");
     public static Text difficulty = new Text("Difficulty");
     public static Text itemMode = new Text("Item Mode");
 
     public static Text colorBlindBool = new Text("FALSE");
     public static Text keySettingBool = new Text("WASD");
-    public static Text sizeSettingBool = new Text("size1");
+    public static Text sizeSettingBool = new Text("size25");
     public static Text resetScoreBoardBool =new Text("RESET");
     public static Text resetBool = new Text("RESET");
     public static Text diffcultyBool = new Text("Easy");
@@ -150,10 +150,20 @@ public class Setting extends Application {
 
         settingStage.setScene(scene);
         settingStage.setTitle("T E T R I S");
+        settingStage.setResizable(false);
         settingStage.show();
 
     }
-
+    public void changeStageSize(Stage stage, Integer size){
+        Integer x = size * 10 + 150;
+        Integer y = size * (20 + DEADLINEGAP) - size;
+        stage.setWidth(x);
+        stage.setHeight(y);
+//        StartMenu.window.setWidth(x);
+//        StartMenu.window.setHeight(y);
+//        Tetris.window.setWidth(x);
+//        Tetris.window.setWidth(y);
+    }
     private void colorReset(){
         diffcultyBool.setFill(Color.BLACK);
         itemModeBool.setFill(Color.BLACK);
@@ -270,12 +280,18 @@ public class Setting extends Application {
                                     }
                                     break;
                                 case "size":
-                                    if(sizeSettingBool.getText().equals("size1")){
-                                        sizeSettingBool.setText("size2");
-                                    }else if(sizeSettingBool.getText().equals("size2")){
-                                        sizeSettingBool.setText("size3");
+                                    if(sizeSettingBool.getText().equals("size35")){
+                                        Tetris.SIZE = 25;
+                                        Tetris.MOVE = 25;
+                                        sizeSettingBool.setText("size25");
+                                    }else if(sizeSettingBool.getText().equals("size25")){
+                                        Tetris.SIZE = 30;
+                                        Tetris.MOVE = 30;
+                                        sizeSettingBool.setText("size30");
                                     }else{
-                                        sizeSettingBool.setText("size1");
+                                        Tetris.SIZE = 35;
+                                        Tetris.MOVE = 35;
+                                        sizeSettingBool.setText("size35");
                                     }
                                     break;
                                 case "score":
