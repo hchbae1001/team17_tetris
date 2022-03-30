@@ -719,29 +719,30 @@ public class Tetris extends Application{
             {
                 name = result.get();
                 Leaderboard.addScore(score,name);
-                LeaderBoard_menu.gameOver = true;
-                LeaderBoard_menu.gameOverUser = name;
                 for(int i=9;i>=0;i--)
                 {
                     if(Leaderboard.topScores.get(i)==score&&Leaderboard.topUser.get(i)==name)
+                    {
+                        LeaderBoard_menu.RankingColor=i;
                         break;
+                    }
                 }
             }
         }
         Leaderboard.saveScores(Leaderboard.fileName);
 
-        leaderBoard_menu.RankingRefresh();
-
-        if(!StartMenu.isLeaderboardOn){
+        LeaderBoard_menu leader = new LeaderBoard_menu();
+        if(!StartMenu.isLeaderboardOn)
+        {
             try {
-                leaderBoard_menu.gameOverHighLight();
-                leaderBoard_menu.start(window);
-                StartMenu.isLeaderboardOn = true;
+                leader.start(window);
+                StartMenu.isLeaderboardOn=true;
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }else{
-            leaderBoard_menu.gameOverHighLight();
+        }
+        else{
+            LeaderBoard_menu.LeaderBoard();
             window.setScene(LeaderBoard_menu.scene);
         }
     }

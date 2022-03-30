@@ -215,6 +215,7 @@ public class StartMenu extends Application {
                                         e.printStackTrace();
                                     }
                                 }else{
+                                    LeaderBoard_menu.LeaderBoard();
                                     window.setScene(LeaderBoard_menu.scene);
                                 }
                                 System.out.println("scoreBoard");
