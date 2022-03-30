@@ -81,7 +81,6 @@ class ControllerTest {
 
     @Test
     void makeRect() {
-
         System.out.println((float)7/100);
         Form form = Controller.makeRect("o");
         assertNotEquals(form.getName(),null);
@@ -246,5 +245,16 @@ class ControllerTest {
             }
         }
 
+    }
+
+    @Test
+    void makeItem(){
+        while(true) {
+            Form form = Controller.makeItem("o");
+            if (form instanceof FormSix) {
+                System.out.println(form.getName());
+                break;
+            }
+        }
     }
 }

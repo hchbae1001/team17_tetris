@@ -13,7 +13,7 @@ public class Form {
     public NewShape d;
 
 
-    Color color;
+    protected Color color;
     final private String name;
     public int form = 1;
     // (colorBlindMode = true) == 색각이상자 모드
@@ -83,7 +83,8 @@ public class Form {
                     color = Color.ORANGE;
                 }
                 break;
-
+            default:
+                color = null;
         }
         this.a.setFill(color);
         this.b.setFill(color);

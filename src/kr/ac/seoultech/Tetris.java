@@ -12,6 +12,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 //import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -42,10 +43,13 @@ public class Tetris extends Application{
     private static Text scoretext = new Text("Score: ");
     private static Text linetesxt = new Text("Lines: ");
 
+    private static int itemCount = 0;
     private static int dropPeriod = 1000;
     private static int bonusScore = 10;
     private static int limitDropPeriod = 300;
     private static boolean directKeyPressed = false;
+    public  static boolean isWeightBlock = false;
+    private static boolean weightIsLocked = false;
     LeaderBoard_menu leaderBoard_menu = new LeaderBoard_menu();
     public static void main(String[] args) {
         launch(args);
@@ -116,6 +120,7 @@ public class Tetris extends Application{
         startTimer();
 
     }
+
     private void moveOnKeyPressArrow(Form form){
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
@@ -126,12 +131,16 @@ public class Tetris extends Application{
                         DirectlyMoveDown(form);
                         break;
                     case RIGHT:
+                        if(weightIsLocked)
+                            break;
                         Controller.MoveRight(form);
                         break;
                     case DOWN:
                         MoveDown(form);
                         break;
                     case LEFT:
+                        if(weightIsLocked)
+                            break;
                         Controller.MoveLeft(form);
                         break;
                     case UP:
@@ -153,12 +162,16 @@ public class Tetris extends Application{
                                 DirectlyMoveDown(form);
                                 break;
                             case D:
+                                if(weightIsLocked)
+                                    break;
                                 Controller.MoveRight(form);
                                 break;
                             case S:
                                 MoveDown(form);
                                 break;
                             case A:
+                                if(weightIsLocked)
+                                    break;
                                 Controller.MoveLeft(form);
                                 break;
                             case W:
@@ -461,6 +474,11 @@ public class Tetris extends Application{
     }
 
     private void RemoveRows(Pane pane) {
+        if(Setting.itemModeBool.getText().equals("TRUE")){
+            lineClearItem(pane);
+            bombItem(pane);
+            fillItem(pane);
+        }
         ArrayList<Node> rects = new ArrayList<Node>();
         ArrayList<Integer> lines = new ArrayList<Integer>();
         ArrayList<Node> newrects = new ArrayList<Node>();
@@ -470,8 +488,12 @@ public class Tetris extends Application{
                 if (MESH[j][i] == 1)
                     full++;
             }
-            if (full == MESH.length)
+            if (full == MESH.length){
+                if(Setting.itemModeBool.getText().equals("TRUE")) {
+                    socreItem(pane, i * SIZE, 0, XMAX - SIZE);
+                }
                 lines.add(i);
+            }
             //lines.add(i + lines.size());
             full = 0;
         }
@@ -541,27 +563,63 @@ public class Tetris extends Application{
 
     private void MoveDown(Form form) {
         score = score + bonusScore;
+        updateScoretext();
+        if(isWeightBlock)
+            weightDown(form, group);
         if (form.a.getY() == YMAX - SIZE || form.b.getY() == YMAX - SIZE || form.c.getY() == YMAX - SIZE
                 || form.d.getY() == YMAX - SIZE || moveA(form) || moveB(form) || moveC(form) || moveD(form)) {
             MESH[(int) form.a.getX() / SIZE][(int) form.a.getY() / SIZE] = 1;
             MESH[(int) form.b.getX() / SIZE][(int) form.b.getY() / SIZE] = 1;
             MESH[(int) form.c.getX() / SIZE][(int) form.c.getY() / SIZE] = 1;
             MESH[(int) form.d.getX() / SIZE][(int) form.d.getY() / SIZE] = 1;
+            if(form instanceof FormSix){
+                MESH[(int) ((FormSix) form).e.getX() / SIZE][(int) ((FormSix) form).e.getY() / SIZE] = 1;
+                MESH[(int) ((FormSix) form).f.getX() / SIZE][(int) ((FormSix) form).f.getY() / SIZE] = 1;
+            }
             RemoveRows(group);
 
             checkGameover(form);
             if(top)
                 return;
             Form a = nextObj;
-            nextObj = Controller.makeRect("o");
+            if(Setting.itemModeBool.getText().equals("TRUE")) {
+
+                if(linesNo  > itemCount){
+                    nextObj = Controller.makeItem("o");
+                    itemCount = linesNo;
+                }else{
+                    nextObj = Controller.makeRect("o");
+                }
+            }else {
+                nextObj = Controller.makeRect("o");
+            }
             object = a;
             // 블럭 생성 직후 겹치는 여부 확인
             isOverlap(object);
 
             if(top)
                 return;
-            group.getChildren().addAll(a.a, a.b, a.c, a.d);
-            nextObjPane.getChildren().addAll(nextObj.a, nextObj.b, nextObj.c, nextObj.d);
+
+            // 생성된 object가 weight 블럭이면
+            if(object instanceof FormSix){
+                FormSix formSix = (FormSix) object;
+                System.out.println("weight Block!");
+                isWeightBlock = true;
+                group.getChildren().addAll(a.a, a.b, a.c, a.d, formSix.e, formSix.f);
+            }else{
+                group.getChildren().addAll(a.a, a.b, a.c, a.d);
+            }
+
+            // 생성된 nextObj가 weight 블럭이면
+            if(nextObj instanceof FormSix){
+                FormSix formSix = (FormSix) nextObj;
+                nextObjPane.getChildren().addAll(nextObj.a, nextObj.b, nextObj.c, nextObj.d, formSix.e, formSix.f);
+            }else{
+                nextObjPane.getChildren().addAll(nextObj.a, nextObj.b, nextObj.c, nextObj.d);
+            }
+
+
+
             if(Setting.keySettingBool.getText().equals("Arrow Keys")){
                 moveOnKeyPressArrow(a);
             }else{
@@ -581,6 +639,10 @@ public class Tetris extends Application{
                 form.b.setY(form.b.getY() + MOVE);
                 form.c.setY(form.c.getY() + MOVE);
                 form.d.setY(form.d.getY() + MOVE);
+                if(form instanceof FormSix){
+                    ((FormSix) form).e.setY(((FormSix) form).e.getY() + MOVE);
+                    ((FormSix) form).f.setY(((FormSix) form).f.getY() + MOVE);
+                }
             }
         }
     }
@@ -588,6 +650,9 @@ public class Tetris extends Application{
     private void DirectlyMoveDown(Form form) {
         while(true) {
             score = score + bonusScore;
+            updateScoretext();
+            if(isWeightBlock)
+                weightDown(form, group);
             if (form.a.getY() == YMAX - SIZE || form.b.getY() == YMAX - SIZE || form.c.getY() == YMAX - SIZE
                     || form.d.getY() == YMAX - SIZE || moveA(form) || moveB(form) || moveC(form) || moveD(form)) {
 
@@ -596,21 +661,51 @@ public class Tetris extends Application{
                 MESH[(int) form.b.getX() / SIZE][(int) form.b.getY() / SIZE] = 1;
                 MESH[(int) form.c.getX() / SIZE][(int) form.c.getY() / SIZE] = 1;
                 MESH[(int) form.d.getX() / SIZE][(int) form.d.getY() / SIZE] = 1;
+                if(form instanceof FormSix){
+                    MESH[(int) ((FormSix) form).e.getX() / SIZE][(int) ((FormSix) form).e.getY() / SIZE] = 1;
+                    MESH[(int) ((FormSix) form).f.getX() / SIZE][(int) ((FormSix) form).f.getY() / SIZE] = 1;
+                }
                 RemoveRows(group);
 
                 checkGameover(form);
                 if(top)
                     return;
                 Form a = nextObj;
-                nextObj = Controller.makeRect("o");
+                if(Setting.itemModeBool.getText().equals("TRUE")) {
+                    if(linesNo > itemCount){
+                        nextObj = Controller.makeItem("o");
+                        itemCount = linesNo;
+                    }else{
+                        nextObj = Controller.makeRect("o");
+                    }
+                }else {
+                    nextObj = Controller.makeRect("o");
+                }
                 object = a;
                 // 블럭 생성 직후 겹치는 여부 확인
                 isOverlap(object);
 
                 if(top)
                     return;
-                group.getChildren().addAll(a.a, a.b, a.c, a.d);
-                nextObjPane.getChildren().addAll(nextObj.a, nextObj.b, nextObj.c, nextObj.d);
+
+                // 생성된 object가 weight 블럭이면
+                if(object instanceof FormSix){
+                    FormSix formSix = (FormSix) object;
+                    System.out.println("weight Block!");
+                    isWeightBlock = true;
+                    group.getChildren().addAll(a.a, a.b, a.c, a.d, formSix.e, formSix.f);
+                }else{
+                    group.getChildren().addAll(a.a, a.b, a.c, a.d);
+                }
+
+                // 생성된 nextObj가 weight 블럭이면
+                if(nextObj instanceof FormSix){
+                    FormSix formSix = (FormSix) nextObj;
+                    nextObjPane.getChildren().addAll(nextObj.a, nextObj.b, nextObj.c, nextObj.d, formSix.e, formSix.f);
+                }else{
+                    nextObjPane.getChildren().addAll(nextObj.a, nextObj.b, nextObj.c, nextObj.d);
+                }
+
                 if(Setting.keySettingBool.getText().equals("Arrow Keys")){
                     moveOnKeyPressArrow(a);
                 }else{
@@ -633,6 +728,10 @@ public class Tetris extends Application{
                     form.b.setY(form.b.getY() + MOVE);
                     form.c.setY(form.c.getY() + MOVE);
                     form.d.setY(form.d.getY() + MOVE);
+                    if(form instanceof FormSix){
+                        ((FormSix) form).e.setY(((FormSix) form).e.getY() + MOVE);
+                        ((FormSix) form).f.setY(((FormSix) form).f.getY() + MOVE);
+                    }
                 }
             }
         }
@@ -805,6 +904,220 @@ public class Tetris extends Application{
     private void updateScoretext(){
         scoretext.setText("Score: " + Integer.toString(score));
         linetesxt.setText("Lines: " + Integer.toString(linesNo));
+    }
+
+
+    // 아이템 모드용 메서드들
+
+    public void weightDown(Form form, Pane pane){
+        if (form.a.getY() == YMAX - SIZE || form.b.getY() == YMAX - SIZE || form.c.getY() == YMAX - SIZE
+                || form.d.getY() == YMAX - SIZE || moveA(form) || moveB(form) || moveC(form) || moveD(form)) {
+            weightIsLocked = true;
+        }
+
+        if(form.a.getY() != YMAX - SIZE){
+            ArrayList<Node> rects = new ArrayList<Node>();
+
+            for (Node node : pane.getChildren()) {
+                if (node instanceof NewShape)
+                    rects.add(node);
+            }
+            // SCORE 아이템 있으면 10만점 추가 후 삭제
+            socreItem(pane, (int)(form.a.getY() + SIZE), (int)form.a.getX(), (int)form.d.getX());
+            for (Node node : rects) {
+                if (node instanceof NewShape){
+                    NewShape a = (NewShape) node;
+                    if(a.getX() >= form.a.getX() && a.getX() <= form.d.getX() && a.getY() == form.a.getY() + SIZE){
+                        pane.getChildren().remove(node);
+                    }
+                }
+            }
+
+            MESH[(int) form.a.getX() / SIZE][((int) form.d.getY() / SIZE) + 1] = 0;
+            MESH[(int) form.b.getX() / SIZE][((int) form.d.getY() / SIZE) + 1] = 0;
+            MESH[(int) form.c.getX() / SIZE][((int) form.d.getY() / SIZE) + 1] = 0;
+            MESH[(int) form.d.getX() / SIZE][((int) form.d.getY() / SIZE) + 1] = 0;
+        }else {
+            isWeightBlock = false;
+            weightIsLocked = false;
+        }
+    }
+
+    public void lineClearItem(Pane pane){
+        ArrayList<Node> rects = new ArrayList<Node>();
+        ArrayList<Node> newrects = new ArrayList<Node>();
+
+
+        for (Node node : pane.getChildren()) {
+            if (node instanceof NewShape)
+                rects.add(node);
+        }
+        double LY = -1;
+        for (Node node : rects) {
+            NewShape a = (NewShape) node;
+            if (a.getText() == "L") {
+                LY = a.getY();
+                break;
+            }
+        }
+        if(LY == -1){
+            System.out.println("It is not Line Clear Item!!");
+            return;
+        }
+        // SCORE 아이템 있으면 10만점 추가 후 삭제
+        socreItem(pane, (int)LY, 0, XMAX - SIZE);
+        score += bonusScore*100;
+        linesNo++;
+        for (Node node : rects) {
+            NewShape a = (NewShape) node;
+            if (a.getY() == LY) {
+                MESH[(int) a.getX() / SIZE][(int) a.getY() / SIZE] = 0;
+                pane.getChildren().remove(node);
+            }else
+                newrects.add(node);
+
+        }
+
+        for (Node node : newrects) {
+            NewShape a = (NewShape) node;
+            if (a.getY() < LY) {
+                MESH[(int) a.getX() / SIZE][(int) a.getY() / SIZE] = 0;
+                a.setY(a.getY() + SIZE);
+            }
+        }
+
+        rects.clear();
+        newrects.clear();
+        for (Node node : pane.getChildren()) {
+            if (node instanceof NewShape)
+                rects.add(node);
+        }
+        for (Node node : rects) {
+            NewShape a = (NewShape) node;
+            try {
+                MESH[(int) a.getX() / SIZE][(int) a.getY() / SIZE] = 1;
+            } catch (ArrayIndexOutOfBoundsException e) {
+            }
+        }
+
+    }
+
+    public void bombItem(Pane pane){
+        ArrayList<Node> rects = new ArrayList<Node>();
+
+        for (Node node : pane.getChildren()) {
+            if (node instanceof NewShape)
+                rects.add(node);
+        }
+        double BY = -1;
+        double BX = -1;
+        for (Node node : rects) {
+            NewShape a = (NewShape) node;
+            if (a.getText() == "B") {
+                BX = a.getX();
+                BY = a.getY();
+                break;
+            }
+        }
+
+        if(BX == -1 || BY == -1){
+            System.out.println("It is not Bomb Item!!");
+            return;
+        }
+        // SCORE 아이템 있으면 10만점 추가 후 삭제
+        socreItem(pane, (int)(BY - SIZE*2), (int)(BY + SIZE*2), (int)(BX - SIZE*2), (int)(BX + SIZE*2));
+        for (Node node : rects) {
+            NewShape a = (NewShape) node;
+            if (a.getX() <= BX + SIZE*2 && a.getX() >= BX - SIZE*2 && a.getY() <= BY + SIZE*2 && a.getY() >= BY - SIZE*2) {
+                MESH[(int) a.getX() / SIZE][(int) a.getY() / SIZE] = 0;
+                pane.getChildren().remove(node);
+            }
+        }
+
+    }
+
+    public void fillItem(Pane pane){
+        ArrayList<Node> rects = new ArrayList<Node>();
+
+        for (Node node : pane.getChildren()) {
+            if (node instanceof NewShape)
+                rects.add(node);
+        }
+        double FY = -1;
+        double FX = -1;
+        Color tempColor = Color.BLACK;
+        for (Node node : rects) {
+            NewShape a = (NewShape) node;
+            if (a.getText() == "F") {
+                FX = a.getX();
+                FY = a.getY();
+                tempColor = (Color) a.getFill();
+                break;
+            }
+        }
+
+        if(FX == -1 || FY == -1){
+            System.out.println("It is not Fill Item!!");
+            return;
+        }
+        // SCORE 아이템 있으면 10만점 추가 후 일반 블럭으로 변경
+        socreItem(pane, (int)(FY - SIZE), (int)(FY + SIZE), (int)(FX - SIZE), (int)(FX + SIZE));
+        for (Node node : rects) {
+            NewShape a = (NewShape) node;
+            if (a.getX() <= FX + SIZE && a.getX() >= FX - SIZE && a.getY() <= FY + SIZE && a.getY() >= FY - SIZE) {
+                MESH[(int) a.getX() / SIZE][(int) a.getY() / SIZE] = 0;
+                pane.getChildren().remove(node);
+            }
+        }
+        for(int i = (int)FX - SIZE; i <= (int)FX +SIZE;){
+            for(int j = (int)FY - SIZE; j <= (int)FY +SIZE;){
+                if (i <= XMAX - SIZE && i >= 0 && j <= YMAX - SIZE && j >= DEADLINEGAP*SIZE) {
+                    MESH[i/SIZE][j/SIZE] = 1;
+                    NewShape SingleNewShape = new NewShape(0,0,"o");
+                    SingleNewShape.setX(i);
+                    SingleNewShape.setY(j);
+                    SingleNewShape.setFill(tempColor);
+                    group.getChildren().add(SingleNewShape);
+                }
+                j += SIZE;
+            }
+            i += SIZE;
+        }
+
+    }
+
+    public void socreItem(Pane pane, int y, int x1, int x2){
+        ArrayList<Node> rects = new ArrayList<Node>();
+
+        for (Node node : pane.getChildren()) {
+            if (node instanceof NewShape)
+                rects.add(node);
+        }
+        for (Node node : rects) {
+            NewShape a = (NewShape) node;
+            if(a.getText() == "S" && a.getY() == y && a.getX() >= x1 && a.getX() <= x2){
+                System.out.println("It is SCORE Item!!");
+                score += 100000;
+            }
+        }
+
+    }
+
+    public void socreItem(Pane pane, int y1, int y2, int x1, int x2){
+        ArrayList<Node> rects = new ArrayList<Node>();
+
+        for (Node node : pane.getChildren()) {
+            if (node instanceof NewShape)
+                rects.add(node);
+        }
+        for (Node node : rects) {
+            NewShape a = (NewShape) node;
+            if(a.getText() == "S" && a.getY() >= y1 && a.getY() <= y2 && a.getX() >= x1 && a.getX() <= x2){
+                System.out.println("It is SCORE Item!!");
+                score += 100000;
+            }
+        }
+
     }
 
 

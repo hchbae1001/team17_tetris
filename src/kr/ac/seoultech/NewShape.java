@@ -13,14 +13,15 @@ public class NewShape extends Text{
         setText("o");
     }
 
-    public  NewShape(String shape) {
+    public NewShape(String shape) {
         super(shape);
     }
 
 
     public NewShape(double x, double y, String shape) {
         super(x,y,shape);
-        setStyle(String.format("-fx-font: %d arial;", MOVE+20));
+        double fsize = MOVE * 1.8;
+        setStyle(String.format("-fx-font: %f arial;", fsize));
         setFill(Color.ORANGE);
         //setX(x);
         //setY(y);
