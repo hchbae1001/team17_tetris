@@ -27,6 +27,8 @@ public class LeaderBoard_menu extends Application {
     public static Text[] Ranking_user = new Text[10];
 
     public static Stage window;
+    public static Boolean gameOver = false;
+    public static String gameOverUser;
 
     public void LeaderBoardPress(){
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -40,6 +42,7 @@ public class LeaderBoard_menu extends Application {
         });
     }
 
+<<<<<<< HEAD
     public void LeaderBoardColor(int i){
         if(i>=0&&i<10)
         {
@@ -48,12 +51,27 @@ public class LeaderBoard_menu extends Application {
         }
     }
 
+=======
+    public void gameOverHighLight(){
+        for(int i = 0; i < 10; i++){
+            if(Ranking_user[i].getText().equals(gameOverUser)){
+                Ranking_user[i].setFill(Color.RED);
+                Ranking_score[i].setFill(Color.RED);
+            }
+        }
+    }
+>>>>>>> cd8603b43681e10c77dd0e20c310c05968fdae5f
     public void RankingRefresh(){
         Leaderboard.loadScores(Leaderboard.fileName);
         for(int i=0;i<10;i++)
         {
-            Ranking_score[i]=new Text(Integer.toString(Leaderboard.topScores.get(i)));
-            Ranking_user[i]=new Text(Leaderboard.topUser.get(i));
+            if(StartMenu.isLeaderboardOn){
+                Ranking_score[i].setText(Integer.toString(Leaderboard.topScores.get(i)));
+                Ranking_user[i].setText(Leaderboard.topUser.get(i));
+            }else{
+                Ranking_score[i]=new Text(Integer.toString(Leaderboard.topScores.get(i)));
+                Ranking_user[i]=new Text(Leaderboard.topUser.get(i));
+            }
         }
     }
 
@@ -72,14 +90,17 @@ public class LeaderBoard_menu extends Application {
             Ranking_score[i].setY(YMAX / 2 -200+i*50);
             Ranking_score[i].setFill(Color.BLACK);
             Ranking_user[i].setStyle("-fx-font: 20 arial");
-            Ranking_user[i].setX(XMAX / 2);
+            Ranking_user[i].setX(XMAX / 2 - 50);
             Ranking_user[i].setY(YMAX / 2 -200+i*50);
             Ranking_user[i].setFill(Color.BLACK);
         }
+<<<<<<< HEAD
 
         LeaderBoardColor(RankingColor);
         RankingColor = -1;
 
+=======
+>>>>>>> cd8603b43681e10c77dd0e20c310c05968fdae5f
         group.getChildren().addAll(
                 Ranking_score[0],Ranking_score[1],Ranking_score[2],Ranking_score[3],Ranking_score[4],Ranking_score[5],Ranking_score[6],Ranking_score[7],Ranking_score[8],Ranking_score[9],
                 Ranking_user[0],Ranking_user[1],Ranking_user[2],Ranking_user[3],Ranking_user[4],Ranking_user[5],Ranking_user[6],Ranking_user[7],Ranking_user[8],Ranking_user[9],
@@ -91,6 +112,11 @@ public class LeaderBoard_menu extends Application {
     public void start(Stage primaryStage) throws Exception {
         window = primaryStage;
         LeaderBoard();
+        //LeaderBoard_Menu를 처음 띄우는 경우
+        if(gameOver){
+            gameOverHighLight();
+            gameOver = false;
+        }
         LeaderBoardPress();
 
         primaryStage.setScene(scene);

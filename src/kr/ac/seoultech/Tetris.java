@@ -46,12 +46,12 @@ public class Tetris extends Application{
     private static int bonusScore = 10;
     private static int limitDropPeriod = 300;
     private static boolean directKeyPressed = false;
-
+    LeaderBoard_menu leaderBoard_menu = new LeaderBoard_menu();
     public static void main(String[] args) {
         launch(args);
     }
     public static Stage window;
-
+    public static String name;
     @Override
     public void start(Stage stage) throws Exception {
         System.out.println(level);
@@ -708,7 +708,6 @@ public class Tetris extends Application{
         group.getChildren().add(over);
         if(Leaderboard.topScores.get(9)<score)
         {
-            String name="";
             TextInputDialog dialog = new TextInputDialog("name");
             dialog.setTitle("Leaderboard");
             dialog.setHeaderText(null);
@@ -720,6 +719,8 @@ public class Tetris extends Application{
             {
                 name = result.get();
                 Leaderboard.addScore(score,name);
+                LeaderBoard_menu.gameOver = true;
+                LeaderBoard_menu.gameOverUser = name;
                 for(int i=9;i>=0;i--)
                 {
                     if(Leaderboard.topScores.get(i)==score&&Leaderboard.topUser.get(i)==name)
@@ -732,6 +733,7 @@ public class Tetris extends Application{
         }
         Leaderboard.saveScores(Leaderboard.fileName);
 
+<<<<<<< HEAD
         LeaderBoard_menu leader = new LeaderBoard_menu();
         if(!StartMenu.isLeaderboardOn)
         {
@@ -743,6 +745,20 @@ public class Tetris extends Application{
             }
         }
         else{
+=======
+        leaderBoard_menu.RankingRefresh();
+
+        if(!StartMenu.isLeaderboardOn){
+            try {
+                leaderBoard_menu.gameOverHighLight();
+                leaderBoard_menu.start(window);
+                StartMenu.isLeaderboardOn = true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }else{
+            leaderBoard_menu.gameOverHighLight();
+>>>>>>> cd8603b43681e10c77dd0e20c310c05968fdae5f
             window.setScene(LeaderBoard_menu.scene);
         }
     }

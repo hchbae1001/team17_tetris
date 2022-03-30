@@ -10,6 +10,8 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import kr.ac.seoultech.*;
@@ -25,28 +27,52 @@ public class StartMenu extends Application {
     public static Scene scene = new Scene(group, XMAX + 150, YMAX - SIZE);
     private static Form menu;
     //페이지 내 표시할 것들
-    final private static Text menu3_start = new Text("START");
+    final private static Text gameTitle = new Text("Team17 TETRIS");
+    final private static Text help = new Text("Space = Select Menu");
+    final private static Text menu4_start = new Text("NORMAL MODE START");
+    final private static Text menu3_itemstart = new Text("ITEM MODE START");
     final private static Text menu2_setting = new Text("Setting");
     final private static Text menu1_scoreBoard = new Text("Score Board");
     final private static Text menu0_Exit = new Text("Exit");
     private static boolean isSettingOn = false;
     public static boolean isLeaderboardOn = false;
+<<<<<<< HEAD
     private static boolean isStartOn = false;
+=======
+>>>>>>> cd8603b43681e10c77dd0e20c310c05968fdae5f
     //count = 3 -> start 에 커서
-    private static Integer count = 3;
+
     private static String menuSelected = "";
 
     final private static ArrayList<String> select = new ArrayList<String>(Arrays.asList(
-            "exit", "scoreBoard", "setting",  "start"));
+            "exit", "scoreBoard", "setting",  "itemstart","start"));
     final private static Integer menu_max = select.size();
+    private static Integer count = select.size() - 1;
 
     public static Stage window;
 
     private void startMenuSetting(){
-        menu3_start.setStyle("-fx-font: 20 arial");
-        menu3_start.setX(XMAX / 2);
-        menu3_start.setY(YMAX / 2 + 50);
-        menu3_start.setFill(Color.RED);
+
+        gameTitle.setStyle("-fx-font-size: 20px");
+        gameTitle.setFont(Font.font(null, FontWeight.BOLD,20));
+        gameTitle.setX(XMAX / 2);
+        gameTitle.setY(YMAX / 2 - 150);
+        gameTitle.setFill(Color.BLACK);
+
+        help.setStyle("-fx-font: 20 arial");
+        help.setX(XMAX / 2 - 10);
+        help.setY(YMAX / 2 - 100);
+        help.setFill(Color.BLACK);
+
+        menu4_start.setStyle("-fx-font: 20 arial");
+        menu4_start.setX(XMAX / 2);
+        menu4_start.setY(YMAX / 2);
+        menu4_start.setFill(Color.RED);
+
+        menu3_itemstart.setStyle("-fx-font: 20 arial");
+        menu3_itemstart.setX(XMAX / 2);
+        menu3_itemstart.setY(YMAX / 2 + 50);
+        menu3_itemstart.setFill(Color.BLACK);
 
         menu2_setting.setStyle("-fx-font: 20 arial");
         menu2_setting.setX(XMAX / 2);
@@ -64,7 +90,7 @@ public class StartMenu extends Application {
         menu0_Exit.setFill(Color.BLACK);
 
         group.getChildren().addAll(
-                menu3_start,menu2_setting,menu1_scoreBoard,menu0_Exit
+                gameTitle,help,menu4_start,menu3_itemstart,menu2_setting,menu1_scoreBoard,menu0_Exit
         );
 
         //초기 시작 시, Start 에 커서
@@ -84,7 +110,8 @@ public class StartMenu extends Application {
     }
 
     private void colorReset(){
-        menu3_start.setFill(Color.BLACK);
+        menu4_start.setFill(Color.BLACK);
+        menu3_itemstart.setFill(Color.BLACK);
         menu2_setting.setFill(Color.BLACK);
         menu1_scoreBoard.setFill(Color.BLACK);
         menu0_Exit.setFill(Color.BLACK);
@@ -92,9 +119,13 @@ public class StartMenu extends Application {
 
     private void menuColoring(){
         switch (count){
+            case 4:
+                colorReset();
+                menu4_start.setFill(Color.RED);
+                break;
             case 3:
                 colorReset();
-                menu3_start.setFill(Color.RED);
+                menu3_itemstart.setFill(Color.RED);
                 break;
             case 2:
                 colorReset();
@@ -112,6 +143,7 @@ public class StartMenu extends Application {
     }
     private void menuPress(Form form){
         Setting settingMenu = new Setting();
+        Tetris tetris = new Tetris();
         LeaderBoard_menu leaderboard = new LeaderBoard_menu();
         Tetris tetris = new Tetris();
         scene.setOnKeyPressed((new EventHandler<KeyEvent>() {
@@ -148,6 +180,7 @@ public class StartMenu extends Application {
                     case SPACE:
                         switch (menuSelected){
                             case "start":
+<<<<<<< HEAD
                                 if(!isStartOn)
                                 {
                                     try{
@@ -159,6 +192,19 @@ public class StartMenu extends Application {
                                 }
                                 else{
                                     window.setScene(Tetris.scene);
+=======
+                                try{
+                                    tetris.start(window);
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
+                                break;
+                            case "itemstart":
+                                try{
+                                    tetris.start(window);
+                                }catch (Exception e){
+                                    e.printStackTrace();
+>>>>>>> cd8603b43681e10c77dd0e20c310c05968fdae5f
                                 }
                                 break;
                             case "setting":
