@@ -723,14 +723,28 @@ public class Tetris extends Application{
                 for(int i=9;i>=0;i--)
                 {
                     if(Leaderboard.topScores.get(i)==score&&Leaderboard.topUser.get(i)==name)
+                    {
+                        LeaderBoard_menu.RankingColor=i;
                         break;
+                    }
                 }
             }
         }
         Leaderboard.saveScores(Leaderboard.fileName);
 
-        window.setScene(LeaderBoard_menu.scene);
-        //window.close();
+        LeaderBoard_menu leader = new LeaderBoard_menu();
+        if(!StartMenu.isLeaderboardOn)
+        {
+            try {
+                leader.start(window);
+                StartMenu.isLeaderboardOn=true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else{
+            window.setScene(LeaderBoard_menu.scene);
+        }
     }
 
     public void speedUp() {

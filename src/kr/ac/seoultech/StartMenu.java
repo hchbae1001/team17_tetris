@@ -30,7 +30,8 @@ public class StartMenu extends Application {
     final private static Text menu1_scoreBoard = new Text("Score Board");
     final private static Text menu0_Exit = new Text("Exit");
     private static boolean isSettingOn = false;
-    private static boolean isLeaderboardOn = false;
+    public static boolean isLeaderboardOn = false;
+    private static boolean isStartOn = false;
     //count = 3 -> start 에 커서
     private static Integer count = 3;
     private static String menuSelected = "";
@@ -112,6 +113,7 @@ public class StartMenu extends Application {
     private void menuPress(Form form){
         Setting settingMenu = new Setting();
         LeaderBoard_menu leaderboard = new LeaderBoard_menu();
+        Tetris tetris = new Tetris();
         scene.setOnKeyPressed((new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
@@ -146,11 +148,17 @@ public class StartMenu extends Application {
                     case SPACE:
                         switch (menuSelected){
                             case "start":
-                                Tetris tetris = new Tetris();
-                                try{
-                                    tetris.start(window);
-                                }catch (Exception e){
-                                    e.printStackTrace();
+                                if(!isStartOn)
+                                {
+                                    try{
+                                        tetris.start(window);
+                                        isStartOn = true;
+                                    }catch (Exception e){
+                                        e.printStackTrace();
+                                    }
+                                }
+                                else{
+                                    window.setScene(Tetris.scene);
                                 }
                                 break;
                             case "setting":
