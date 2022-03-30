@@ -36,10 +36,6 @@ public class StartMenu extends Application {
     final private static Text menu0_Exit = new Text("Exit");
     private static boolean isSettingOn = false;
     public static boolean isLeaderboardOn = false;
-<<<<<<< HEAD
-    private static boolean isStartOn = false;
-=======
->>>>>>> cd8603b43681e10c77dd0e20c310c05968fdae5f
     //count = 3 -> start 에 커서
 
     private static String menuSelected = "";
@@ -145,7 +141,6 @@ public class StartMenu extends Application {
         Setting settingMenu = new Setting();
         Tetris tetris = new Tetris();
         LeaderBoard_menu leaderboard = new LeaderBoard_menu();
-        Tetris tetris = new Tetris();
         scene.setOnKeyPressed((new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
@@ -180,19 +175,6 @@ public class StartMenu extends Application {
                     case SPACE:
                         switch (menuSelected){
                             case "start":
-<<<<<<< HEAD
-                                if(!isStartOn)
-                                {
-                                    try{
-                                        tetris.start(window);
-                                        isStartOn = true;
-                                    }catch (Exception e){
-                                        e.printStackTrace();
-                                    }
-                                }
-                                else{
-                                    window.setScene(Tetris.scene);
-=======
                                 try{
                                     tetris.start(window);
                                 }catch (Exception e){
@@ -204,7 +186,6 @@ public class StartMenu extends Application {
                                     tetris.start(window);
                                 }catch (Exception e){
                                     e.printStackTrace();
->>>>>>> cd8603b43681e10c77dd0e20c310c05968fdae5f
                                 }
                                 break;
                             case "setting":
@@ -234,6 +215,7 @@ public class StartMenu extends Application {
                                         e.printStackTrace();
                                     }
                                 }else{
+                                    LeaderBoard_menu.LeaderBoard();
                                     window.setScene(LeaderBoard_menu.scene);
                                 }
                                 System.out.println("scoreBoard");
