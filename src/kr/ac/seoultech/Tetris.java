@@ -18,7 +18,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-public class Tetris extends Application{
+public class Tetris extends Application {
     // The variables
     // 데드라인은 최소한 2 이상 ,하지만 일자 블럭 생성 직후부터 회전이 가능하려면 4 이상을 사용해야 함
     public static final int DEADLINEGAP = 4;
@@ -29,7 +29,9 @@ public class Tetris extends Application{
     public static int[][] MESH;
     public static final int BonusRate = 10;
     public static final int SpeedUpRate = 50;
-    public enum Difficulty{ Easy, Normal, Hard }
+
+    public enum Difficulty {Easy, Normal, Hard}
+
     public static Difficulty level = Difficulty.Easy;
     private static Pane group = new Pane();
     private static Form object;
@@ -48,17 +50,22 @@ public class Tetris extends Application{
     private static int bonusScore = 10;
     private static int limitDropPeriod = 300;
     private static boolean directKeyPressed = false;
-    public  static boolean isWeightBlock = false;
+    public static boolean isWeightBlock = false;
     private static boolean weightIsLocked = false;
     LeaderBoard_menu leaderBoard_menu = new LeaderBoard_menu();
+
     public static void main(String[] args) {
         launch(args);
     }
+
     public static Stage window;
     public static String name;
+    public static Boolean itemModeBool;
+
     @Override
     public void start(Stage stage) throws Exception {
         System.out.println(level);
+        System.out.println(itemModeBool);
         window = stage;
         XMAX = SIZE * 10;
         YMAX = SIZE * (20 + DEADLINEGAP);
@@ -68,12 +75,11 @@ public class Tetris extends Application{
 
         Leaderboard.loadScores(Leaderboard.fileName);
 
-        if(level == Difficulty.Easy){
+        if (level == Difficulty.Easy) {
             limitDropPeriod = 300;
-        }
-        else if(level == Difficulty.Normal) {
+        } else if (level == Difficulty.Normal) {
             limitDropPeriod = 200;
-        }else{
+        } else {
             limitDropPeriod = 100;
         }
 
@@ -100,9 +106,9 @@ public class Tetris extends Application{
 
         Form a = nextObj;
         group.getChildren().addAll(a.a, a.b, a.c, a.d);
-        if(Setting.keySettingBool.getText().equals("Arrow Keys")){
+        if (Setting.keySettingBool.getText().equals("Arrow Keys")) {
             moveOnKeyPressArrow(a);
-        }else{
+        } else {
             moveOnKeyPressWASD(a);
         }
 
@@ -121,7 +127,7 @@ public class Tetris extends Application{
 
     }
 
-    private void moveOnKeyPressArrow(Form form){
+    private void moveOnKeyPressArrow(Form form) {
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
@@ -131,7 +137,7 @@ public class Tetris extends Application{
                         DirectlyMoveDown(form);
                         break;
                     case RIGHT:
-                        if(weightIsLocked)
+                        if (weightIsLocked)
                             break;
                         Controller.MoveRight(form);
                         break;
@@ -139,7 +145,7 @@ public class Tetris extends Application{
                         MoveDown(form);
                         break;
                     case LEFT:
-                        if(weightIsLocked)
+                        if (weightIsLocked)
                             break;
                         Controller.MoveLeft(form);
                         break;
@@ -150,33 +156,34 @@ public class Tetris extends Application{
             }
         });
     }
+
     // 블럭 이동 키입력
     private void moveOnKeyPressWASD(Form form) {
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                if(!directKeyPressed && !top) {
-                        switch (event.getCode()) {
-                            case SPACE:
-                                directKeyPressed = true;
-                                DirectlyMoveDown(form);
+                if (!directKeyPressed && !top) {
+                    switch (event.getCode()) {
+                        case SPACE:
+                            directKeyPressed = true;
+                            DirectlyMoveDown(form);
+                            break;
+                        case D:
+                            if (weightIsLocked)
                                 break;
-                            case D:
-                                if(weightIsLocked)
-                                    break;
-                                Controller.MoveRight(form);
+                            Controller.MoveRight(form);
+                            break;
+                        case S:
+                            MoveDown(form);
+                            break;
+                        case A:
+                            if (weightIsLocked)
                                 break;
-                            case S:
-                                MoveDown(form);
-                                break;
-                            case A:
-                                if(weightIsLocked)
-                                    break;
-                                Controller.MoveLeft(form);
-                                break;
-                            case W:
-                                MoveTurn(form);
-                                break;
+                            Controller.MoveLeft(form);
+                            break;
+                        case W:
+                            MoveTurn(form);
+                            break;
 
                     }
 
@@ -474,7 +481,7 @@ public class Tetris extends Application{
     }
 
     private void RemoveRows(Pane pane) {
-        if(Setting.itemModeBool.getText().equals("TRUE")){
+        if (itemModeBool.equals(true)) {
             lineClearItem(pane);
             bombItem(pane);
             fillItem(pane);
@@ -488,8 +495,8 @@ public class Tetris extends Application{
                 if (MESH[j][i] == 1)
                     full++;
             }
-            if (full == MESH.length){
-                if(Setting.itemModeBool.getText().equals("TRUE")) {
+            if (full == MESH.length) {
+                if (itemModeBool.equals(true)) {
                     socreItem(pane, i * SIZE, 0, XMAX - SIZE);
                 }
                 lines.add(i);
@@ -503,7 +510,7 @@ public class Tetris extends Application{
                     if (node instanceof NewShape)
                         rects.add(node);
                 }
-                score += (bonusScore*100*lines.size());
+                score += (bonusScore * 100 * lines.size());
                 linesNo++;
 
                 for (Node node : rects) {
@@ -564,7 +571,7 @@ public class Tetris extends Application{
     private void MoveDown(Form form) {
         score = score + bonusScore;
         updateScoretext();
-        if(isWeightBlock)
+        if (isWeightBlock)
             weightDown(form, group);
         if (form.a.getY() == YMAX - SIZE || form.b.getY() == YMAX - SIZE || form.c.getY() == YMAX - SIZE
                 || form.d.getY() == YMAX - SIZE || moveA(form) || moveB(form) || moveC(form) || moveD(form)) {
@@ -572,57 +579,56 @@ public class Tetris extends Application{
             MESH[(int) form.b.getX() / SIZE][(int) form.b.getY() / SIZE] = 1;
             MESH[(int) form.c.getX() / SIZE][(int) form.c.getY() / SIZE] = 1;
             MESH[(int) form.d.getX() / SIZE][(int) form.d.getY() / SIZE] = 1;
-            if(form instanceof FormSix){
+            if (form instanceof FormSix) {
                 MESH[(int) ((FormSix) form).e.getX() / SIZE][(int) ((FormSix) form).e.getY() / SIZE] = 1;
                 MESH[(int) ((FormSix) form).f.getX() / SIZE][(int) ((FormSix) form).f.getY() / SIZE] = 1;
             }
             RemoveRows(group);
 
             checkGameover(form);
-            if(top)
+            if (top)
                 return;
             Form a = nextObj;
-            if(Setting.itemModeBool.getText().equals("TRUE")) {
+            if (itemModeBool.equals(true)) {
 
-                if(linesNo  > itemCount){
+                if (linesNo > itemCount) {
                     nextObj = Controller.makeItem("o");
                     itemCount = linesNo;
-                }else{
+                } else {
                     nextObj = Controller.makeRect("o");
                 }
-            }else {
+            } else {
                 nextObj = Controller.makeRect("o");
             }
             object = a;
             // 블럭 생성 직후 겹치는 여부 확인
             isOverlap(object);
 
-            if(top)
+            if (top)
                 return;
 
             // 생성된 object가 weight 블럭이면
-            if(object instanceof FormSix){
+            if (object instanceof FormSix) {
                 FormSix formSix = (FormSix) object;
                 System.out.println("weight Block!");
                 isWeightBlock = true;
                 group.getChildren().addAll(a.a, a.b, a.c, a.d, formSix.e, formSix.f);
-            }else{
+            } else {
                 group.getChildren().addAll(a.a, a.b, a.c, a.d);
             }
 
             // 생성된 nextObj가 weight 블럭이면
-            if(nextObj instanceof FormSix){
+            if (nextObj instanceof FormSix) {
                 FormSix formSix = (FormSix) nextObj;
                 nextObjPane.getChildren().addAll(nextObj.a, nextObj.b, nextObj.c, nextObj.d, formSix.e, formSix.f);
-            }else{
+            } else {
                 nextObjPane.getChildren().addAll(nextObj.a, nextObj.b, nextObj.c, nextObj.d);
             }
 
 
-
-            if(Setting.keySettingBool.getText().equals("Arrow Keys")){
+            if (Setting.keySettingBool.getText().equals("Arrow Keys")) {
                 moveOnKeyPressArrow(a);
-            }else{
+            } else {
                 moveOnKeyPressWASD(a);
             }
             directKeyPressed = false;
@@ -639,7 +645,7 @@ public class Tetris extends Application{
                 form.b.setY(form.b.getY() + MOVE);
                 form.c.setY(form.c.getY() + MOVE);
                 form.d.setY(form.d.getY() + MOVE);
-                if(form instanceof FormSix){
+                if (form instanceof FormSix) {
                     ((FormSix) form).e.setY(((FormSix) form).e.getY() + MOVE);
                     ((FormSix) form).f.setY(((FormSix) form).f.getY() + MOVE);
                 }
@@ -648,10 +654,10 @@ public class Tetris extends Application{
     }
 
     private void DirectlyMoveDown(Form form) {
-        while(true) {
+        while (true) {
             score = score + bonusScore;
             updateScoretext();
-            if(isWeightBlock)
+            if (isWeightBlock)
                 weightDown(form, group);
             if (form.a.getY() == YMAX - SIZE || form.b.getY() == YMAX - SIZE || form.c.getY() == YMAX - SIZE
                     || form.d.getY() == YMAX - SIZE || moveA(form) || moveB(form) || moveC(form) || moveD(form)) {
@@ -661,54 +667,54 @@ public class Tetris extends Application{
                 MESH[(int) form.b.getX() / SIZE][(int) form.b.getY() / SIZE] = 1;
                 MESH[(int) form.c.getX() / SIZE][(int) form.c.getY() / SIZE] = 1;
                 MESH[(int) form.d.getX() / SIZE][(int) form.d.getY() / SIZE] = 1;
-                if(form instanceof FormSix){
+                if (form instanceof FormSix) {
                     MESH[(int) ((FormSix) form).e.getX() / SIZE][(int) ((FormSix) form).e.getY() / SIZE] = 1;
                     MESH[(int) ((FormSix) form).f.getX() / SIZE][(int) ((FormSix) form).f.getY() / SIZE] = 1;
                 }
                 RemoveRows(group);
 
                 checkGameover(form);
-                if(top)
+                if (top)
                     return;
                 Form a = nextObj;
-                if(Setting.itemModeBool.getText().equals("TRUE")) {
-                    if(linesNo > itemCount){
+                if (itemModeBool.equals(true)) {
+                    if (linesNo > itemCount) {
                         nextObj = Controller.makeItem("o");
                         itemCount = linesNo;
-                    }else{
+                    } else {
                         nextObj = Controller.makeRect("o");
                     }
-                }else {
+                } else {
                     nextObj = Controller.makeRect("o");
                 }
                 object = a;
                 // 블럭 생성 직후 겹치는 여부 확인
                 isOverlap(object);
 
-                if(top)
+                if (top)
                     return;
 
                 // 생성된 object가 weight 블럭이면
-                if(object instanceof FormSix){
+                if (object instanceof FormSix) {
                     FormSix formSix = (FormSix) object;
                     System.out.println("weight Block!");
                     isWeightBlock = true;
                     group.getChildren().addAll(a.a, a.b, a.c, a.d, formSix.e, formSix.f);
-                }else{
+                } else {
                     group.getChildren().addAll(a.a, a.b, a.c, a.d);
                 }
 
                 // 생성된 nextObj가 weight 블럭이면
-                if(nextObj instanceof FormSix){
+                if (nextObj instanceof FormSix) {
                     FormSix formSix = (FormSix) nextObj;
                     nextObjPane.getChildren().addAll(nextObj.a, nextObj.b, nextObj.c, nextObj.d, formSix.e, formSix.f);
-                }else{
+                } else {
                     nextObjPane.getChildren().addAll(nextObj.a, nextObj.b, nextObj.c, nextObj.d);
                 }
 
-                if(Setting.keySettingBool.getText().equals("Arrow Keys")){
+                if (Setting.keySettingBool.getText().equals("Arrow Keys")) {
                     moveOnKeyPressArrow(a);
-                }else{
+                } else {
                     moveOnKeyPressWASD(a);
                 }
                 directKeyPressed = false;
@@ -728,7 +734,7 @@ public class Tetris extends Application{
                     form.b.setY(form.b.getY() + MOVE);
                     form.c.setY(form.c.getY() + MOVE);
                     form.d.setY(form.d.getY() + MOVE);
-                    if(form instanceof FormSix){
+                    if (form instanceof FormSix) {
                         ((FormSix) form).e.setY(((FormSix) form).e.getY() + MOVE);
                         ((FormSix) form).f.setY(((FormSix) form).f.getY() + MOVE);
                     }
@@ -767,10 +773,10 @@ public class Tetris extends Application{
         return xb && yb && MESH[((int) rect.getX() / SIZE) + x][((int) rect.getY() / SIZE) - y] == 0;
     }
 
-    private void isOverlap(Form form){
+    private void isOverlap(Form form) {
         boolean isEOG = false;
         while (MESH[(int) form.a.getX() / SIZE][((int) form.a.getY() / SIZE)] == 1 || MESH[(int) form.b.getX() / SIZE][((int) form.b.getY() / SIZE)] == 1 ||
-                MESH[(int) form.c.getX() / SIZE][((int) form.c.getY() / SIZE)] == 1 || MESH[(int) form.d.getX() / SIZE][((int) form.d.getY() / SIZE)] == 1){
+                MESH[(int) form.c.getX() / SIZE][((int) form.c.getY() / SIZE)] == 1 || MESH[(int) form.d.getX() / SIZE][((int) form.d.getY() / SIZE)] == 1) {
             isEOG = true;
             object.a.setY(object.a.getY() - MOVE);
             object.b.setY(object.b.getY() - MOVE);
@@ -778,14 +784,14 @@ public class Tetris extends Application{
             object.d.setY(object.d.getY() - MOVE);
             top = true;
         }
-        if(isEOG){
+        if (isEOG) {
             group.getChildren().addAll(object.a, object.b, object.c, object.d);
             nextObjPane.getChildren().addAll(nextObj.a, nextObj.b, nextObj.c, nextObj.d);
             showGameover();
         }
     }
 
-    private void checkGameover(Form form){
+    private void checkGameover(Form form) {
         // 블럭이 데드라인을 넘어가면 top을 true로 만들어 GAME OVER 판정
         for (int i = 0; i < XMAX / SIZE; i++) {
             if (MESH[i][DEADLINEGAP - 1] == 1) {
@@ -796,7 +802,7 @@ public class Tetris extends Application{
         }
     }
 
-    private void showGameover(){
+    private void showGameover() {
         game = false;
         updateScoretext();
         Text over = new Text("GAME OVER");
@@ -805,24 +811,20 @@ public class Tetris extends Application{
         over.setY(250);
         over.setX(10);
         group.getChildren().add(over);
-        if(Leaderboard.topScores.get(9)<score)
-        {
+        if (Leaderboard.topScores.get(9) < score) {
             TextInputDialog dialog = new TextInputDialog("name");
             dialog.setTitle("Leaderboard");
             dialog.setHeaderText(null);
             dialog.setContentText("이름을 입력해주세요");
 
-            Optional<String> result=dialog.showAndWait();
+            Optional<String> result = dialog.showAndWait();
 
-            if(result.isPresent())
-            {
+            if (result.isPresent()) {
                 name = result.get();
-                Leaderboard.addScore(score,name);
-                for(int i=9;i>=0;i--)
-                {
-                    if(Leaderboard.topScores.get(i)==score&&Leaderboard.topUser.get(i)==name)
-                    {
-                        LeaderBoard_menu.RankingColor=i;
+                Leaderboard.addScore(score, name);
+                for (int i = 9; i >= 0; i--) {
+                    if (Leaderboard.topScores.get(i) == score && Leaderboard.topUser.get(i) == name) {
+                        LeaderBoard_menu.RankingColor = i;
                         break;
                     }
                 }
@@ -831,39 +833,36 @@ public class Tetris extends Application{
         Leaderboard.saveScores(Leaderboard.fileName);
 
         LeaderBoard_menu leader = new LeaderBoard_menu();
-        if(!StartMenu.isLeaderboardOn)
-        {
+        if (!StartMenu.isLeaderboardOn) {
             try {
                 leader.start(window);
-                StartMenu.isLeaderboardOn=true;
+                StartMenu.isLeaderboardOn = true;
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-        else{
+        } else {
             LeaderBoard_menu.LeaderBoard();
             window.setScene(LeaderBoard_menu.scene);
         }
     }
 
     public void speedUp() {
-        if(level == Difficulty.Easy){
+        if (level == Difficulty.Easy) {
             bonusScore += BonusRate;
             dropPeriod -= SpeedUpRate * 0.8;
-        }
-        else if(level == Difficulty.Normal) {
+        } else if (level == Difficulty.Normal) {
             bonusScore += BonusRate;
             dropPeriod -= SpeedUpRate;
-        }else{
+        } else {
             bonusScore += BonusRate;
             dropPeriod -= SpeedUpRate * 1.2;
         }
 
-        if(dropPeriod < limitDropPeriod)
+        if (dropPeriod < limitDropPeriod)
             dropPeriod = limitDropPeriod;
     }
 
-    private void startTimer(){
+    private void startTimer() {
         Timer fall = new Timer();
         TimerTask task = new TimerTask() {
             public void run() {
@@ -881,7 +880,7 @@ public class Tetris extends Application{
                             System.out.println(dropPeriod);
 
                             if (score / 5000 >= bonusScore / BonusRate && dropPeriod != limitDropPeriod) {
-                                if(dropPeriod > limitDropPeriod) {
+                                if (dropPeriod > limitDropPeriod) {
                                     speedUp();
                                     fall.cancel(); // cancel time
                                     startTimer();   // start the time again with a new delay time
@@ -901,7 +900,7 @@ public class Tetris extends Application{
         fall.scheduleAtFixedRate(task, 0, dropPeriod);
     }
 
-    private void updateScoretext(){
+    private void updateScoretext() {
         scoretext.setText("Score: " + Integer.toString(score));
         linetesxt.setText("Lines: " + Integer.toString(linesNo));
     }
@@ -909,13 +908,13 @@ public class Tetris extends Application{
 
     // 아이템 모드용 메서드들
 
-    public void weightDown(Form form, Pane pane){
+    public void weightDown(Form form, Pane pane) {
         if (form.a.getY() == YMAX - SIZE || form.b.getY() == YMAX - SIZE || form.c.getY() == YMAX - SIZE
                 || form.d.getY() == YMAX - SIZE || moveA(form) || moveB(form) || moveC(form) || moveD(form)) {
             weightIsLocked = true;
         }
 
-        if(form.a.getY() != YMAX - SIZE){
+        if (form.a.getY() != YMAX - SIZE) {
             ArrayList<Node> rects = new ArrayList<Node>();
 
             for (Node node : pane.getChildren()) {
@@ -923,11 +922,11 @@ public class Tetris extends Application{
                     rects.add(node);
             }
             // SCORE 아이템 있으면 10만점 추가 후 삭제
-            socreItem(pane, (int)(form.a.getY() + SIZE), (int)form.a.getX(), (int)form.d.getX());
+            socreItem(pane, (int) (form.a.getY() + SIZE), (int) form.a.getX(), (int) form.d.getX());
             for (Node node : rects) {
-                if (node instanceof NewShape){
+                if (node instanceof NewShape) {
                     NewShape a = (NewShape) node;
-                    if(a.getX() >= form.a.getX() && a.getX() <= form.d.getX() && a.getY() == form.a.getY() + SIZE){
+                    if (a.getX() >= form.a.getX() && a.getX() <= form.d.getX() && a.getY() == form.a.getY() + SIZE) {
                         pane.getChildren().remove(node);
                     }
                 }
@@ -937,13 +936,13 @@ public class Tetris extends Application{
             MESH[(int) form.b.getX() / SIZE][((int) form.d.getY() / SIZE) + 1] = 0;
             MESH[(int) form.c.getX() / SIZE][((int) form.d.getY() / SIZE) + 1] = 0;
             MESH[(int) form.d.getX() / SIZE][((int) form.d.getY() / SIZE) + 1] = 0;
-        }else {
+        } else {
             isWeightBlock = false;
             weightIsLocked = false;
         }
     }
 
-    public void lineClearItem(Pane pane){
+    public void lineClearItem(Pane pane) {
         ArrayList<Node> rects = new ArrayList<Node>();
         ArrayList<Node> newrects = new ArrayList<Node>();
 
@@ -960,20 +959,20 @@ public class Tetris extends Application{
                 break;
             }
         }
-        if(LY == -1){
+        if (LY == -1) {
             System.out.println("It is not Line Clear Item!!");
             return;
         }
         // SCORE 아이템 있으면 10만점 추가 후 삭제
-        socreItem(pane, (int)LY, 0, XMAX - SIZE);
-        score += bonusScore*100;
+        socreItem(pane, (int) LY, 0, XMAX - SIZE);
+        score += bonusScore * 100;
         linesNo++;
         for (Node node : rects) {
             NewShape a = (NewShape) node;
             if (a.getY() == LY) {
                 MESH[(int) a.getX() / SIZE][(int) a.getY() / SIZE] = 0;
                 pane.getChildren().remove(node);
-            }else
+            } else
                 newrects.add(node);
 
         }
@@ -1002,7 +1001,7 @@ public class Tetris extends Application{
 
     }
 
-    public void bombItem(Pane pane){
+    public void bombItem(Pane pane) {
         ArrayList<Node> rects = new ArrayList<Node>();
 
         for (Node node : pane.getChildren()) {
@@ -1020,15 +1019,15 @@ public class Tetris extends Application{
             }
         }
 
-        if(BX == -1 || BY == -1){
+        if (BX == -1 || BY == -1) {
             System.out.println("It is not Bomb Item!!");
             return;
         }
         // SCORE 아이템 있으면 10만점 추가 후 삭제
-        socreItem(pane, (int)(BY - SIZE*2), (int)(BY + SIZE*2), (int)(BX - SIZE*2), (int)(BX + SIZE*2));
+        socreItem(pane, (int) (BY - SIZE * 2), (int) (BY + SIZE * 2), (int) (BX - SIZE * 2), (int) (BX + SIZE * 2));
         for (Node node : rects) {
             NewShape a = (NewShape) node;
-            if (a.getX() <= BX + SIZE*2 && a.getX() >= BX - SIZE*2 && a.getY() <= BY + SIZE*2 && a.getY() >= BY - SIZE*2) {
+            if (a.getX() <= BX + SIZE * 2 && a.getX() >= BX - SIZE * 2 && a.getY() <= BY + SIZE * 2 && a.getY() >= BY - SIZE * 2) {
                 MESH[(int) a.getX() / SIZE][(int) a.getY() / SIZE] = 0;
                 pane.getChildren().remove(node);
             }
@@ -1036,7 +1035,7 @@ public class Tetris extends Application{
 
     }
 
-    public void fillItem(Pane pane){
+    public void fillItem(Pane pane) {
         ArrayList<Node> rects = new ArrayList<Node>();
 
         for (Node node : pane.getChildren()) {
@@ -1056,12 +1055,12 @@ public class Tetris extends Application{
             }
         }
 
-        if(FX == -1 || FY == -1){
+        if (FX == -1 || FY == -1) {
             System.out.println("It is not Fill Item!!");
             return;
         }
         // SCORE 아이템 있으면 10만점 추가 후 일반 블럭으로 변경
-        socreItem(pane, (int)(FY - SIZE), (int)(FY + SIZE), (int)(FX - SIZE), (int)(FX + SIZE));
+        socreItem(pane, (int) (FY - SIZE), (int) (FY + SIZE), (int) (FX - SIZE), (int) (FX + SIZE));
         for (Node node : rects) {
             NewShape a = (NewShape) node;
             if (a.getX() <= FX + SIZE && a.getX() >= FX - SIZE && a.getY() <= FY + SIZE && a.getY() >= FY - SIZE) {
@@ -1069,11 +1068,11 @@ public class Tetris extends Application{
                 pane.getChildren().remove(node);
             }
         }
-        for(int i = (int)FX - SIZE; i <= (int)FX +SIZE;){
-            for(int j = (int)FY - SIZE; j <= (int)FY +SIZE;){
-                if (i <= XMAX - SIZE && i >= 0 && j <= YMAX - SIZE && j >= DEADLINEGAP*SIZE) {
-                    MESH[i/SIZE][j/SIZE] = 1;
-                    NewShape SingleNewShape = new NewShape(0,0,"o");
+        for (int i = (int) FX - SIZE; i <= (int) FX + SIZE; ) {
+            for (int j = (int) FY - SIZE; j <= (int) FY + SIZE; ) {
+                if (i <= XMAX - SIZE && i >= 0 && j <= YMAX - SIZE && j >= DEADLINEGAP * SIZE) {
+                    MESH[i / SIZE][j / SIZE] = 1;
+                    NewShape SingleNewShape = new NewShape(0, 0, "o");
                     SingleNewShape.setX(i);
                     SingleNewShape.setY(j);
                     SingleNewShape.setFill(tempColor);
@@ -1086,7 +1085,7 @@ public class Tetris extends Application{
 
     }
 
-    public void socreItem(Pane pane, int y, int x1, int x2){
+    public void socreItem(Pane pane, int y, int x1, int x2) {
         ArrayList<Node> rects = new ArrayList<Node>();
 
         for (Node node : pane.getChildren()) {
@@ -1095,7 +1094,7 @@ public class Tetris extends Application{
         }
         for (Node node : rects) {
             NewShape a = (NewShape) node;
-            if(a.getText() == "S" && a.getY() == y && a.getX() >= x1 && a.getX() <= x2){
+            if (a.getText() == "S" && a.getY() == y && a.getX() >= x1 && a.getX() <= x2) {
                 System.out.println("It is SCORE Item!!");
                 score += 100000;
             }
@@ -1103,7 +1102,7 @@ public class Tetris extends Application{
 
     }
 
-    public void socreItem(Pane pane, int y1, int y2, int x1, int x2){
+    public void socreItem(Pane pane, int y1, int y2, int x1, int x2) {
         ArrayList<Node> rects = new ArrayList<Node>();
 
         for (Node node : pane.getChildren()) {
@@ -1112,14 +1111,10 @@ public class Tetris extends Application{
         }
         for (Node node : rects) {
             NewShape a = (NewShape) node;
-            if(a.getText() == "S" && a.getY() >= y1 && a.getY() <= y2 && a.getX() >= x1 && a.getX() <= x2){
+            if (a.getText() == "S" && a.getY() >= y1 && a.getY() <= y2 && a.getX() >= x1 && a.getX() <= x2) {
                 System.out.println("It is SCORE Item!!");
                 score += 100000;
             }
         }
-
     }
-
-
-
 }

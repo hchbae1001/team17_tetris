@@ -43,21 +43,20 @@ public class Setting extends Application {
     public static Text sizeSetting = new Text("Tetris Size Setting :");
     public static Text resetConfig = new Text("Reset Config :");
     public static Text difficulty = new Text("Difficulty");
-    public static Text itemMode = new Text("Item Mode");
 
     public static Text diffcultyBool = new Text("Easy");
-    public static Text itemModeBool = new Text("FALSE");
     public static Text colorBlindBool = new Text("FALSE");
     public static Text keySettingBool = new Text("Arrow Keys");
     public static Text sizeSettingBool = new Text("size25");
     public static Text resetScoreBoardBool =new Text("RESET");
     public static Text resetBool = new Text("RESET");
 
-    private static String menuSelected = "";
+
     public static ArrayList<String> savedSetting = new ArrayList<String>();
     final private static ArrayList<String> select = new ArrayList<String>(Arrays.asList(
-            "config","score", "size",  "key" ,"color","item","difficulty"));
+            "config","score", "size",  "key" ,"color","difficulty"));
     final private static Integer menu_max = select.size();
+    private static String menuSelected = select.get(menu_max - 1);
     private static Integer count = menu_max - 1;
     Stage window;
     private static Boolean resetConfigCheck = false;
@@ -69,34 +68,29 @@ public class Setting extends Application {
         difficulty.setY(YMAX / 2 - 100);
         difficulty.setFill(Color.BLACK);
 
-        itemMode.setStyle("-fx-font: 20 arial");
-        itemMode.setX(XMAX / 2 - 100);
-        itemMode.setY(YMAX / 2 - 50);
-        itemMode.setFill(Color.BLACK);
-
         colorBlindText.setStyle("-fx-font: 20 arial");
         colorBlindText.setX(XMAX / 2 - 100);
-        colorBlindText.setY(YMAX / 2);
+        colorBlindText.setY(YMAX / 2 - 50);
         colorBlindText.setFill(Color.BLACK);
 
         keySetting.setStyle("-fx-font: 20 arial");
         keySetting.setX(XMAX / 2 - 100);
-        keySetting.setY(YMAX / 2 + 50);
+        keySetting.setY(YMAX / 2);
         keySetting.setFill(Color.BLACK);
 
         sizeSetting.setStyle("-fx-font: 20 arial");
         sizeSetting.setX(XMAX / 2 - 100);
-        sizeSetting.setY(YMAX / 2 + 100);
+        sizeSetting.setY(YMAX / 2 + 50);
         sizeSetting.setFill(Color.BLACK);
 
         resetScoreBoard.setStyle("-fx-font: 20 arial");
         resetScoreBoard.setX(XMAX / 2 - 100);
-        resetScoreBoard.setY(YMAX / 2 + 150);
+        resetScoreBoard.setY(YMAX / 2 + 100);
         resetScoreBoard.setFill(Color.BLACK);
 
         resetConfig.setStyle("-fx-font: 20 arial");
         resetConfig.setX(XMAX / 2 - 100);
-        resetConfig.setY(YMAX / 2 + 200);
+        resetConfig.setY(YMAX / 2 + 150);
         resetConfig.setFill(Color.BLACK);
 
 
@@ -106,44 +100,40 @@ public class Setting extends Application {
         diffcultyBool.setY(YMAX / 2 - 100);
         diffcultyBool.setFill(Color.RED);
 
-        itemModeBool.setStyle("-fx-font: 20 arial");
-        itemModeBool.setX(XMAX / 2 + 150);
-        itemModeBool.setY(YMAX / 2 - 50);
-        itemModeBool.setFill(Color.BLACK);
-
         colorBlindBool.setStyle("-fx-font: 20 arial");
         colorBlindBool.setX(XMAX / 2 + 150);
-        colorBlindBool.setY(YMAX / 2);
+        colorBlindBool.setY(YMAX / 2 - 50);
         colorBlindBool.setFill(Color.BLACK);
 
         keySettingBool.setStyle("-fx-font: 20 arial");
         keySettingBool.setX(XMAX / 2 + 150);
-        keySettingBool.setY(YMAX / 2 + 50);
+        keySettingBool.setY(YMAX / 2);
         keySettingBool.setFill(Color.BLACK);
 
         sizeSettingBool.setStyle("-fx-font: 20 arial");
         sizeSettingBool.setX(XMAX / 2 + 150);
-        sizeSettingBool.setY(YMAX / 2 + 100);
+        sizeSettingBool.setY(YMAX / 2 + 50);
         sizeSettingBool.setFill(Color.BLACK);
 
         resetScoreBoardBool.setStyle("-fx-font: 20 arial");
         resetScoreBoardBool.setX(XMAX / 2 + 150);
-        resetScoreBoardBool.setY(YMAX / 2 + 150);
+        resetScoreBoardBool.setY(YMAX / 2 + 100);
         resetScoreBoardBool.setFill(Color.BLACK);
 
         resetBool.setStyle("-fx-font: 20 arial");
         resetBool.setX(XMAX / 2 + 150);
-        resetBool.setY(YMAX / 2 + 200);
+        resetBool.setY(YMAX / 2 + 150);
         resetBool.setFill(Color.BLACK);
 
         group.getChildren().addAll(
-          difficulty,itemMode, colorBlindText, keySetting, resetConfig, resetScoreBoard, sizeSetting,
-                diffcultyBool,itemModeBool,colorBlindBool,keySettingBool,sizeSettingBool,resetBool,resetScoreBoardBool
+                difficulty,colorBlindText, keySetting, resetConfig, resetScoreBoard, sizeSetting,
+                diffcultyBool,colorBlindBool,keySettingBool,sizeSettingBool,resetBool,resetScoreBoardBool
         );
     }
 
     @Override
     public void start(Stage settingStage){
+        System.out.println(menuSelected);
         window = settingStage;
         settingMenuSetting();
         settingPress(settingForm);
@@ -166,14 +156,13 @@ public class Setting extends Application {
                 StartMenu.settings.add(settings[i]);
             }
             Setting.diffcultyBool.setText(StartMenu.settings.get(0));
-            Setting.itemModeBool.setText(StartMenu.settings.get(1));
-            Setting.colorBlindBool.setText(StartMenu.settings.get(2));
-            Setting.keySettingBool.setText(StartMenu.settings.get(3));
-            Setting.sizeSettingBool.setText(StartMenu.settings.get(4));
-            for(int i = 0; i < 5; i++){
+            Setting.colorBlindBool.setText(StartMenu.settings.get(1));
+            Setting.keySettingBool.setText(StartMenu.settings.get(2));
+            Setting.sizeSettingBool.setText(StartMenu.settings.get(3));
+            for(int i = 0; i < 4; i++){
                 savedSetting.add(StartMenu.settings.get(i));
             }
-            switch (StartMenu.settings.get(4)){
+            switch (StartMenu.settings.get(3)){
                 case "size25":
                     Tetris.SIZE = 25;
                     Tetris.MOVE = 25;
@@ -210,10 +199,9 @@ public class Setting extends Application {
             BufferedWriter writer = new BufferedWriter(output);
             writer.write(
                     "Easy" + "-"+ //diffuculty
-                    "FALSE" + "-"+ //item mode
-                    "FALSE" + "-"+ //color blind mode
-                    "Arrow Keys" + "-"+ //key setting
-                    "size25" //tetris size setting
+                            "FALSE" + "-"+ //color blind mode
+                            "Arrow Keys" + "-"+ //key setting
+                            "size25" //tetris size setting
             );
             writer.close();
         }catch (Exception e){
@@ -229,10 +217,9 @@ public class Setting extends Application {
             BufferedWriter writer = new BufferedWriter(output);
             writer.write(
                     savedSetting.get(0) +"-"+
-                    savedSetting.get(1) +"-"+
-                    savedSetting.get(2) +"-"+
-                    savedSetting.get(3) +"-"+
-                    savedSetting.get(4) +"-"
+                            savedSetting.get(1) +"-"+
+                            savedSetting.get(2) +"-"+
+                            savedSetting.get(3)
             );
             writer.close();
         }
@@ -242,7 +229,6 @@ public class Setting extends Application {
     }
     private void colorReset(){
         diffcultyBool.setFill(Color.BLACK);
-        itemModeBool.setFill(Color.BLACK);
         colorBlindBool.setFill(Color.BLACK);
         keySettingBool.setFill(Color.BLACK);
         sizeSettingBool.setFill(Color.BLACK);
@@ -251,13 +237,9 @@ public class Setting extends Application {
     }
     private void menuColoring(){
         switch (count){
-            case 6:
-                colorReset();
-                diffcultyBool.setFill(Color.RED);
-                break;
             case 5:
                 colorReset();
-                itemModeBool.setFill(Color.RED);
+                diffcultyBool.setFill(Color.RED);
                 break;
             case 4:
                 colorReset();
@@ -314,95 +296,83 @@ public class Setting extends Application {
                         break;
 
                     case SPACE:
-                            switch (menuSelected){
-                                case "difficulty":
-                                    if(diffcultyBool.getText().equals("Hard")){
-                                        //쉬움
-                                        Tetris.level = Tetris.Difficulty.Easy;
-                                        diffcultyBool.setText("Easy");
-                                        savedSetting.set(0,"Easy");
-                                    }else if(diffcultyBool.getText().equals("Easy")){
-                                        //중간
-                                        Tetris.level = Tetris.Difficulty.Normal;
-                                        diffcultyBool.setText("Normal");
-                                        savedSetting.set(0,"Normal");
-                                    }else{
-                                        //어려움
-                                        Tetris.level = Tetris.Difficulty.Hard;
-                                        diffcultyBool.setText("Hard");
-                                        savedSetting.set(0,"Hard");
-                                    }
-                                    break;
+                        switch (menuSelected){
+                            case "difficulty":
+                                if(diffcultyBool.getText().equals("Hard")){
+                                    //쉬움
+                                    Tetris.level = Tetris.Difficulty.Easy;
+                                    diffcultyBool.setText("Easy");
+                                    savedSetting.set(0,"Easy");
+                                }else if(diffcultyBool.getText().equals("Easy")){
+                                    //중간
+                                    Tetris.level = Tetris.Difficulty.Normal;
+                                    diffcultyBool.setText("Normal");
+                                    savedSetting.set(0,"Normal");
+                                }else{
+                                    //어려움
+                                    Tetris.level = Tetris.Difficulty.Hard;
+                                    diffcultyBool.setText("Hard");
+                                    savedSetting.set(0,"Hard");
+                                }
+                                break;
+                            case "color":
+                                if(colorBlindBool.getText().equals("FALSE")){
+                                    colorBlindBool.setText("TRUE");
+                                    Form.colorBlindMode = true;
+                                    savedSetting.set(1,"TRUE");
+                                }else{
+                                    colorBlindBool.setText("FALSE");
+                                    Form.colorBlindMode = false;
+                                    savedSetting.set(1,"FALSE");
+                                }
 
-                                case "item":
-                                    if(itemModeBool.getText().equals("TRUE")){
-                                        //아이템모드 비활성화
-                                        itemModeBool.setText("FALSE");
-                                        savedSetting.set(1,"FALSE");
-                                    }else{
-                                        //아이템모드 활성화
-                                        itemModeBool.setText("TRUE");
-                                        savedSetting.set(1,"TRUE");
-                                    }
-                                    break;
-
-                                case "color":
-                                    if(colorBlindBool.getText().equals("FALSE")){
-                                        colorBlindBool.setText("TRUE");
-                                        Form.colorBlindMode = true;
-                                        savedSetting.set(2,"TRUE");
-                                    }else{
-                                        colorBlindBool.setText("FALSE");
-                                        Form.colorBlindMode = false;
-                                        savedSetting.set(2,"FALSE");
-                                    }
-
-                                    break;
-                                case "key":
-                                    if(keySettingBool.getText().equals("WASD")){
-                                        keySettingBool.setText("Arrow Keys");
-                                        savedSetting.set(3,"Arrow Keys");
-                                    }else{
-                                        keySettingBool.setText("WASD");
-                                        savedSetting.set(3,"WASD");
-                                    }
-                                    break;
-                                case "size":
-                                    if(sizeSettingBool.getText().equals("size35")){
-                                        Tetris.SIZE = 25;
-                                        Tetris.MOVE = 25;
-                                        sizeSettingBool.setText("size25");
-                                        savedSetting.set(4,"size25");
-                                    }else if(sizeSettingBool.getText().equals("size25")){
-                                        Tetris.SIZE = 30;
-                                        Tetris.MOVE = 30;
-                                        sizeSettingBool.setText("size30");
-                                        savedSetting.set(4,"size30");
-                                    }else{
-                                        Tetris.SIZE = 35;
-                                        Tetris.MOVE = 35;
-                                        sizeSettingBool.setText("size35");
-                                        savedSetting.set(4,"size35");
-                                    }
-                                    break;
-                                case "score":
-
-                                    Leaderboard.createSaveData(Leaderboard.fileName);
+                                break;
+                            case "key":
+                                if(keySettingBool.getText().equals("WASD")){
+                                    keySettingBool.setText("Arrow Keys");
+                                    savedSetting.set(2,"Arrow Keys");
+                                }else{
+                                    keySettingBool.setText("WASD");
+                                    savedSetting.set(2,"WASD");
+                                }
+                                break;
+                            case "size":
+                                if(sizeSettingBool.getText().equals("size35")){
+                                    Tetris.SIZE = 25;
+                                    Tetris.MOVE = 25;
+                                    sizeSettingBool.setText("size25");
+                                    savedSetting.set(3,"size25");
+                                }else if(sizeSettingBool.getText().equals("size25")){
+                                    Tetris.SIZE = 30;
+                                    Tetris.MOVE = 30;
+                                    sizeSettingBool.setText("size30");
+                                    savedSetting.set(3,"size30");
+                                }else{
+                                    Tetris.SIZE = 35;
+                                    Tetris.MOVE = 35;
+                                    sizeSettingBool.setText("size35");
+                                    savedSetting.set(3,"size35");
+                                }
+                                break;
+                            case "score":
+                                Leaderboard.createSaveData(Leaderboard.fileName);
+                                if(StartMenu.isLeaderboardOn){
                                     for(int i = 0 ; i < 10 ; i++){
                                         LeaderBoard_menu.Ranking_score[i].setText("0");
                                         LeaderBoard_menu.Ranking_user[i].setText("___");
                                         LeaderBoard_menu.Ranking_score[i].setFill(Color.BLACK);
                                         LeaderBoard_menu.Ranking_user[i].setFill(Color.BLACK);
                                     }
-                                    System.out.println("ScoreBoardReset");
+                                }
+                                System.out.println("ScoreBoardReset");
 
-                                    break;
-                                case "config":
-                                    resetConfig();
-                                    resetConfigCheck = true;
-                                    System.out.println("Reset Configuration");
-                                    break;
-                            }
+                                break;
+                            case "config":
+                                resetConfig();
+                                resetConfigCheck = true;
+                                System.out.println("Reset Configuration");
+                                break;
+                        }
                         break;
 
                     case BACK_SPACE:
@@ -423,7 +393,6 @@ public class Setting extends Application {
     }
     public void resetConfig(){
         diffcultyBool.setText("Easy");
-        itemModeBool.setText("FALSE");
         colorBlindBool.setText("FALSE");
         keySettingBool.setText("Arrow Keys");
         sizeSettingBool.setText("size 25");
@@ -435,4 +404,3 @@ public class Setting extends Application {
         Tetris.MOVE = 25;
     }
 }
-

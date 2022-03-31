@@ -176,6 +176,7 @@ public class StartMenu extends Application {
                         switch (menuSelected){
                             case "start":
                                 try{
+                                    Tetris.itemModeBool = false;
                                     tetris.start(window);
                                 }catch (Exception e){
                                     e.printStackTrace();
@@ -183,6 +184,7 @@ public class StartMenu extends Application {
                                 break;
                             case "itemstart":
                                 try{
+                                    Tetris.itemModeBool = true;
                                     tetris.start(window);
                                 }catch (Exception e){
                                     e.printStackTrace();
