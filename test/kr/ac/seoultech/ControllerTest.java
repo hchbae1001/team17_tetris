@@ -250,7 +250,7 @@ class ControllerTest {
     @Test
     void makeItem(){
         while(true) {
-            Form form = Controller.makeItem("o");
+            Form form = Controller.makeItem();
             if (form instanceof FormSix) {
                 System.out.println(form.getName());
                 break;

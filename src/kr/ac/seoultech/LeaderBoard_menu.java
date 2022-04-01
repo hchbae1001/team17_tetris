@@ -21,7 +21,7 @@ public class LeaderBoard_menu extends Application {
 
     public static int RankingColor = -1;
 
-    public static Text Title=new Text("Leaderboard");
+    public static Text Title = new Text("Leaderboard");
 
     public static Text[] Ranking_score = new Text[10];
     public static Text[] Ranking_user = new Text[10];
