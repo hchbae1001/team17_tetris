@@ -965,7 +965,7 @@ public class Tetris extends Application {
         isPaused = false;
         pauseCount = pause_max - 1;
         linesNo = 0;
-        itemModeBool = false;
+        //itemModeBool = false;
         top = false;
         game = true;
         itemCount = 0;
