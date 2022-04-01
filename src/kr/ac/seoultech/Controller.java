@@ -158,13 +158,13 @@ public class Controller {
         return new Form(a, b, c, d, name);
     }
 
-    public static Form makeItem(String shape) {
+    public static Form makeItem() {
         int block = (int) (Math.random() * 50);
         String name;
 
         if (block < 10) {
-            NewShape a = new NewShape(SIZE - 1, SIZE - 1, shape), b = new NewShape(SIZE - 1, SIZE - 1, shape), c = new NewShape(SIZE - 1, SIZE - 1, shape),
-                    d = new NewShape(SIZE - 1, SIZE - 1, shape), e = new NewShape(SIZE - 1, SIZE - 1, shape), f = new NewShape(SIZE - 1, SIZE - 1, shape);
+            NewShape a = new NewShape(SIZE - 1, SIZE - 1, "M"), b = new NewShape(SIZE - 1, SIZE - 1, "M"), c = new NewShape(SIZE - 1, SIZE - 1, "M"),
+                    d = new NewShape(SIZE - 1, SIZE - 1, "M"), e = new NewShape(SIZE - 1, SIZE - 1, "M"), f = new NewShape(SIZE - 1, SIZE - 1, "M");
             a.setX(XMAX / 2 - SIZE - SIZE);
             a.setY(SIZE * (DEADLINEGAP - 1));
             b.setX(XMAX / 2 - SIZE);
