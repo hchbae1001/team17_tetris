@@ -92,7 +92,7 @@ public class LeaderBoard_Select extends Application {
         line.setStroke(Color.BLACK);
 
         group.getChildren().addAll(
-            modeSelect, standardMode, itemMode,
+                modeSelect, standardMode, itemMode,
                 difficulty, easeMode, normalMode, hardMode,
                 line
         );
@@ -244,9 +244,9 @@ public class LeaderBoard_Select extends Application {
                         break;
                     case BACK_SPACE:
                         if(modeSelected){
-                           modeSelected = false;
-                           count2 = null;
-                           menuColoring();
+                            modeSelected = false;
+                            count2 = null;
+                            menuColoring();
                         }else{
                             window.setScene(StartMenu.scene);
                         }

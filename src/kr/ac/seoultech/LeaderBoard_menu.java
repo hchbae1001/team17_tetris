@@ -28,6 +28,10 @@ public class LeaderBoard_menu extends Application {
 
     public static Stage window;
     public static String mode, difficulty;
+
+    public enum difficulty_enum {EASY, NORMAL, HARD}
+    public enum mode_enum {STANDARD, ITEM}
+
     public void LeaderBoardPress(){
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
@@ -51,17 +55,58 @@ public class LeaderBoard_menu extends Application {
         }
     }
 
-    public static void RankingRefresh(){
+    public static void RankingRefresh(int difficulty){
         Leaderboard.loadScores(Leaderboard.fileName);
-        for(int i=0;i<10;i++)
+        switch (difficulty)
         {
-            Ranking_score[i]=new Text(Integer.toString(Leaderboard.topScores[Tetris.level.ordinal()+3*Tetris.itemModeBool_int].get(i)));
-            Ranking_user[i]=new Text(Leaderboard.topUser[Tetris.level.ordinal()+3*Tetris.itemModeBool_int].get(i));
+            case 0:
+                for(int i=0;i<10;i++)
+                {
+                    Ranking_score[i]=new Text(Integer.toString(Leaderboard.topScores_EASY.get(i)));
+                    Ranking_user[i]=new Text(Leaderboard.topUser_EASY.get(i));
+                }
+                break;
+            case 1:
+                for(int i=0;i<10;i++)
+                {
+                    Ranking_score[i]=new Text(Integer.toString(Leaderboard.topScores.get(i)));
+                    Ranking_user[i]=new Text(Leaderboard.topUser.get(i));
+                }
+                break;
+            case 2:
+                for(int i=0;i<10;i++)
+                {
+                    Ranking_score[i]=new Text(Integer.toString(Leaderboard.topScores_HARD.get(i)));
+                    Ranking_user[i]=new Text(Leaderboard.topUser_HARD.get(i));
+                }
+                break;
+            case 3:
+                for(int i=0;i<10;i++)
+                {
+                    Ranking_score[i]=new Text(Integer.toString(Leaderboard.topScores_ITEM_EASY.get(i)));
+                    Ranking_user[i]=new Text(Leaderboard.topUser_ITEM_EASY.get(i));
+                }
+                break;
+            case 4:
+                for(int i=0;i<10;i++)
+                {
+                    Ranking_score[i]=new Text(Integer.toString(Leaderboard.topScores_ITEM.get(i)));
+                    Ranking_user[i]=new Text(Leaderboard.topUser_ITEM.get(i));
+                }
+                break;
+            case 5:
+                for(int i=0;i<10;i++)
+                {
+                    Ranking_score[i]=new Text(Integer.toString(Leaderboard.topScores_ITEM_HARD.get(i)));
+                    Ranking_user[i]=new Text(Leaderboard.topUser_ITEM_HARD.get(i));
+                }
+                break;
         }
+
     }
 
     public static void LeaderBoard(){
-        RankingRefresh();
+        RankingRefresh(difficulty_enum.valueOf(difficulty).ordinal()+mode_enum.valueOf(mode).ordinal()*3);
 
         Title.setStyle("-fx-font: 40 arial");
         Title.setX(XMAX / 2 -25);
