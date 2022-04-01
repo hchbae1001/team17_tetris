@@ -8,11 +8,9 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.TextInputDialog;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 //import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -61,6 +59,7 @@ public class Tetris extends Application {
     public static Stage window;
     public static String name;
     public static Boolean itemModeBool;
+    public static int itemModeBool_int;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -811,7 +810,13 @@ public class Tetris extends Application {
         over.setY(250);
         over.setX(10);
         group.getChildren().add(over);
-        if (Leaderboard.topScores.get(9) < score) {
+
+        if(itemModeBool)
+            itemModeBool_int=1;
+        else
+            itemModeBool_int=0;
+
+        if (Leaderboard.topScores[level.ordinal()+3*itemModeBool_int].get(9) < score) {
             TextInputDialog dialog = new TextInputDialog("name");
             dialog.setTitle("Leaderboard");
             dialog.setHeaderText(null);
@@ -821,9 +826,9 @@ public class Tetris extends Application {
 
             if (result.isPresent()) {
                 name = result.get();
-                Leaderboard.addScore(score, name);
+                Leaderboard.addScore(score, name, level.ordinal()+3*itemModeBool_int);
                 for (int i = 9; i >= 0; i--) {
-                    if (Leaderboard.topScores.get(i) == score && Leaderboard.topUser.get(i) == name) {
+                    if (Leaderboard.topScores[level.ordinal()+3*itemModeBool_int].get(i) == score && Leaderboard.topUser[level.ordinal()+3*itemModeBool_int].get(i) == name) {
                         LeaderBoard_menu.RankingColor = i;
                         break;
                     }

@@ -55,8 +55,8 @@ public class LeaderBoard_menu extends Application {
         Leaderboard.loadScores(Leaderboard.fileName);
         for(int i=0;i<10;i++)
         {
-            Ranking_score[i]=new Text(Integer.toString(Leaderboard.topScores.get(i)));
-            Ranking_user[i]=new Text(Leaderboard.topUser.get(i));
+            Ranking_score[i]=new Text(Integer.toString(Leaderboard.topScores[Tetris.level.ordinal()+3*Tetris.itemModeBool_int].get(i)));
+            Ranking_user[i]=new Text(Leaderboard.topUser[Tetris.level.ordinal()+3*Tetris.itemModeBool_int].get(i));
         }
     }
 
