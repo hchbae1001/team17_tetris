@@ -29,13 +29,14 @@ public class StartMenu extends Application {
     //페이지 내 표시할 것들
     final private static Text gameTitle = new Text("Team17 TETRIS");
     final private static Text help = new Text("Space = Select Menu");
-    final private static Text menu4_start = new Text("NORMAL MODE START");
+    final private static Text menu4_start = new Text("STANDARD MODE START");
     final private static Text menu3_itemstart = new Text("ITEM MODE START");
     final private static Text menu2_setting = new Text("Setting");
     final private static Text menu1_scoreBoard = new Text("Score Board");
     final private static Text menu0_Exit = new Text("Exit");
     private static boolean isSettingOn = false;
     public static boolean isLeaderboardOn = false;
+    public static boolean isBoardSelectOn = false;
     //count = 3 -> start 에 커서
 
     private static String menuSelected = "";
@@ -199,28 +200,22 @@ public class StartMenu extends Application {
                                         e.printStackTrace();
                                     }
                                 }else{
-                                    try{
                                         window.setScene(Setting.scene);
-                                    }catch (Exception e){
-                                        e.printStackTrace();
-                                    }
                                 }
-
                                 System.out.println("setting");
                                 break;
                             case "scoreBoard":
-                                if(!isLeaderboardOn){
-                                    try {
-                                        leaderboard.start(window);
-                                        isLeaderboardOn = true;
-                                    } catch (Exception e) {
+                                if(!isBoardSelectOn){
+                                    try{
+                                        LeaderBoard_Select leaderBoard_select = new LeaderBoard_Select();
+                                        leaderBoard_select.start(window);
+                                        isBoardSelectOn = true;
+                                    }catch (Exception e){
                                         e.printStackTrace();
                                     }
                                 }else{
-                                    LeaderBoard_menu.LeaderBoard();
-                                    window.setScene(LeaderBoard_menu.scene);
+                                    window.setScene(LeaderBoard_Select.scene);
                                 }
-                                System.out.println("scoreBoard");
                                 break;
                             case "exit":
                                 System.out.println("exit");

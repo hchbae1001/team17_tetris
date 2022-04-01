@@ -27,7 +27,7 @@ public class LeaderBoard_menu extends Application {
     public static Text[] Ranking_user = new Text[10];
 
     public static Stage window;
-
+    public static String mode, difficulty;
     public void LeaderBoardPress(){
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
@@ -37,7 +37,7 @@ public class LeaderBoard_menu extends Application {
                     group.getChildren().removeAll(Ranking_score[0],Ranking_score[1],Ranking_score[2],Ranking_score[3],Ranking_score[4],Ranking_score[5],Ranking_score[6],Ranking_score[7],Ranking_score[8],Ranking_score[9],
                             Ranking_user[0],Ranking_user[1],Ranking_user[2],Ranking_user[3],Ranking_user[4],Ranking_user[5],Ranking_user[6],Ranking_user[7],Ranking_user[8],Ranking_user[9],
                             Title);
-                    window.setScene(StartMenu.scene);
+                    window.setScene(LeaderBoard_Select.scene);
                 }
             }
         });
