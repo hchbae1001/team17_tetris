@@ -640,7 +640,7 @@ public class Tetris extends Application {
         }
     }
 
-    private void RemoveRows(Pane pane) {
+    private void RemoveRows(Pane pane, int lineCount) {
         if (itemModeBool.equals(true)) {
             lineClearItem(pane);
             bombItem(pane);
@@ -675,7 +675,7 @@ public class Tetris extends Application {
                 if (node instanceof NewShape)
                     rects.add(node);
             }
-            score += (bonusScore * 100);
+            score += (bonusScore * 100 * (lineCount + 1));
             linesNo++;
 
             for (Node node : rects) {
@@ -723,7 +723,7 @@ public class Tetris extends Application {
 
                             //itemAnim = false;
                             //MakeObject();
-                            RemoveRows(group);
+                            RemoveRows(group, lineCount + 1);
                             //timer = startTimer();
                         }
                     });
@@ -800,7 +800,7 @@ public class Tetris extends Application {
                     weightDelete(group);
                 }
                 timer.cancel();
-                RemoveRows(group);
+                RemoveRows(group, 0);
                 checkGameover(form);
                 if (top)
                     return;
@@ -1240,7 +1240,7 @@ public class Tetris extends Application {
                 Platform.runLater(new Runnable() {
                     public void run() {
                         itemAnim = false;
-                        RemoveRows(group);
+                        RemoveRows(group, 0);
                     }
                 });
             }
@@ -1413,7 +1413,7 @@ public class Tetris extends Application {
                             }
                         }
                         itemAnim = false;
-                        RemoveRows(group);
+                        RemoveRows(group, 1);
                         //MakeObject();
                         //RemoveRows(group);
                         //timer = startTimer();
