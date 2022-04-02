@@ -8,11 +8,9 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.TextInputDialog;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Mesh;
 import javafx.scene.shape.Rectangle;
@@ -85,11 +83,34 @@ public class Tetris extends Application {
     public static Stage window;
     public static String name;
     public static Boolean itemModeBool;
+    public static int itemModeInt;
 
     @Override
     public void start(Stage stage) throws Exception {
         System.out.println(level);
         System.out.println(itemModeBool);
+        if(itemModeBool)
+        {
+            LeaderBoard_menu.mode="ITEM";
+            itemModeInt=1;
+        }
+        else
+        {
+            LeaderBoard_menu.mode="STANDARD";
+            itemModeInt=0;
+        }
+        switch (level)
+        {
+            case Easy:
+                LeaderBoard_menu.difficulty="EASY";
+                break;
+            case Normal:
+                LeaderBoard_menu.difficulty="NORMAL";
+                break;
+            case Hard:
+                LeaderBoard_menu.difficulty="HARD";
+                break;
+        }
         window = stage;
         XMAX = SIZE * 10;
         YMAX = SIZE * (20 + DEADLINEGAP);
@@ -922,6 +943,7 @@ public class Tetris extends Application {
         over.setY(YMAX/2);
         over.setX(10);
         group.getChildren().add(over);
+
         if (Leaderboard.topScores.get(9) < score) {
             TextInputDialog dialog = new TextInputDialog("name");
             dialog.setTitle("Leaderboard");
@@ -932,13 +954,15 @@ public class Tetris extends Application {
 
             if (result.isPresent()) {
                 name = result.get();
-                Leaderboard.addScore(score, name);
+                Leaderboard.addScore(score, name,level.ordinal()+itemModeInt*3);
+                /*
                 for (int i = 9; i >= 0; i--) {
                     if (Leaderboard.topScores.get(i) == score && Leaderboard.topUser.get(i) == name) {
                         LeaderBoard_menu.RankingColor = i;
                         break;
                     }
                 }
+                 */
             }
         }
         Leaderboard.saveScores(Leaderboard.fileName);
