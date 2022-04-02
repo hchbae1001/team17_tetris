@@ -15,7 +15,7 @@ class ControllerTest {
     @Test
     void moveRight() {
         Form form = Controller.makeRect("o");
-        int tempMax = Controller.XMAX - Controller.SIZE;
+        int tempMax = Tetris.XMAX - Tetris.SIZE;
         while(true){
             Controller.MoveRight(form);
             if (form.a.getX() == tempMax) {
