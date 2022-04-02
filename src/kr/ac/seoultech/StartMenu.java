@@ -34,6 +34,7 @@ public class StartMenu extends Application {
     final private static Text menu2_setting = new Text("Setting");
     final private static Text menu1_scoreBoard = new Text("Score Board");
     final private static Text menu0_Exit = new Text("Exit");
+    private static boolean isGameOn = false;
     private static boolean isSettingOn = false;
     public static boolean isLeaderboardOn = false;
     public static boolean isBoardSelectOn = false;
@@ -176,19 +177,33 @@ public class StartMenu extends Application {
                     case SPACE:
                         switch (menuSelected){
                             case "start":
-                                try{
+                                if(!isGameOn){
+                                    try{
+                                        isGameOn = true;
+                                        Tetris.itemModeBool = false;
+                                        tetris.start(window);
+                                    }catch (Exception e){
+                                        e.printStackTrace();
+                                    }
+                                }else {
                                     Tetris.itemModeBool = false;
-                                    tetris.start(window);
-                                }catch (Exception e){
-                                    e.printStackTrace();
+                                    tetris.continueGame("Restart");
+                                    window.setScene(Tetris.scene);
                                 }
                                 break;
                             case "itemstart":
-                                try{
+                                if(!isGameOn) {
+                                    try {
+                                        isGameOn = true;
+                                        Tetris.itemModeBool = true;
+                                        tetris.start(window);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }else {
                                     Tetris.itemModeBool = true;
-                                    tetris.start(window);
-                                }catch (Exception e){
-                                    e.printStackTrace();
+                                    tetris.continueGame("Restart");
+                                    window.setScene(Tetris.scene);
                                 }
                                 break;
                             case "setting":
