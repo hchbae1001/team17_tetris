@@ -34,7 +34,7 @@ public class Leaderboard {
                         topUser_EASY.add(i, name);
                         topScores_EASY.remove(topScores_EASY.size()-1);
                         topUser_EASY.remove(topUser_EASY.size()-1);
-                        return;
+                        break;
                     }
                 }
                 for (int i = 9; i >= 0; i--) {
@@ -52,7 +52,7 @@ public class Leaderboard {
                         topUser.add(i, name);
                         topScores.remove(topScores.size()-1);
                         topUser.remove(topUser.size()-1);
-                        return;
+                        break;
                     }
                 }
                 for (int i = 9; i >= 0; i--) {
@@ -70,7 +70,7 @@ public class Leaderboard {
                         topUser_HARD.add(i, name);
                         topScores_HARD.remove(topScores_HARD.size()-1);
                         topUser_HARD.remove(topUser_HARD.size()-1);
-                        return;
+                        break;
                     }
                 }
                 for (int i = 9; i >= 0; i--) {
@@ -88,7 +88,7 @@ public class Leaderboard {
                         topUser_ITEM_EASY.add(i, name);
                         topScores_ITEM_EASY.remove(topScores_ITEM_EASY.size()-1);
                         topUser_ITEM_EASY.remove(topUser_ITEM_EASY.size()-1);
-                        return;
+                        break;
                     }
                 }
                 for (int i = 9; i >= 0; i--) {
@@ -106,7 +106,7 @@ public class Leaderboard {
                         topUser_ITEM.add(i, name);
                         topScores_ITEM.remove(topScores_ITEM.size()-1);
                         topUser_ITEM.remove(topUser_ITEM.size()-1);
-                        return;
+                        break;
                     }
                 }
                 for (int i = 9; i >= 0; i--) {
@@ -124,7 +124,7 @@ public class Leaderboard {
                         topUser_HARD.add(i, name);
                         topScores_ITEM_HARD.remove(topScores_ITEM_HARD.size()-1);
                         topUser_HARD.remove(topUser_HARD.size()-1);
-                        return;
+                        break;
                     }
                 }
                 for (int i = 9; i >= 0; i--) {

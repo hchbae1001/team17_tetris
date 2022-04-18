@@ -967,6 +967,8 @@ public class Tetris extends Application {
         }
         Leaderboard.saveScores(Leaderboard.fileName);
 
+        deleteOldGame();
+
         LeaderBoard_menu leader = new LeaderBoard_menu();
         if (!StartMenu.isLeaderboardOn) {
             try {

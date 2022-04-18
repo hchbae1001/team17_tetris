@@ -32,7 +32,7 @@ public class LeaderBoard_menu extends Application {
     public enum difficulty_enum {EASY, NORMAL, HARD}
     public enum mode_enum {STANDARD, ITEM}
 
-    public void LeaderBoardPress(){
+    public static void LeaderBoardPress(){
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
@@ -133,13 +133,14 @@ public class LeaderBoard_menu extends Application {
                 Ranking_user[0],Ranking_user[1],Ranking_user[2],Ranking_user[3],Ranking_user[4],Ranking_user[5],Ranking_user[6],Ranking_user[7],Ranking_user[8],Ranking_user[9],
                 Title
         );
+
+        LeaderBoardPress();
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         window = primaryStage;
         LeaderBoard();
-        LeaderBoardPress();
 
         primaryStage.setScene(scene);
         primaryStage.setTitle("T E T R I S");

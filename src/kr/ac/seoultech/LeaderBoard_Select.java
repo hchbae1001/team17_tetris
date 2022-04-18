@@ -243,6 +243,7 @@ public class LeaderBoard_Select extends Application {
                         }
                         break;
                     case BACK_SPACE:
+                        System.out.println("modeSelected:"+modeSelected);
                         if(modeSelected){
                             modeSelected = false;
                             count2 = null;
