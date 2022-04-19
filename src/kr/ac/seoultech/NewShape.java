@@ -13,9 +13,9 @@ public class NewShape extends Text{
         setText("o");
     }
 
-    public NewShape(String shape) {
-        super(shape);
-    }
+    //public NewShape(String shape) {
+    //    super(shape);
+    //}
 
 
     public NewShape(double x, double y, String shape) {

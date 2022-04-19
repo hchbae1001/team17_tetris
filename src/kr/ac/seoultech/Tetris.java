@@ -8,6 +8,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -18,6 +19,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class Tetris extends Application {
+    public static boolean isTest = false;
     // The variables
     // 데드라인은 최소한 2 이상 ,하지만 일자 블럭 생성 직후부터 회전이 가능하려면 4 이상을 사용해야 함
     public static final int DEADLINEGAP = 4;
@@ -38,7 +40,7 @@ public class Tetris extends Application {
     private static Form object;
     public static Scene scene;
 
-    private static Timer timer;
+    private static Timer timer = new Timer();
     // 일시 정지 UI
     private static Pane pausePane = new Pane();
     final private static ArrayList<String> pauseSelect = new ArrayList<String>(Arrays.asList(
@@ -89,28 +91,7 @@ public class Tetris extends Application {
     public void start(Stage stage) throws Exception {
         System.out.println(level);
         System.out.println(itemModeBool);
-        if(itemModeBool)
-        {
-            LeaderBoard_menu.mode="ITEM";
-            itemModeInt=1;
-        }
-        else
-        {
-            LeaderBoard_menu.mode="STANDARD";
-            itemModeInt=0;
-        }
-        switch (level)
-        {
-            case Easy:
-                LeaderBoard_menu.difficulty="EASY";
-                break;
-            case Normal:
-                LeaderBoard_menu.difficulty="NORMAL";
-                break;
-            case Hard:
-                LeaderBoard_menu.difficulty="HARD";
-                break;
-        }
+
         window = stage;
         XMAX = SIZE * 10;
         YMAX = SIZE * (20 + DEADLINEGAP);
@@ -122,6 +103,8 @@ public class Tetris extends Application {
         stage.show();
         timer = startTimer(dropPeriod);
 
+        if(isTest)
+            window.close();
     }
 
 
@@ -133,95 +116,99 @@ public class Tetris extends Application {
                 if(itemAnim)
                     return;
                 if(!timeStop) {
-                    if (isPaused) {
-                        switch (event.getCode()) {
-                            case ESCAPE:
-                                continueGame("Continue");
-                                group.getChildren().remove(pausePane);
-                                break;
-                            case SPACE:
-                                switch (pauseSelected) {
-                                    case "Continue":
-                                        continueGame("Continue");
-                                        group.getChildren().remove(pausePane);
-                                        break;
-                                    case "Restart":
-                                        // 초기화 메서드 호출
-                                        deleteOldGame();
-                                        continueGame("Restart");
-                                        break;
-                                    case "Go To Menu":
-                                        try {
-                                            deleteOldGame();
-                                            window.setScene(StartMenu.scene);
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                        break;
-                                    case "Quit game":
-                                        System.out.println("exit");
-                                        window.close();
-                                        break;
-                                }
-                                break;
-                            case DOWN:
-                                if (pauseCount >= 1 && pauseCount < pause_max) {
-                                    --pauseCount;
-                                    pauseSelected = pauseSelect.get(pauseCount);
-                                    System.out.println(pauseCount);
-                                } else {
-                                    pauseCount = pause_max - 1;
-                                    pauseSelected = pauseSelect.get(pauseCount);
-                                    System.out.println(pauseCount);
-                                }
-                                pauseColoring();
-                                break;
-                            case UP:
-                                if (pauseCount >= 0 && pauseCount < pause_max - 1) {
-                                    ++pauseCount;
-                                    pauseSelected = pauseSelect.get(pauseCount);
-                                    System.out.println(pauseCount);
-                                } else {
-                                    pauseCount = 0;
-                                    pauseSelected = pauseSelect.get(pauseCount);
-                                    System.out.println(pauseCount);
-                                }
-                                pauseColoring();
-                                break;
-                        }
-                    } else {
-                        switch (event.getCode()) {
-                            case ESCAPE:
-                                //fall.cancel();
-                                //fall.purge();
-                                group.getChildren().add(pausePane);
-                                isPaused = true;
-                                break;
-                            case SPACE:
-                                directKeyPressed = true;
-                                MoveDown(form);
-                                break;
-                            case RIGHT:
-                                if (weightIsLocked)
-                                    break;
-                                Controller.MoveRight(form);
-                                break;
-                            case DOWN:
-                                MoveDown(form);//
-                                break;
-                            case LEFT:
-                                if (weightIsLocked)
-                                    break;
-                                Controller.MoveLeft(form);
-                                break;
-                            case UP:
-                                MoveTurn(form);
-                                break;
-                        }
-                    }
+                    arrowKeyCodeFunc(event.getCode(), form);
                 }
             }
         });
+    }
+
+    public void arrowKeyCodeFunc(KeyCode keyCode, Form form){
+        if (isPaused) {
+            switch (keyCode) {
+                case ESCAPE:
+                    continueGame("Continue");
+                    group.getChildren().remove(pausePane);
+                    break;
+                case SPACE:
+                    switch (pauseSelected) {
+                        case "Continue":
+                            continueGame("Continue");
+                            group.getChildren().remove(pausePane);
+                            break;
+                        case "Restart":
+                            // 초기화 메서드 호출
+                            deleteOldGame();
+                            continueGame("Restart");
+                            break;
+                        case "Go To Menu":
+                            try {
+                                deleteOldGame();
+                                window.setScene(StartMenu.scene);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        case "Quit game":
+                            System.out.println("exit");
+                            window.close();
+                            break;
+                    }
+                    break;
+                case DOWN:
+                    if (pauseCount >= 1 && pauseCount < pause_max) {
+                        --pauseCount;
+                        pauseSelected = pauseSelect.get(pauseCount);
+                        System.out.println(pauseCount);
+                    } else {
+                        pauseCount = pause_max - 1;
+                        pauseSelected = pauseSelect.get(pauseCount);
+                        System.out.println(pauseCount);
+                    }
+                    pauseColoring();
+                    break;
+                case UP:
+                    if (pauseCount >= 0 && pauseCount < pause_max - 1) {
+                        ++pauseCount;
+                        pauseSelected = pauseSelect.get(pauseCount);
+                        System.out.println(pauseCount);
+                    } else {
+                        pauseCount = 0;
+                        pauseSelected = pauseSelect.get(pauseCount);
+                        System.out.println(pauseCount);
+                    }
+                    pauseColoring();
+                    break;
+            }
+        } else {
+            switch (keyCode) {
+                case ESCAPE:
+                    //fall.cancel();
+                    //fall.purge();
+                    group.getChildren().add(pausePane);
+                    isPaused = true;
+                    break;
+                case SPACE:
+                    directKeyPressed = true;
+                    BlockDown(form);
+                    break;
+                case RIGHT:
+                    if (weightIsLocked)
+                        break;
+                    Controller.MoveRight(form);
+                    break;
+                case DOWN:
+                    BlockDown(form);//
+                    break;
+                case LEFT:
+                    if (weightIsLocked)
+                        break;
+                    Controller.MoveLeft(form);
+                    break;
+                case UP:
+                    MoveTurn(form);
+                    break;
+            }
+        }
     }
 
     // 키입력
@@ -229,99 +216,105 @@ public class Tetris extends Application {
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
+                if(itemAnim)
+                    return;
                 if(!timeStop) {
-                    if (isPaused) {
-                        switch (event.getCode()) {
-                            case ESCAPE:
-                                continueGame("Continue");
-                                group.getChildren().remove(pausePane);
-                                break;
-                            case SPACE:
-                                switch (pauseSelected) {
-                                    case "Continue":
-                                        continueGame("Continue");
-                                        group.getChildren().remove(pausePane);
-                                        break;
-                                    case "Restart":
-                                        // 초기화 메서드 호출
-                                        deleteOldGame();
-                                        continueGame("Restart");
-                                        break;
-                                    case "Go To Menu":
-                                        try {
-                                            deleteOldGame();
-                                            window.setScene(StartMenu.scene);
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                        break;
-                                    case "Quit game":
-                                        System.out.println("exit");
-                                        window.close();
-                                        break;
-                                }
-                                break;
-                            case S:
-                                if (pauseCount >= 1 && pauseCount < pause_max) {
-                                    --pauseCount;
-                                    pauseSelected = pauseSelect.get(pauseCount);
-                                    System.out.println(pauseCount);
-                                } else {
-                                    pauseCount = pause_max - 1;
-                                    pauseSelected = pauseSelect.get(pauseCount);
-                                    System.out.println(pauseCount);
-                                }
-                                pauseColoring();
-                                break;
-                            case W:
-                                if (pauseCount >= 0 && pauseCount < pause_max - 1) {
-                                    ++pauseCount;
-                                    pauseSelected = pauseSelect.get(pauseCount);
-                                    System.out.println(pauseCount);
-                                } else {
-                                    pauseCount = 0;
-                                    pauseSelected = pauseSelect.get(pauseCount);
-                                    System.out.println(pauseCount);
-                                }
-                                pauseColoring();
-                                break;
-                        }
-                    } else {
-                        switch (event.getCode()) {
-                            case ESCAPE:
-                                //fall.cancel();
-                                //fall.purge();
-                                group.getChildren().add(pausePane);
-                                isPaused = true;
-                                break;
-                            case SPACE:
-                                directKeyPressed = true;
-                                MoveDown(form);
-                                break;
-                            case D:
-                                if (weightIsLocked)
-                                    break;
-                                Controller.MoveRight(form);
-                                break;
-                            case S:
-                                MoveDown(form);//
-                                break;
-                            case A:
-                                if (weightIsLocked)
-                                    break;
-                                Controller.MoveLeft(form);
-                                break;
-                            case W:
-                                MoveTurn(form);
-                                break;
-                        }
-                    }
+                    WASDKeyCodeFunc(event.getCode(), form);
                 }
             }
         });
     }
 
-    private void MoveTurn(Form form) {
+    public void WASDKeyCodeFunc(KeyCode keyCode, Form form){
+        if (isPaused) {
+            switch (keyCode) {
+                case ESCAPE:
+                    continueGame("Continue");
+                    group.getChildren().remove(pausePane);
+                    break;
+                case SPACE:
+                    switch (pauseSelected) {
+                        case "Continue":
+                            continueGame("Continue");
+                            group.getChildren().remove(pausePane);
+                            break;
+                        case "Restart":
+                            // 초기화 메서드 호출
+                            deleteOldGame();
+                            continueGame("Restart");
+                            break;
+                        case "Go To Menu":
+                            try {
+                                deleteOldGame();
+                                window.setScene(StartMenu.scene);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        case "Quit game":
+                            System.out.println("exit");
+                            window.close();
+                            break;
+                    }
+                    break;
+                case S:
+                    if (pauseCount >= 1 && pauseCount < pause_max) {
+                        --pauseCount;
+                        pauseSelected = pauseSelect.get(pauseCount);
+                        System.out.println(pauseCount);
+                    } else {
+                        pauseCount = pause_max - 1;
+                        pauseSelected = pauseSelect.get(pauseCount);
+                        System.out.println(pauseCount);
+                    }
+                    pauseColoring();
+                    break;
+                case W:
+                    if (pauseCount >= 0 && pauseCount < pause_max - 1) {
+                        ++pauseCount;
+                        pauseSelected = pauseSelect.get(pauseCount);
+                        System.out.println(pauseCount);
+                    } else {
+                        pauseCount = 0;
+                        pauseSelected = pauseSelect.get(pauseCount);
+                        System.out.println(pauseCount);
+                    }
+                    pauseColoring();
+                    break;
+            }
+        } else {
+            switch (keyCode) {
+                case ESCAPE:
+                    //fall.cancel();
+                    //fall.purge();
+                    group.getChildren().add(pausePane);
+                    isPaused = true;
+                    break;
+                case SPACE:
+                    directKeyPressed = true;
+                    BlockDown(form);
+                    break;
+                case D:
+                    if (weightIsLocked)
+                        break;
+                    Controller.MoveRight(form);
+                    break;
+                case S:
+                    BlockDown(form);//
+                    break;
+                case A:
+                    if (weightIsLocked)
+                        break;
+                    Controller.MoveLeft(form);
+                    break;
+                case W:
+                    MoveTurn(form);
+                    break;
+            }
+        }
+    }
+
+    public void MoveTurn(Form form) {
         int f = form.form;
         NewShape a = form.a;
         NewShape b = form.b;
@@ -640,7 +633,7 @@ public class Tetris extends Application {
         }
     }
 
-    private void RemoveRows(Pane pane, int lineCount) {
+    public void RemoveRows(Pane pane, int lineCount) {
         if (itemModeBool.equals(true)) {
             lineClearItem(pane);
             bombItem(pane);
@@ -662,7 +655,7 @@ public class Tetris extends Application {
             }
             if (full == MESH.length) {
                 if (itemModeBool.equals(true)) {
-                    socreItem(pane, i * SIZE, 0, XMAX - SIZE);
+                    scoreItem(pane, i * SIZE, 0, XMAX - SIZE);
                 }
                 lines = i;
                 break;
@@ -759,28 +752,28 @@ public class Tetris extends Application {
         updateScoretext();
     }
 
-    private void MoveDown(NewShape rect) {
+    public void MoveDown(NewShape rect) {
         if (rect.getY() + MOVE < YMAX)
             rect.setY(rect.getY() + MOVE);
 
     }
 
-    private void MoveRight(NewShape rect) {
+    public void MoveRight(NewShape rect) {
         if (rect.getX() + MOVE <= XMAX - SIZE)
             rect.setX(rect.getX() + MOVE);
     }
 
-    private void MoveLeft(NewShape rect) {
+    public void MoveLeft(NewShape rect) {
         if (rect.getX() - MOVE >= 0)
             rect.setX(rect.getX() - MOVE);
     }
 
-    private void MoveUp(NewShape rect) {
+    public void MoveUp(NewShape rect) {
         if (rect.getY() - MOVE > 0)
             rect.setY(rect.getY() - MOVE);
     }
 
-    private void MoveDown(Form form) {
+    public void BlockDown(Form form) {
         do {
             score = score + bonusScore;
             updateScoretext();
@@ -801,7 +794,7 @@ public class Tetris extends Application {
                 }
                 timer.cancel();
                 RemoveRows(group, 0);
-                checkGameover(form);
+                checkGameover();
                 if (top)
                     return;
                 break;
@@ -827,12 +820,12 @@ public class Tetris extends Application {
         } while (directKeyPressed);
     }
 
-    private void MakeObject(){
+    public void MakeObject(){
         Form a = nextObj;
         if (itemModeBool.equals(true)) {
-            if (linesNo > itemCount) {
+            if (linesNo/10 > itemCount) {
                 nextObj = Controller.makeItem();
-                itemCount = linesNo;
+                itemCount = linesNo/10;
             } else {
                 nextObj = Controller.makeRect("o");
             }
@@ -841,7 +834,7 @@ public class Tetris extends Application {
         }
         object = a;
         // 블럭 생성 직후 겹치는 여부 확인
-        isOverlap(object);
+        isOverlap();
 
         if (top)
             return;
@@ -864,6 +857,9 @@ public class Tetris extends Application {
             nextObjPane.getChildren().addAll(nextObj.a, nextObj.b, nextObj.c, nextObj.d);
         }
 
+        if(isTest)
+            return;
+
         if (Setting.keySettingBool.getText().equals("Arrow Keys")) {
             moveOnKeyPressArrow(a);
         } else {
@@ -873,23 +869,23 @@ public class Tetris extends Application {
         // 수정 필요성 있음
     }
 
-    private boolean moveA(Form form) {
+    public boolean moveA(Form form) {
         return (MESH[(int) form.a.getX() / SIZE][((int) form.a.getY() / SIZE) + 1] == 1);
     }
 
-    private boolean moveB(Form form) {
+    public boolean moveB(Form form) {
         return (MESH[(int) form.b.getX() / SIZE][((int) form.b.getY() / SIZE) + 1] == 1);
     }
 
-    private boolean moveC(Form form) {
+    public boolean moveC(Form form) {
         return (MESH[(int) form.c.getX() / SIZE][((int) form.c.getY() / SIZE) + 1] == 1);
     }
 
-    private boolean moveD(Form form) {
+    public boolean moveD(Form form) {
         return (MESH[(int) form.d.getX() / SIZE][((int) form.d.getY() / SIZE) + 1] == 1);
     }
 
-    private boolean cB(NewShape rect, int x, int y) {
+    public boolean cB(NewShape rect, int x, int y) {
         boolean xb = false;
         boolean yb = false;
         if (x >= 0)
@@ -897,16 +893,16 @@ public class Tetris extends Application {
         if (x < 0)
             xb = rect.getX() + x * MOVE >= 0;
         if (y >= 0)
-            yb = rect.getY() - y * MOVE > 0;
+            yb = rect.getY() - y * MOVE >= 0;
         if (y < 0)
-            yb = rect.getY() + y * MOVE < YMAX;
+            yb = rect.getY() - y * MOVE <= YMAX - SIZE;
         return xb && yb && MESH[((int) rect.getX() / SIZE) + x][((int) rect.getY() / SIZE) - y] == 0;
     }
 
-    private void isOverlap(Form form) {
+    public void isOverlap() {
         boolean isEOG = false;
-        while (MESH[(int) form.a.getX() / SIZE][((int) form.a.getY() / SIZE)] == 1 || MESH[(int) form.b.getX() / SIZE][((int) form.b.getY() / SIZE)] == 1 ||
-                MESH[(int) form.c.getX() / SIZE][((int) form.c.getY() / SIZE)] == 1 || MESH[(int) form.d.getX() / SIZE][((int) form.d.getY() / SIZE)] == 1) {
+        while (MESH[(int) object.a.getX() / SIZE][((int) object.a.getY() / SIZE)] == 1 || MESH[(int) object.b.getX() / SIZE][((int) object.b.getY() / SIZE)] == 1 ||
+                MESH[(int) object.c.getX() / SIZE][((int) object.c.getY() / SIZE)] == 1 || MESH[(int) object.d.getX() / SIZE][((int) object.d.getY() / SIZE)] == 1) {
             isEOG = true;
             object.a.setY(object.a.getY() - MOVE);
             object.b.setY(object.b.getY() - MOVE);
@@ -914,6 +910,10 @@ public class Tetris extends Application {
             object.d.setY(object.d.getY() - MOVE);
             top = true;
         }
+
+        if(isTest)
+            return;
+
         if (isEOG) {
             group.getChildren().addAll(object.a, object.b, object.c, object.d);
             nextObjPane.getChildren().addAll(nextObj.a, nextObj.b, nextObj.c, nextObj.d);
@@ -921,18 +921,20 @@ public class Tetris extends Application {
         }
     }
 
-    private void checkGameover(Form form) {
+    public void checkGameover() {
         // 블럭이 데드라인을 넘어가면 top을 true로 만들어 GAME OVER 판정
         for (int i = 0; i < XMAX / SIZE; i++) {
             if (MESH[i][DEADLINEGAP - 1] == 1) {
                 top = true;
+                if(isTest)
+                    return;
                 showGameover();
                 break;
             }
         }
     }
 
-    private void showGameover() {
+    public void showGameover() {
         if(!game)
             return;
         game = false;
@@ -997,7 +999,7 @@ public class Tetris extends Application {
             dropPeriod = limitDropPeriod;
     }
 
-    private Timer startTimer(int delay) {
+    public Timer startTimer(int delay) {
         Timer fall = new Timer();
         TimerTask task = new TimerTask() {
             public void run() {
@@ -1019,7 +1021,7 @@ public class Tetris extends Application {
                                     timer = startTimer(0);   // start the time again with a new delay time
                                 }
                             } else {
-                                MoveDown(object);//
+                                BlockDown(object);//
                                 updateScoretext();
                             }
                         }
@@ -1031,8 +1033,10 @@ public class Tetris extends Application {
             fall.cancel();
             task.cancel();
             fall.purge();
+        }else{
+            fall.scheduleAtFixedRate(task, delay, dropPeriod);
         }
-        fall.scheduleAtFixedRate(task, delay, dropPeriod);
+        //fall.scheduleAtFixedRate(task, delay, dropPeriod);
         return fall;
     }
 
@@ -1070,19 +1074,43 @@ public class Tetris extends Application {
         fall.scheduleAtFixedRate(task, 0, 1000);
     }
 
-    private void updateScoretext() {
+    public void updateScoretext() {
         scoretext.setText("Score: " + Integer.toString(score));
         linetesxt.setText("Lines: " + Integer.toString(linesNo));
     }
 
     public void setNewGame() {
+        if(itemModeBool)
+        {
+            LeaderBoard_menu.mode="ITEM";
+            itemModeInt=1;
+        }
+        else
+        {
+            LeaderBoard_menu.mode="STANDARD";
+            itemModeInt=0;
+        }
+        switch (level)
+        {
+            case Easy:
+                LeaderBoard_menu.difficulty="EASY";
+                break;
+            case Normal:
+                LeaderBoard_menu.difficulty="NORMAL";
+                break;
+            case Hard:
+                LeaderBoard_menu.difficulty="HARD";
+                break;
+        }
+
         MESH = new int[XMAX / SIZE][YMAX / SIZE];
+        /*
         for(int i = 0; i < YMAX/SIZE; i++){
             System.out.println(String.format("%02d 번째 줄 : ", i) + MESH[0][i] + MESH[1][i] + MESH[2][i] + MESH[3][i] + MESH[4][i] + MESH[5][i] + MESH[6][i]
                     + MESH[7][i] + MESH[8][i] + MESH[9][i]);
         }
         System.out.println();
-
+         */
         score = 0;
         isPaused = false;
         pauseCount = pause_max - 1;
@@ -1181,11 +1209,6 @@ public class Tetris extends Application {
 
         Form a = nextObj;
         group.getChildren().addAll(a.a, a.b, a.c, a.d);
-        if (Setting.keySettingBool.getText().equals("Arrow Keys")) {
-            moveOnKeyPressArrow(a);
-        } else {
-            moveOnKeyPressWASD(a);
-        }
 
         object = a;
         nextObj = Controller.makeRect("o");
@@ -1196,23 +1219,32 @@ public class Tetris extends Application {
 
         group.getChildren().add(animPane);
 
+        if(isTest)
+            return;
+
+        if (Setting.keySettingBool.getText().equals("Arrow Keys")) {
+            moveOnKeyPressArrow(a);
+        } else {
+            moveOnKeyPressWASD(a);
+        }
     }
 
     public void deleteOldGame() {
         fall.cancel();
+        fall.purge();
         group.getChildren().clear();
         nextObjPane.getChildren().clear();
         pausePane.getChildren().clear();
     }
 
-    private void pauseColorReset(){
+    public void pauseColorReset(){
         pause3_continue.setFill(Color.BLACK);
         pause2_restart.setFill(Color.BLACK);
         pause1_menu.setFill(Color.BLACK);
         pause0_quit.setFill(Color.BLACK);
     }
 
-    private void pauseColoring(){
+    public void pauseColoring(){
         switch (pauseCount){
             case 3:
                 pauseColorReset();
@@ -1262,6 +1294,7 @@ public class Tetris extends Application {
             }
         };
         fall.schedule(task,100);
+
     }
 
     public void deleteAnim2(Node node, Pane pane, int cnt) {
@@ -1301,7 +1334,7 @@ public class Tetris extends Application {
                     rects.add(node);
             }
             // SCORE 아이템 있으면 10만점 추가 후 삭제
-            socreItem(pane, (int) (form.a.getY() + SIZE), (int) form.a.getX(), (int) form.d.getX());
+            scoreItem(pane, (int) (form.a.getY() + SIZE), (int) form.a.getX(), (int) form.d.getX());
             for (Node node : rects) {
                 if (node instanceof NewShape) {
                     NewShape a = (NewShape) node;
@@ -1341,6 +1374,7 @@ public class Tetris extends Application {
                 }
             }
         }
+
         timer.cancel();
         waitForTimer();
         itemAnim = true;
@@ -1368,7 +1402,7 @@ public class Tetris extends Application {
             return;
         }
         // SCORE 아이템 있으면 10만점 추가 후 삭제
-        socreItem(pane, (int) LY, 0, XMAX - SIZE);
+        scoreItem(pane, (int) LY, 0, XMAX - SIZE);
         score += bonusScore * 100;
         linesNo++;
         for (Node node : rects) {
@@ -1454,7 +1488,7 @@ public class Tetris extends Application {
             return;
         }
         // SCORE 아이템 있으면 10만점 추가 후 삭제
-        socreItem(pane, (int) (BY - SIZE * 2), (int) (BY + SIZE * 2), (int) (BX - SIZE * 2), (int) (BX + SIZE * 2));
+        scoreItem(pane, (int) (BY - SIZE * 2), (int) (BY + SIZE * 2), (int) (BX - SIZE * 2), (int) (BX + SIZE * 2));
         for (Node node : rects) {
             NewShape a = (NewShape) node;
             if (a.getX() <= BX + SIZE * 2 && a.getX() >= BX - SIZE * 2 && a.getY() <= BY + SIZE * 2 && a.getY() >= BY - SIZE * 2) {
@@ -1494,7 +1528,7 @@ public class Tetris extends Application {
             return;
         }
         // SCORE 아이템 있으면 10만점 추가 후 일반 블럭으로 변경
-        socreItem(pane, (int) (FY - SIZE), (int) (FY + SIZE), (int) (FX - SIZE), (int) (FX + SIZE));
+        scoreItem(pane, (int) (FY - SIZE), (int) (FY + SIZE), (int) (FX - SIZE), (int) (FX + SIZE));
         for (Node node : rects) {
             NewShape a = (NewShape) node;
             if (a.getX() <= FX + SIZE && a.getX() >= FX - SIZE && a.getY() <= FY + SIZE && a.getY() >= FY - SIZE) {
@@ -1519,7 +1553,7 @@ public class Tetris extends Application {
 
     }
 
-    public void socreItem(Pane pane, int y, int x1, int x2) {
+    public void scoreItem(Pane pane, int y, int x1, int x2) {
         ArrayList<Node> rects = new ArrayList<Node>();
 
         for (Node node : pane.getChildren()) {
@@ -1533,10 +1567,9 @@ public class Tetris extends Application {
                 score += 100000;
             }
         }
-
     }
 
-    public void socreItem(Pane pane, int y1, int y2, int x1, int x2) {
+    public void scoreItem(Pane pane, int y1, int y2, int x1, int x2) {
         ArrayList<Node> rects = new ArrayList<Node>();
 
         for (Node node : pane.getChildren()) {
