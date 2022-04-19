@@ -112,12 +112,12 @@ public class LeaderBoard_menu extends Application {
                 }
                 break;
         }
-
     }
 
     public static void LeaderBoard(){
 
         RankingRefresh(difficulty_enum.valueOf(difficulty).ordinal()+mode_enum.valueOf(mode).ordinal()*3);
+        System.out.println("RankingRefresh :"+(difficulty_enum.valueOf(difficulty).ordinal()+mode_enum.valueOf(mode).ordinal()*3));
 
         Title.setStyle("-fx-font: 40 arial");
         Title.setX(XMAX / 2 -25);
