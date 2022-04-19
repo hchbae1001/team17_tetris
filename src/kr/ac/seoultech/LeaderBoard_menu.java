@@ -41,7 +41,17 @@ public class LeaderBoard_menu extends Application {
                     group.getChildren().removeAll(Ranking_score[0],Ranking_score[1],Ranking_score[2],Ranking_score[3],Ranking_score[4],Ranking_score[5],Ranking_score[6],Ranking_score[7],Ranking_score[8],Ranking_score[9],
                             Ranking_user[0],Ranking_user[1],Ranking_user[2],Ranking_user[3],Ranking_user[4],Ranking_user[5],Ranking_user[6],Ranking_user[7],Ranking_user[8],Ranking_user[9],
                             Title);
-                    window.setScene(LeaderBoard_Select.scene);
+                    if(!StartMenu.isBoardSelectOn){
+                        try{
+                            LeaderBoard_Select leaderBoard_select = new LeaderBoard_Select();
+                            leaderBoard_select.start(window);
+                            StartMenu.isBoardSelectOn = true;
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }else{
+                        window.setScene(LeaderBoard_Select.scene);
+                    }
                 }
             }
         });
@@ -102,11 +112,12 @@ public class LeaderBoard_menu extends Application {
                 }
                 break;
         }
-
     }
 
     public static void LeaderBoard(){
+
         RankingRefresh(difficulty_enum.valueOf(difficulty).ordinal()+mode_enum.valueOf(mode).ordinal()*3);
+        System.out.println("RankingRefresh :"+(difficulty_enum.valueOf(difficulty).ordinal()+mode_enum.valueOf(mode).ordinal()*3));
 
         Title.setStyle("-fx-font: 40 arial");
         Title.setX(XMAX / 2 -25);

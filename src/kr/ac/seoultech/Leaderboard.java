@@ -39,7 +39,7 @@ public class Leaderboard {
                 }
                 for (int i = 9; i >= 0; i--) {
                     if (topScores_EASY.get(i) == score && topUser_EASY.get(i) == name) {
-                        LeaderBoard_menu.RankingColor = i;
+                        //LeaderBoard_menu.RankingColor = i;
                         break;
                     }
                 }
@@ -57,7 +57,7 @@ public class Leaderboard {
                 }
                 for (int i = 9; i >= 0; i--) {
                     if (topScores.get(i) == score && topUser.get(i) == name) {
-                        LeaderBoard_menu.RankingColor = i;
+                        //LeaderBoard_menu.RankingColor = i;
                         break;
                     }
                 }
@@ -75,7 +75,7 @@ public class Leaderboard {
                 }
                 for (int i = 9; i >= 0; i--) {
                     if (topScores_HARD.get(i) == score && topUser_HARD.get(i) == name) {
-                        LeaderBoard_menu.RankingColor = i;
+                        //LeaderBoard_menu.RankingColor = i;
                         break;
                     }
                 }
@@ -93,7 +93,7 @@ public class Leaderboard {
                 }
                 for (int i = 9; i >= 0; i--) {
                     if (topScores_ITEM_EASY.get(i) == score && topUser_ITEM_EASY.get(i) == name) {
-                        LeaderBoard_menu.RankingColor = i;
+                        //LeaderBoard_menu.RankingColor = i;
                         break;
                     }
                 }
@@ -111,7 +111,7 @@ public class Leaderboard {
                 }
                 for (int i = 9; i >= 0; i--) {
                     if (topScores_ITEM.get(i) == score && topUser_ITEM.get(i) == name) {
-                        LeaderBoard_menu.RankingColor = i;
+                        //LeaderBoard_menu.RankingColor = i;
                         break;
                     }
                 }
@@ -121,15 +121,15 @@ public class Leaderboard {
                 {
                     if(score >=topScores_ITEM_HARD.get(i)){
                         topScores_ITEM_HARD.add(i, score);
-                        topUser_HARD.add(i, name);
+                        topUser_ITEM_HARD.add(i, name);
                         topScores_ITEM_HARD.remove(topScores_ITEM_HARD.size()-1);
-                        topUser_HARD.remove(topUser_HARD.size()-1);
+                        topUser_ITEM_HARD.remove(topUser_HARD.size()-1);
                         break;
                     }
                 }
                 for (int i = 9; i >= 0; i--) {
                     if (topScores_ITEM_HARD.get(i) == score && topUser_ITEM_HARD.get(i) == name) {
-                        LeaderBoard_menu.RankingColor = i;
+                        //LeaderBoard_menu.RankingColor = i;
                         break;
                     }
                 }
@@ -295,5 +295,5 @@ public class Leaderboard {
             e.printStackTrace();
         }
     }
-
 }
+
