@@ -22,6 +22,7 @@ public class Leaderboard {
     public static ArrayList<Integer> topScores_ITEM_HARD = new ArrayList<Integer>();
     public static ArrayList<String> topUser_ITEM_HARD = new ArrayList<String>();
 
+    public static int RankingColor = -1;
 
     public static void addScore(int score, String name, int difficulty){
         switch (difficulty)
@@ -39,7 +40,8 @@ public class Leaderboard {
                 }
                 for (int i = 9; i >= 0; i--) {
                     if (topScores_EASY.get(i) == score && topUser_EASY.get(i) == name) {
-                        //LeaderBoard_menu.RankingColor = i;
+                        RankingColor = i;
+
                         break;
                     }
                 }
@@ -57,7 +59,7 @@ public class Leaderboard {
                 }
                 for (int i = 9; i >= 0; i--) {
                     if (topScores.get(i) == score && topUser.get(i) == name) {
-                        //LeaderBoard_menu.RankingColor = i;
+                        RankingColor = i;
                         break;
                     }
                 }
@@ -75,7 +77,7 @@ public class Leaderboard {
                 }
                 for (int i = 9; i >= 0; i--) {
                     if (topScores_HARD.get(i) == score && topUser_HARD.get(i) == name) {
-                        //LeaderBoard_menu.RankingColor = i;
+                        RankingColor = i;
                         break;
                     }
                 }
@@ -93,7 +95,7 @@ public class Leaderboard {
                 }
                 for (int i = 9; i >= 0; i--) {
                     if (topScores_ITEM_EASY.get(i) == score && topUser_ITEM_EASY.get(i) == name) {
-                        //LeaderBoard_menu.RankingColor = i;
+                        RankingColor = i;
                         break;
                     }
                 }
@@ -111,7 +113,7 @@ public class Leaderboard {
                 }
                 for (int i = 9; i >= 0; i--) {
                     if (topScores_ITEM.get(i) == score && topUser_ITEM.get(i) == name) {
-                        //LeaderBoard_menu.RankingColor = i;
+                        RankingColor = i;
                         break;
                     }
                 }
@@ -129,7 +131,7 @@ public class Leaderboard {
                 }
                 for (int i = 9; i >= 0; i--) {
                     if (topScores_ITEM_HARD.get(i) == score && topUser_ITEM_HARD.get(i) == name) {
-                        //LeaderBoard_menu.RankingColor = i;
+                        RankingColor = i;
                         break;
                     }
                 }

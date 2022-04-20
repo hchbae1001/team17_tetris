@@ -25,7 +25,7 @@ public class LeaderBoard_Select extends Application {
     Tetris tetris = new Tetris();
     StartMenu startMenu = new StartMenu();
 
-    private static Form boardSelectForm;
+    public static Form boardSelectForm;
 
     public static Text modeSelect = new Text("Mode");
     public static Text standardMode = new Text("STANDARD");
@@ -41,18 +41,18 @@ public class LeaderBoard_Select extends Application {
             "ITEM","STANDARD"));
     final private static Integer menu1_max = selectOne.size();
     private static String menuSelected1 = selectOne.get(menu1_max - 1);
-    private static Integer count1 = menu1_max - 1;
+    public static Integer count1 = menu1_max - 1;
 
     //0-hard 1-normal 2-easy
     final private static ArrayList<String> selectTwo = new ArrayList<String>(Arrays.asList(
             "HARD", "NORMAL", "EASY"));
     final private static Integer menu2_max = selectTwo.size();
     private static String menuSelected2;
-    private static Integer count2 = null;
+    public static Integer count2 = null;
 
     Stage window;
     public static Boolean modeSelected = false;
-    private void boardSelectSetting(){
+    public void boardSelectSetting(){
         modeSelect.setStyle("-fx-font: 40 arial");
         modeSelect.setX(XMAX / 2 - 50);
         modeSelect.setY(YMAX / 2 - 150);
@@ -67,7 +67,7 @@ public class LeaderBoard_Select extends Application {
         itemMode.setX(XMAX / 2 - 50);
         itemMode.setY(YMAX / 2);
         itemMode.setFill(Color.BLACK);
-        //
+
         difficulty.setStyle("-fx-font: 40 arial");
         difficulty.setX(XMAX / 2 + 100);
         difficulty.setY(YMAX / 2 - 150);
@@ -109,7 +109,7 @@ public class LeaderBoard_Select extends Application {
         boardSelect.setResizable(false);
         boardSelect.show();
     }
-    private void colorReset(){
+    public void colorReset(){
         if(!modeSelected){
             standardMode.setFill(Color.BLACK);
             itemMode.setFill(Color.BLACK);
@@ -118,7 +118,7 @@ public class LeaderBoard_Select extends Application {
         normalMode.setFill(Color.BLACK);
         hardMode.setFill(Color.BLACK);
     }
-    private void menuColoring(){
+    public void menuColoring(){
         colorReset();
         //모드 선택시 색상고정
         if(!modeSelected){
@@ -153,7 +153,7 @@ public class LeaderBoard_Select extends Application {
         }
     }
 
-    private void boardSelectPress(Form form) {
+    public void boardSelectPress(Form form) {
         scene.setOnKeyPressed((new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
