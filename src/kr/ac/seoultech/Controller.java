@@ -39,13 +39,14 @@ public class Controller {
                 form.b.setX(form.b.getX() + Tetris.MOVE);
                 form.c.setX(form.c.getX() + Tetris.MOVE);
                 form.d.setX(form.d.getX() + Tetris.MOVE);
-            }else{
+            }/*else{
                 for(int i = 0; i < Tetris.YMAX/Tetris.SIZE; i++){
                     System.out.println(String.format("%02d 번째 줄 : ", i) + Tetris.MESH[0][i] + Tetris.MESH[1][i] + Tetris.MESH[2][i] + Tetris.MESH[3][i] + Tetris.MESH[4][i] + Tetris.MESH[5][i] + Tetris.MESH[6][i]
                             + Tetris.MESH[7][i] + Tetris.MESH[8][i] + Tetris.MESH[9][i]);
                 }
                 System.out.println();
             }
+            */
         }
     }
 
@@ -73,13 +74,16 @@ public class Controller {
                 form.b.setX(form.b.getX() - Tetris.MOVE);
                 form.c.setX(form.c.getX() - Tetris.MOVE);
                 form.d.setX(form.d.getX() - Tetris.MOVE);
-            }else{
+            }/*else{
                 for(int i = 0; i < Tetris.YMAX/Tetris.SIZE; i++){
                     System.out.println(String.format("%02d 번째 줄 : ", i) + Tetris.MESH[0][i] + Tetris.MESH[1][i] + Tetris.MESH[2][i] + Tetris.MESH[3][i] + Tetris.MESH[4][i] + Tetris.MESH[5][i] + Tetris.MESH[6][i]
                             + Tetris.MESH[7][i] + Tetris.MESH[8][i] + Tetris.MESH[9][i]);
                 }
                 System.out.println();
+
+
             }
+            */
         }
     }
 
@@ -221,4 +225,6 @@ public class Controller {
         }
         return form;
     }
+
+
 }
