@@ -19,8 +19,6 @@ public class LeaderBoard_menu extends Application {
     final private static Pane group = new Pane();
     public static Scene scene = new Scene(group, XMAX + 150, YMAX - SIZE);
 
-    public static int RankingColor = -1;
-
     public static Text Title = new Text("Leaderboard");
 
     public static Text[] Ranking_score = new Text[10];
@@ -136,8 +134,8 @@ public class LeaderBoard_menu extends Application {
             Ranking_user[i].setFill(Color.BLACK);
         }
 
-        LeaderBoardColor(RankingColor);
-        RankingColor = -1;
+        LeaderBoardColor(Leaderboard.RankingColor);
+        Leaderboard.RankingColor = -1;
 
         group.getChildren().addAll(
                 Ranking_score[0],Ranking_score[1],Ranking_score[2],Ranking_score[3],Ranking_score[4],Ranking_score[5],Ranking_score[6],Ranking_score[7],Ranking_score[8],Ranking_score[9],

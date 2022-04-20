@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class LeaderboardTest {
 
     @Test
-    void addScore() {   //color change에서 오류 뜸 나중에 확인 필요!!!!
+    void addScore() {
         Leaderboard.loadScores("TestScore");
 
         //Case 0 (EASY, STANDARD)
