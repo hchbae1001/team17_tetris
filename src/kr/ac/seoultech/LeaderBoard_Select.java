@@ -3,6 +3,7 @@ package kr.ac.seoultech;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -40,14 +41,14 @@ public class LeaderBoard_Select extends Application {
     final private static ArrayList<String> selectOne = new ArrayList<String>(Arrays.asList(
             "ITEM","STANDARD"));
     final private static Integer menu1_max = selectOne.size();
-    private static String menuSelected1 = selectOne.get(menu1_max - 1);
+    public static String menuSelected1 = selectOne.get(menu1_max - 1);
     public static Integer count1 = menu1_max - 1;
 
     //0-hard 1-normal 2-easy
     final private static ArrayList<String> selectTwo = new ArrayList<String>(Arrays.asList(
             "HARD", "NORMAL", "EASY"));
     final private static Integer menu2_max = selectTwo.size();
-    private static String menuSelected2;
+    public static String menuSelected2;
     public static Integer count2 = null;
 
     Stage window;
@@ -157,106 +158,114 @@ public class LeaderBoard_Select extends Application {
         scene.setOnKeyPressed((new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                switch (event.getCode()) {
-                    case UP:
-                        if(!modeSelected){
-                            if(count1 >= 0 && count1 < menu1_max -1){
-                                ++count1;
-                                menuSelected1 = selectOne.get(count1);
-                                System.out.println(menuSelected1);
-                            }else{
-                                count1 = 0;
-                                menuSelected1 = selectOne.get(count1);
-                                System.out.println(menuSelected1);
-                            }
-                        }else{
-                            if(count2 >= 0 && count2 < menu2_max -1){
-                                ++count2;
-                                menuSelected2 = selectTwo.get(count2);
-                                System.out.println(menuSelected2);
-                            }else{
-                                count2 = 0;
-                                menuSelected2 = selectTwo.get(count2);
-                                System.out.println(menuSelected2);
-                            }
-                        }
-                        menuColoring();
-                        break;
-
-                    case DOWN:
-                        if(!modeSelected){
-                            if(count1 >= 1 && count1 < menu1_max){
-                                --count1;
-                                menuSelected1 = selectOne.get(count1);
-                                System.out.println(menuSelected1);
-                            }else{
-                                count1 = menu1_max - 1;
-                                menuSelected1 = selectOne.get(count1);
-                                System.out.println(menuSelected1);
-                            }
-                        }else{
-                            if(count2 >= 1 && count2 < menu2_max){
-                                --count2;
-                                menuSelected2 = selectTwo.get(count2);
-                                System.out.println(menuSelected2);
-                            }else{
-                                count2 = menu2_max - 1;
-                                menuSelected2 = selectTwo.get(count2);
-                                System.out.println(menuSelected2);
-                            }
-                        }
-                        menuColoring();
-                        break;
-                    case SPACE:
-                        if(modeSelected){
-                            LeaderBoard_menu.mode = menuSelected1;
-                            switch (menuSelected2){
-                                case "EASY":
-                                    LeaderBoard_menu.difficulty = "EASY";
-                                    break;
-                                case "NORMAL":
-                                    LeaderBoard_menu.difficulty = "NORMAL";
-                                    break;
-                                case "HARD":
-                                    LeaderBoard_menu.difficulty = "HARD";
-                                    break;
-                            }
-                            if(StartMenu.isLeaderboardOn){
-                                System.out.println("check setscene");
-                                LeaderBoard_menu.LeaderBoard();
-                                window.setScene(LeaderBoard_menu.scene);
-                            }else{
-                                System.out.println("check start");
-                                try{
-                                    LeaderBoard_menu leaderBoard_menu = new LeaderBoard_menu();
-                                    leaderBoard_menu.start(window);
-                                }catch (Exception e){
-                                    e.printStackTrace();
-                                }
-                            }
-
-                        }else{
-                            count2 = menu2_max - 1;
-                            menuSelected2 = selectTwo.get(count2);
-                            System.out.println(menuSelected2);
-                            easeMode.setFill(Color.RED);
-                            modeSelected = true;
-                            menuColoring();
-
-                        }
-                        break;
-                    case BACK_SPACE:
-                        System.out.println("modeSelected:"+modeSelected);
-                        if(modeSelected){
-                            modeSelected = false;
-                            count2 = null;
-                            menuColoring();
-                        }else{
-                            window.setScene(StartMenu.scene);
-                        }
-                        break;
-                }
+                selectBoard(event.getCode());
             }
         }));
+    }
+
+    public void selectBoard(KeyCode k)
+    {
+        switch (k) {
+            case UP:
+                if(!modeSelected){
+                    if(count1 >= 0 && count1 < menu1_max -1){
+                        ++count1;
+                        menuSelected1 = selectOne.get(count1);
+                        System.out.println(menuSelected1);
+                    }
+                    else{
+                        count1 = 0;
+                        menuSelected1 = selectOne.get(count1);
+                        System.out.println(menuSelected1);
+                    }
+
+                }
+                else{
+                    if(count2 >= 0 && count2 < menu2_max -1){
+                        ++count2;
+                        menuSelected2 = selectTwo.get(count2);
+                        System.out.println(menuSelected2);
+                    }else{
+                        count2 = 0;
+                        menuSelected2 = selectTwo.get(count2);
+                        System.out.println(menuSelected2);
+                    }
+                }
+                menuColoring();
+                break;
+
+            case DOWN:
+                if(!modeSelected){
+                    if(count1 >= 1 && count1 < menu1_max){
+                        --count1;
+                        menuSelected1 = selectOne.get(count1);
+                        System.out.println(menuSelected1);
+                    }else{
+                        count1 = menu1_max - 1;
+                        menuSelected1 = selectOne.get(count1);
+                        System.out.println(menuSelected1);
+                    }
+                }else{
+                    if(count2 >= 1 && count2 < menu2_max){
+                        --count2;
+                        menuSelected2 = selectTwo.get(count2);
+                        System.out.println(menuSelected2);
+                    }else{
+                        count2 = menu2_max - 1;
+                        menuSelected2 = selectTwo.get(count2);
+                        System.out.println(menuSelected2);
+                    }
+                }
+                menuColoring();
+                break;
+            case SPACE:
+                if(modeSelected){
+                    LeaderBoard_menu.mode = menuSelected1;
+                    switch (menuSelected2){
+                        case "EASY":
+                            LeaderBoard_menu.difficulty = "EASY";
+                            break;
+                        case "NORMAL":
+                            LeaderBoard_menu.difficulty = "NORMAL";
+                            break;
+                        case "HARD":
+                            LeaderBoard_menu.difficulty = "HARD";
+                            break;
+                    }
+                    if(StartMenu.isLeaderboardOn){
+                        System.out.println("check setscene");
+                        LeaderBoard_menu.LeaderBoard();
+                        window.setScene(LeaderBoard_menu.scene);
+                    }else{
+                        System.out.println("check start");
+                        try{
+                            LeaderBoard_menu leaderBoard_menu = new LeaderBoard_menu();
+                            leaderBoard_menu.start(window);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+
+                }else{
+                    count2 = menu2_max - 1;
+                    menuSelected2 = selectTwo.get(count2);
+                    System.out.println(menuSelected2);
+                    easeMode.setFill(Color.RED);
+                    modeSelected = true;
+                    menuColoring();
+
+                }
+                break;
+            case BACK_SPACE:
+                System.out.println("modeSelected:"+modeSelected);
+                if(modeSelected){
+                    modeSelected = false;
+                    count2 = null;
+                    menuColoring();
+                }else{
+                    window.setScene(StartMenu.scene);
+                }
+                break;
+        }
     }
 }
