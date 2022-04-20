@@ -154,6 +154,7 @@ public class LeaderBoard_menu extends Application {
         LeaderBoard();
 
         primaryStage.setScene(scene);
+
         primaryStage.setTitle("T E T R I S");
         primaryStage.show();
     }
