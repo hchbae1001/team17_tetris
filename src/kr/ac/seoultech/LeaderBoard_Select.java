@@ -222,8 +222,11 @@ public class LeaderBoard_Select extends Application {
                                     break;
                             }
                             if(StartMenu.isLeaderboardOn){
+                                System.out.println("check setscene");
+                                LeaderBoard_menu.LeaderBoard();
                                 window.setScene(LeaderBoard_menu.scene);
                             }else{
+                                System.out.println("check start");
                                 try{
                                     LeaderBoard_menu leaderBoard_menu = new LeaderBoard_menu();
                                     leaderBoard_menu.start(window);
@@ -243,6 +246,7 @@ public class LeaderBoard_Select extends Application {
                         }
                         break;
                     case BACK_SPACE:
+                        System.out.println("modeSelected:"+modeSelected);
                         if(modeSelected){
                             modeSelected = false;
                             count2 = null;

@@ -73,6 +73,21 @@ class TetrisTest {
             Field pauseSelected = tetris.getClass().getDeclaredField("pauseSelected");
             pauseSelected.setAccessible(true);
 
+            Field pause_max = tetris.getClass().getDeclaredField("pause_max");
+            pause_max.setAccessible(true);
+            Integer p_max = (Integer)pause_max.get(tetris);
+
+            Field pauseCount = tetris.getClass().getDeclaredField("pauseCount");
+            pauseCount.setAccessible(true);
+
+            Field group = tetris.getClass().getDeclaredField("group");
+            group.setAccessible(true);
+            Pane _group = (Pane) group.get(tetris);
+
+            Field weightIsLocked = tetris.getClass().getDeclaredField("weightIsLocked");
+            weightIsLocked.setAccessible(true);
+
+
             tetris.setNewGame();
 
             isPaused.set(tetris, true);
@@ -83,13 +98,11 @@ class TetrisTest {
             isPaused.set(tetris, true);
             pauseSelected.set(tetris, "Continue");
             tetris.arrowKeyCodeFunc(KeyCode.SPACE,form);
-
             tetris.deleteOldGame();
 
             isPaused.set(tetris, true);
             pauseSelected.set(tetris, "Restart");
             tetris.arrowKeyCodeFunc(KeyCode.SPACE,form);
-
             tetris.deleteOldGame();
 
 /*
@@ -104,19 +117,27 @@ class TetrisTest {
             tetris.deleteOldGame();
 
  */
-            isPaused.set(tetris, true);
-            tetris.arrowKeyCodeFunc(KeyCode.DOWN,form);
-            tetris.arrowKeyCodeFunc(KeyCode.DOWN,form);
-            tetris.arrowKeyCodeFunc(KeyCode.DOWN,form);
-            tetris.arrowKeyCodeFunc(KeyCode.DOWN,form);
 
-            tetris.arrowKeyCodeFunc(KeyCode.UP,form);
-            tetris.arrowKeyCodeFunc(KeyCode.UP,form);
-            tetris.arrowKeyCodeFunc(KeyCode.UP,form);
-            tetris.arrowKeyCodeFunc(KeyCode.UP,form);
+
+            isPaused.set(tetris, true);
+            for(int i = p_max - 1; i >= 0; i--){
+                assertEquals(i,pauseCount.get(tetris));
+                tetris.arrowKeyCodeFunc(KeyCode.DOWN,form);
+            }
+            assertEquals(p_max - 1,pauseCount.get(tetris));
+
+            pauseCount.set(tetris, 0);
+            for(int i = 0; i <= p_max - 1; i++){
+                assertEquals(i,pauseCount.get(tetris));
+                tetris.arrowKeyCodeFunc(KeyCode.UP,form);
+            }
+            assertEquals(0,pauseCount.get(tetris));
+
 
             isPaused.set(tetris, false);
+            _group.getChildren().clear();
             tetris.arrowKeyCodeFunc(KeyCode.ESCAPE,form);
+            System.out.println(_group.getChildren().get(0));
             tetris.deleteOldGame();
 
             isPaused.set(tetris, false);
@@ -128,6 +149,9 @@ class TetrisTest {
             tetris.deleteOldGame();
 
             isPaused.set(tetris, false);
+            weightIsLocked.set(tetris, true);
+            tetris.arrowKeyCodeFunc(KeyCode.RIGHT,form);
+            weightIsLocked.set(tetris, false);
             tetris.arrowKeyCodeFunc(KeyCode.RIGHT,form);
             tetris.deleteOldGame();
 
@@ -136,15 +160,12 @@ class TetrisTest {
             tetris.deleteOldGame();
 
             isPaused.set(tetris, false);
+            weightIsLocked.set(tetris, true);
+            tetris.arrowKeyCodeFunc(KeyCode.LEFT,form);
+            weightIsLocked.set(tetris, false);
             tetris.arrowKeyCodeFunc(KeyCode.LEFT,form);
             tetris.deleteOldGame();
 
-
-
-            //tetris.arrowKeyCodeFunc(KeyCode.UP,form);
-            //tetris.arrowKeyCodeFunc(KeyCode.RIGHT,form);
-            //tetris.arrowKeyCodeFunc(KeyCode.DOWN,form);
-            //tetris.arrowKeyCodeFunc(KeyCode.LEFT,form);
 
 
         } catch (NoSuchFieldException e) {
@@ -168,6 +189,20 @@ class TetrisTest {
             Field pauseSelected = tetris.getClass().getDeclaredField("pauseSelected");
             pauseSelected.setAccessible(true);
 
+            Field pause_max = tetris.getClass().getDeclaredField("pause_max");
+            pause_max.setAccessible(true);
+            Integer p_max = (Integer)pause_max.get(tetris);
+
+            Field pauseCount = tetris.getClass().getDeclaredField("pauseCount");
+            pauseCount.setAccessible(true);
+
+            Field group = tetris.getClass().getDeclaredField("group");
+            group.setAccessible(true);
+            Pane _group = (Pane) group.get(tetris);
+
+            Field weightIsLocked = tetris.getClass().getDeclaredField("weightIsLocked");
+            weightIsLocked.setAccessible(true);
+
             tetris.setNewGame();
 
             isPaused.set(tetris, true);
@@ -200,18 +235,23 @@ class TetrisTest {
 
  */
             isPaused.set(tetris, true);
-            tetris.WASDKeyCodeFunc(KeyCode.S,form);
-            tetris.WASDKeyCodeFunc(KeyCode.S,form);
-            tetris.WASDKeyCodeFunc(KeyCode.S,form);
-            tetris.WASDKeyCodeFunc(KeyCode.S,form);
+            for(int i = p_max - 1; i >= 0; i--){
+                assertEquals(i, pauseCount.get(tetris));
+                tetris.WASDKeyCodeFunc(KeyCode.S,form);
+            }
+            assertEquals(p_max - 1,pauseCount.get(tetris));
 
-            tetris.WASDKeyCodeFunc(KeyCode.W,form);
-            tetris.WASDKeyCodeFunc(KeyCode.W,form);
-            tetris.WASDKeyCodeFunc(KeyCode.W,form);
-            tetris.WASDKeyCodeFunc(KeyCode.W,form);
+            pauseCount.set(tetris, 0);
+            for(int i = 0; i <= p_max - 1; i++){
+                assertEquals(i,pauseCount.get(tetris));
+                tetris.WASDKeyCodeFunc(KeyCode.W,form);
+            }
+            assertEquals(0,pauseCount.get(tetris));
 
             isPaused.set(tetris, false);
+            _group.getChildren().clear();
             tetris.WASDKeyCodeFunc(KeyCode.ESCAPE,form);
+            System.out.println(_group.getChildren().get(0));
             tetris.deleteOldGame();
 
             isPaused.set(tetris, false);
@@ -223,6 +263,9 @@ class TetrisTest {
             tetris.deleteOldGame();
 
             isPaused.set(tetris, false);
+            weightIsLocked.set(tetris, true);
+            tetris.WASDKeyCodeFunc(KeyCode.D,form);
+            weightIsLocked.set(tetris, false);
             tetris.WASDKeyCodeFunc(KeyCode.D,form);
             tetris.deleteOldGame();
 
@@ -231,6 +274,9 @@ class TetrisTest {
             tetris.deleteOldGame();
 
             isPaused.set(tetris, false);
+            weightIsLocked.set(tetris, true);
+            tetris.WASDKeyCodeFunc(KeyCode.A,form);
+            weightIsLocked.set(tetris, false);
             tetris.WASDKeyCodeFunc(KeyCode.A,form);
             tetris.deleteOldGame();
 
@@ -264,10 +310,15 @@ class TetrisTest {
             object.setAccessible(true);
             for(int i = 0; i < 100; i++){
                 Form form = Controller.makeRect("o");
+                assertEquals(1, form.form);
                 tetris.MoveTurn(form);
+                assertEquals(2, form.form);
                 tetris.MoveTurn(form);
+                assertEquals(3, form.form);
                 tetris.MoveTurn(form);
+                assertEquals(4, form.form);
                 tetris.MoveTurn(form);
+                assertEquals(1, form.form);
             }
 
 

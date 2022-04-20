@@ -26,7 +26,7 @@ public class Tetris extends Application {
     public static int MOVE = Setting.MOVE;
     public static int SIZE = Setting.SIZE;
     public static int XMAX = SIZE * 10;
-    public static int YMAX = SIZE * (20 - DEADLINEGAP);
+    public static int YMAX = SIZE * (20 + DEADLINEGAP);
     public static int[][] MESH = new int[XMAX / SIZE][YMAX / SIZE];
     public static final int BonusRate = 10;
     public static final int SpeedUpRate = 50;
@@ -96,8 +96,11 @@ public class Tetris extends Application {
         XMAX = SIZE * 10;
         YMAX = SIZE * (20 + DEADLINEGAP);
         scene = new Scene(group, XMAX + 150, YMAX - SIZE);
+
         setNewGame();
-        stage.setScene(scene);
+
+        window.setScene(scene);
+        //stage.setScene(scene);
         stage.setTitle("T E T R I S");
         stage.setResizable(false);
         stage.show();
@@ -143,6 +146,8 @@ public class Tetris extends Application {
                         case "Go To Menu":
                             try {
                                 deleteOldGame();
+                                window.setWidth(440);
+                                window.setHeight(613);
                                 window.setScene(StartMenu.scene);
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -246,6 +251,8 @@ public class Tetris extends Application {
                         case "Go To Menu":
                             try {
                                 deleteOldGame();
+                                window.setWidth(440);
+                                window.setHeight(613);
                                 window.setScene(StartMenu.scene);
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -937,6 +944,7 @@ public class Tetris extends Application {
     public void showGameover() {
         if(!game)
             return;
+
         game = false;
         updateScoretext();
         Text over = new Text("GAME OVER");
@@ -947,27 +955,36 @@ public class Tetris extends Application {
         group.getChildren().add(over);
 
         if (Leaderboard.topScores.get(9) < score) {
-            TextInputDialog dialog = new TextInputDialog("name");
+            TextInputDialog dialog = new TextInputDialog("AAA");
             dialog.setTitle("Leaderboard");
             dialog.setHeaderText(null);
-            dialog.setContentText("이름을 입력해주세요");
+            dialog.setContentText("이름을 입력해주세요. (3글자)");
 
             Optional<String> result = dialog.showAndWait();
 
             if (result.isPresent()) {
                 name = result.get();
-                Leaderboard.addScore(score, name,level.ordinal()+itemModeInt*3);
-                /*
-                for (int i = 9; i >= 0; i--) {
-                    if (Leaderboard.topScores.get(i) == score && Leaderboard.topUser.get(i) == name) {
-                        LeaderBoard_menu.RankingColor = i;
-                        break;
+                while(name.length()!=3)
+                {
+                    dialog.setContentText("글자수가 올바르지 않습니다.");
+
+                    result = dialog.showAndWait();
+
+                    if(result.isPresent()){
+                        name = result.get();
                     }
+                    else break;
                 }
-                 */
+                System.out.println("name length :" + name.length());
+                Leaderboard.addScore(score, name,level.ordinal()+itemModeInt*3);
+                System.out.println("add score difficulty : "+(level.ordinal()+itemModeInt*3));
             }
         }
         Leaderboard.saveScores(Leaderboard.fileName);
+
+        deleteOldGame();
+        window.setWidth(440);
+        window.setHeight(613);
 
         LeaderBoard_menu leader = new LeaderBoard_menu();
         if (!StartMenu.isLeaderboardOn) {
@@ -1006,7 +1023,7 @@ public class Tetris extends Application {
                 Platform.runLater(new Runnable() {
                     public void run() {
 
-                        if(isPaused){
+                        if(isPaused || !game){
                             fall.cancel();
                             return;
                         }
@@ -1070,7 +1087,8 @@ public class Tetris extends Application {
                 });
             }
         };
-
+        window.setWidth(XMAX + 140 + SIZE*2);
+        window.setHeight(YMAX + 38 - SIZE);
         fall.scheduleAtFixedRate(task, 0, 1000);
     }
 
@@ -1080,28 +1098,11 @@ public class Tetris extends Application {
     }
 
     public void setNewGame() {
-        if(itemModeBool)
-        {
-            LeaderBoard_menu.mode="ITEM";
-            itemModeInt=1;
-        }
-        else
-        {
-            LeaderBoard_menu.mode="STANDARD";
-            itemModeInt=0;
-        }
-        switch (level)
-        {
-            case Easy:
-                LeaderBoard_menu.difficulty="EASY";
-                break;
-            case Normal:
-                LeaderBoard_menu.difficulty="NORMAL";
-                break;
-            case Hard:
-                LeaderBoard_menu.difficulty="HARD";
-                break;
-        }
+
+        XMAX = SIZE * 10;
+        YMAX = SIZE * (20 + DEADLINEGAP);
+        window.setWidth(XMAX + 140 + SIZE*2);
+        window.setHeight(YMAX + 38 - SIZE);
 
         MESH = new int[XMAX / SIZE][YMAX / SIZE];
         /*
@@ -1219,6 +1220,7 @@ public class Tetris extends Application {
 
         group.getChildren().add(animPane);
 
+
         if(isTest)
             return;
 
@@ -1227,6 +1229,31 @@ public class Tetris extends Application {
         } else {
             moveOnKeyPressWASD(a);
         }
+
+        if(itemModeBool)
+        {
+            LeaderBoard_menu.mode="ITEM";
+            itemModeInt=1;
+        }
+        else
+        {
+            LeaderBoard_menu.mode="STANDARD";
+            itemModeInt=0;
+        }
+        switch (level)
+        {
+            case Easy:
+                LeaderBoard_menu.difficulty="EASY";
+                break;
+            case Normal:
+                LeaderBoard_menu.difficulty="NORMAL";
+                break;
+            case Hard:
+                LeaderBoard_menu.difficulty="HARD";
+                break;
+        }
+
+
     }
 
     public void deleteOldGame() {
