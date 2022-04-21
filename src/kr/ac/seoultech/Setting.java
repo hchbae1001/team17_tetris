@@ -25,17 +25,11 @@ public class Setting extends Application {
     public static Scene scene = new Scene(group, XMAX + 150, YMAX - SIZE);
     Tetris tetris = new Tetris();
     StartMenu startMenu = new StartMenu();
-
+    public static Boolean isCreate = false;
     private static Form settingForm;
     //옵션 기록용 file
     final private static String filePath = new File("").getAbsolutePath();
     final private static String fileName = "Setting";
-
-    //색약모드 controll
-
-    //TODO - return to default setting
-    //TODO - ScoreBoard 기록 초기화
-    //TODO - Key Setting
 
     public static Text colorBlindText = new Text("Color Blind Mode :");
     public static Text keySetting = new Text("Key Setting :");
@@ -60,9 +54,8 @@ public class Setting extends Application {
     private static Integer count = menu_max - 1;
     Stage window;
     private static Boolean resetConfigCheck = false;
-
-    private void settingMenuSetting(){
-
+    public static String title ="";
+    public void settingSetting(){
         difficulty.setStyle("-fx-font: 20 arial");
         difficulty.setX(XMAX / 2 - 100);
         difficulty.setY(YMAX / 2 - 100);
@@ -130,19 +123,17 @@ public class Setting extends Application {
                 diffcultyBool,colorBlindBool,keySettingBool,sizeSettingBool,resetBool,resetScoreBoardBool
         );
     }
-
     @Override
     public void start(Stage settingStage){
         System.out.println(menuSelected);
         window = settingStage;
-        settingMenuSetting();
+        settingSetting();
         settingPress(settingForm);
-
         settingStage.setScene(scene);
         settingStage.setTitle("T E T R I S");
+        title = settingStage.getTitle();
         settingStage.setResizable(false);
         settingStage.show();
-
     }
     public static void loadSetting(){
         try{
@@ -204,12 +195,13 @@ public class Setting extends Application {
                             "size25" //tetris size setting
             );
             writer.close();
+            isCreate = true;
         }catch (Exception e){
             e.printStackTrace();
         }
     }
 
-    private static void saveSettings(){
+    public static void saveSettings(ArrayList savedSetting){
         FileWriter output = null;
         try{
             File f = new File(filePath,fileName);
@@ -227,16 +219,20 @@ public class Setting extends Application {
             e.printStackTrace();
         }
     }
-    private void colorReset(){
+    public static Boolean colorResetVal = false;
+
+    public void colorReset(){
         diffcultyBool.setFill(Color.BLACK);
         colorBlindBool.setFill(Color.BLACK);
         keySettingBool.setFill(Color.BLACK);
         sizeSettingBool.setFill(Color.BLACK);
         resetScoreBoardBool.setFill(Color.BLACK);
         resetBool.setFill(Color.BLACK);
+        colorResetVal = true;
     }
-    private void menuColoring(){
-        switch (count){
+
+    public void menuColoring(int val){
+        switch (val){
             case 5:
                 colorReset();
                 diffcultyBool.setFill(Color.RED);
@@ -279,7 +275,7 @@ public class Setting extends Application {
                             menuSelected = select.get(count);
                             System.out.println(menuSelected);
                         }
-                        menuColoring();
+                        menuColoring(count);
                         break;
 
                     case DOWN:
@@ -292,7 +288,7 @@ public class Setting extends Application {
                             menuSelected = select.get(count);
                             System.out.println(menuSelected);
                         }
-                        menuColoring();
+                        menuColoring(count);
                         break;
 
                     case SPACE:
@@ -380,7 +376,7 @@ public class Setting extends Application {
                             if(resetConfigCheck){
                                 resetConfigCheck = false;
                             }else{
-                                saveSettings();
+                                saveSettings(savedSetting);
                             }
                             window.setScene(StartMenu.scene);
                         }catch (Exception e){
@@ -395,7 +391,7 @@ public class Setting extends Application {
         diffcultyBool.setText("Easy");
         colorBlindBool.setText("FALSE");
         keySettingBool.setText("Arrow Keys");
-        sizeSettingBool.setText("size 25");
+        sizeSettingBool.setText("size25");
         createSettingFile();
         Tetris.level = Tetris.Difficulty.Easy;
         Form.colorBlindMode = false;

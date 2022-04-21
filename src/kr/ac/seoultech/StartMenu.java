@@ -25,31 +25,31 @@ public class StartMenu extends Application {
     public static ArrayList<String> settings = new ArrayList<String>();
     final private static Pane group = new Pane();
     public static Scene scene = new Scene(group, XMAX + 150, YMAX - SIZE);
-    private static Form menu;
+    public static Form menu;
     //페이지 내 표시할 것들
-    final private static Text gameTitle = new Text("Team17 TETRIS");
-    final private static Text help = new Text("Space = Select Menu");
-    final private static Text menu4_start = new Text("STANDARD MODE START");
-    final private static Text menu3_itemstart = new Text("ITEM MODE START");
-    final private static Text menu2_setting = new Text("Setting");
-    final private static Text menu1_scoreBoard = new Text("Score Board");
-    final private static Text menu0_Exit = new Text("Exit");
+    final public static Text gameTitle = new Text("Team17 TETRIS");
+    final public static Text help = new Text("Space = Select Menu");
+    final public static Text menu4_start = new Text("STANDARD MODE START");
+    final public static Text menu3_itemstart = new Text("ITEM MODE START");
+    final public static Text menu2_setting = new Text("Setting");
+    final public static Text menu1_scoreBoard = new Text("Score Board");
+    final public static Text menu0_Exit = new Text("Exit");
     private static boolean isGameOn = false;
     private static boolean isSettingOn = false;
     public static boolean isLeaderboardOn = false;
     public static boolean isBoardSelectOn = false;
     //count = 3 -> start 에 커서
 
-    private static String menuSelected = "";
+    public static String menuSelected = "";
 
-    final private static ArrayList<String> select = new ArrayList<String>(Arrays.asList(
+    public static ArrayList<String> select = new ArrayList<String>(Arrays.asList(
             "exit", "scoreBoard", "setting",  "itemstart","start"));
-    final private static Integer menu_max = select.size();
-    private static Integer count = select.size() - 1;
+    public static Integer menu_max = select.size();
+    public static Integer count = select.size() - 1;
 
     public static Stage window;
 
-    private void startMenuSetting(){
+    public void startMenuSetting(){
 
         gameTitle.setStyle("-fx-font-size: 20px");
         gameTitle.setFont(Font.font(null, FontWeight.BOLD,20));
@@ -107,7 +107,7 @@ public class StartMenu extends Application {
         primaryStage.show();
     }
 
-    private void colorReset(){
+    public void colorReset(){
         menu4_start.setFill(Color.BLACK);
         menu3_itemstart.setFill(Color.BLACK);
         menu2_setting.setFill(Color.BLACK);
@@ -115,8 +115,8 @@ public class StartMenu extends Application {
         menu0_Exit.setFill(Color.BLACK);
     }
 
-    private void menuColoring(){
-        switch (count){
+    public void menuColoring(Integer val){
+        switch (val){
             case 4:
                 colorReset();
                 menu4_start.setFill(Color.RED);
@@ -139,7 +139,7 @@ public class StartMenu extends Application {
                 break;
         }
     }
-    private void menuPress(Form form){
+    public void menuPress(Form form){
         Setting settingMenu = new Setting();
         Tetris tetris = new Tetris();
         LeaderBoard_menu leaderboard = new LeaderBoard_menu();
@@ -158,7 +158,7 @@ public class StartMenu extends Application {
                             menuSelected = select.get(count);
                             System.out.println(count);
                         }
-                        menuColoring();
+                        menuColoring(count);
                         break;
 
                     case DOWN:
@@ -171,7 +171,7 @@ public class StartMenu extends Application {
                             menuSelected = select.get(count);
                             System.out.println(count);
                         }
-                        menuColoring();
+                        menuColoring(count);
                         break;
 
                     case SPACE:
