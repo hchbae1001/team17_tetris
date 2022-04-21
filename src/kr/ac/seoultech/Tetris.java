@@ -156,6 +156,7 @@ public class Tetris extends Application {
                         case "Quit game":
                             System.out.println("exit");
                             window.close();
+                            System.exit(0);
                             break;
                     }
                     break;
@@ -261,6 +262,7 @@ public class Tetris extends Application {
                         case "Quit game":
                             System.out.println("exit");
                             window.close();
+                            System.exit(0);
                             break;
                     }
                     break;
