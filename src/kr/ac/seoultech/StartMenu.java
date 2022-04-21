@@ -235,6 +235,7 @@ public class StartMenu extends Application {
                             case "exit":
                                 System.out.println("exit");
                                 window.close();
+                                System.exit(0);
                                 break;
                         }
                         break;
