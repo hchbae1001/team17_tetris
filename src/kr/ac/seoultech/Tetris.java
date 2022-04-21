@@ -665,6 +665,7 @@ public class Tetris extends Application {
                     scoreItem(pane, i * SIZE, 0, XMAX - SIZE);
                 }
                 lines = i;
+                System.out.println("Remove line : " + lines);
                 break;
             }
             full = 0;
@@ -675,6 +676,7 @@ public class Tetris extends Application {
                 if (node instanceof NewShape)
                     rects.add(node);
             }
+            System.out.println("Score + " + (bonusScore * 100 * (lineCount + 1)));
             score += (bonusScore * 100 * (lineCount + 1));
             linesNo++;
 
@@ -1058,6 +1060,11 @@ public class Tetris extends Application {
     }
 
     public void continueGame(String what){
+        XMAX = SIZE * 10;
+        YMAX = SIZE * (20 + DEADLINEGAP);
+        window.setWidth(XMAX + 140 + SIZE*2);
+        window.setHeight(YMAX + 38 - SIZE);
+
         timeStop = true;
         group.getChildren().add(continueCounter);
         Timer fall = new Timer();
@@ -1224,12 +1231,6 @@ public class Tetris extends Application {
         if(isTest)
             return;
 
-        if (Setting.keySettingBool.getText().equals("Arrow Keys")) {
-            moveOnKeyPressArrow(a);
-        } else {
-            moveOnKeyPressWASD(a);
-        }
-
         if(itemModeBool)
         {
             LeaderBoard_menu.mode="ITEM";
@@ -1251,6 +1252,12 @@ public class Tetris extends Application {
             case Hard:
                 LeaderBoard_menu.difficulty="HARD";
                 break;
+        }
+
+        if (Setting.keySettingBool.getText().equals("Arrow Keys")) {
+            moveOnKeyPressArrow(a);
+        } else {
+            moveOnKeyPressWASD(a);
         }
 
 
