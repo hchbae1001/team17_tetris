@@ -350,16 +350,31 @@ class TetrisTest {
 
             tetris.setNewGame();
 
-            for(int i = 0; i < Tetris.XMAX/Tetris.MOVE; i++) {
-                    pane.getChildren().add(new NewShape(i*Tetris.MOVE, 10*Tetris.MOVE, "o"));
-                    Tetris.MESH[i][10] = 1;
-            }
 
+            for (int i = 0; i < Tetris.XMAX / Tetris.MOVE; i++) {
+                pane.getChildren().add(new NewShape(i * Tetris.MOVE, 10 * Tetris.MOVE, "o"));
+                Tetris.MESH[i][10] = 1;
+                pane.getChildren().add(new NewShape(i * Tetris.MOVE, 11 * Tetris.MOVE, "o"));
+                Tetris.MESH[i][11] = 1;
+                pane.getChildren().add(new NewShape(i * Tetris.MOVE, 12 * Tetris.MOVE, "o"));
+                Tetris.MESH[i][12] = 1;
+                pane.getChildren().add(new NewShape(i * Tetris.MOVE, 13 * Tetris.MOVE, "o"));
+                Tetris.MESH[i][13] = 1;
+            }
             tetris.RemoveRows(pane, 0);
-            for(int i = 0; i < Tetris.XMAX/Tetris.MOVE; i++) {
+            tetris.RemoveRows(pane, 1);
+            tetris.RemoveRows(pane, 2);
+            tetris.RemoveRows(pane, 3);
+            //pane.getChildren().clear();
+            for (int i = 0; i < Tetris.XMAX / Tetris.MOVE; i++) {
                 //System.out.println(Tetris.MESH[i][10]);
                 assertEquals(0, Tetris.MESH[i][10]);
+                assertEquals(0, Tetris.MESH[i][11]);
+                assertEquals(0, Tetris.MESH[i][12]);
+                assertEquals(0, Tetris.MESH[i][13]);
             }
+
+            System.out.println(Tetris.score);
 
 
 
