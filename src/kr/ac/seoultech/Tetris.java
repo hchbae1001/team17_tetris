@@ -17,8 +17,9 @@ import javafx.scene.shape.Mesh;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.Modality;
 
-public class Tetris extends Application {
+public class Tetris extends Application implements Runnable{
     public static boolean isTest = false;
     // The variables
     // 데드라인은 최소한 2 이상 ,하지만 일자 블럭 생성 직후부터 회전이 가능하려면 4 이상을 사용해야 함
@@ -110,6 +111,28 @@ public class Tetris extends Application {
             window.close();
     }
 
+    @Override
+    public void run() {
+        System.out.println(" thread start");
+        Stage window2 = new Stage();
+
+        window2.initModality(Modality.APPLICATION_MODAL);
+        window2.setTitle("T E T R I S 2");
+        window2.setMinWidth(300);
+
+
+
+        Pane pane = new Pane();
+        Scene scene = new Scene(pane, 300, 500);
+        window2.setScene(scene);
+        window2.showAndWait();
+        try{
+            Thread.sleep(1000);
+        }catch (InterruptedException e){
+            e.printStackTrace();
+        }
+        System.out.println(" thread end");
+    }
 
     // 키입력
     private void moveOnKeyPressArrow(Form form) {
