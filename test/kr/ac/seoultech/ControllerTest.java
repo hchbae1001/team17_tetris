@@ -15,31 +15,33 @@ class ControllerTest {
 
     @Test
     void moveRight() {
+        Tetris tetris = new Tetris();
+        tetris.setNewGame();
         Form form = Controller.makeRect("o");
         int tempMax = Tetris.XMAX - Tetris.SIZE;
         while(true){
-            Controller.MoveRight(form);
+            Controller.MoveRight(form, tetris.MESH);
             if (form.a.getX() == tempMax) {
                 System.out.println(form.a.getX());
-                Controller.MoveRight(form);
+                Controller.MoveRight(form, tetris.MESH);
                 System.out.println(form.a.getX());
                 assertEquals(form.a.getX(),tempMax);
                 break;
             }else if(form.b.getX() == tempMax){
                 System.out.println(form.b.getX());
-                Controller.MoveRight(form);
+                Controller.MoveRight(form, tetris.MESH);
                 System.out.println(form.b.getX());
                 assertEquals(form.b.getX(),tempMax);
                 break;
             }else  if(form.c.getX() == tempMax){
                 System.out.println(form.c.getX());
-                Controller.MoveRight(form);
+                Controller.MoveRight(form, tetris.MESH);
                 System.out.println(form.c.getX());
                 assertEquals(form.c.getX(),tempMax);
                 break;
             }else if(form.d.getX() == tempMax){
                 System.out.println(form.d.getX());
-                Controller.MoveRight(form);
+                Controller.MoveRight(form, tetris.MESH);
                 System.out.println(form.d.getX());
                 assertEquals(form.d.getX(),tempMax);
                 break;
@@ -63,61 +65,64 @@ class ControllerTest {
         FormSix weight = new FormSix(a, b, c, d, e, f, "weight");
 
         while(true){
-            Controller.MoveRight(weight);
+            Controller.MoveRight(weight, tetris.MESH);
             if (form.a.getX() == tempMax) {
                 System.out.println(form.a.getX());
-                Controller.MoveRight(form);
+                Controller.MoveRight(form, tetris.MESH);
                 System.out.println(form.a.getX());
                 assertEquals(form.a.getX(),tempMax);
                 break;
             }else if(form.b.getX() == tempMax){
                 System.out.println(form.b.getX());
-                Controller.MoveRight(form);
+                Controller.MoveRight(form, tetris.MESH);
                 System.out.println(form.b.getX());
                 assertEquals(form.b.getX(),tempMax);
                 break;
             }else  if(form.c.getX() == tempMax){
                 System.out.println(form.c.getX());
-                Controller.MoveRight(form);
+                Controller.MoveRight(form, tetris.MESH);
                 System.out.println(form.c.getX());
                 assertEquals(form.c.getX(),tempMax);
                 break;
             }else if(form.d.getX() == tempMax){
                 System.out.println(form.d.getX());
-                Controller.MoveRight(form);
+                Controller.MoveRight(form, tetris.MESH);
                 System.out.println(form.d.getX());
                 assertEquals(form.d.getX(),tempMax);
                 break;
             }
         }
+        tetris.deleteOldGame();
     }
 
     @Test
     void moveLeft() {
+        Tetris tetris = new Tetris();
+        tetris.setNewGame();
         Form form = Controller.makeRect("o");
         while(true){
-            Controller.MoveLeft(form);
+            Controller.MoveLeft(form, tetris.MESH);
             if (form.a.getX() == 0) {
                 System.out.println(form.a.getX());
-                Controller.MoveLeft(form);
+                Controller.MoveLeft(form, tetris.MESH);
                 System.out.println(form.a.getX());
                 assertEquals(form.a.getX(),0.0);
                 break;
             }else if(form.b.getX() == 0){
                 System.out.println(form.b.getX());
-                Controller.MoveLeft(form);
+                Controller.MoveLeft(form, tetris.MESH);
                 System.out.println(form.b.getX());
                 assertEquals(form.b.getX(),0.0);
                 break;
             }else  if(form.c.getX() == 0){
                 System.out.println(form.c.getX());
-                Controller.MoveLeft(form);
+                Controller.MoveLeft(form, tetris.MESH);
                 System.out.println(form.c.getX());
                 assertEquals(form.c.getX(),0.0);
                 break;
             }else if(form.d.getX() == 0){
                 System.out.println(form.d.getX());
-                Controller.MoveLeft(form);
+                Controller.MoveLeft(form, tetris.MESH);
                 System.out.println(form.d.getX());
                 assertEquals(form.d.getX(),0.0);
                 break;
@@ -141,33 +146,34 @@ class ControllerTest {
         FormSix weight = new FormSix(a, b, c, d, e, f, "weight");
 
         while(true){
-            Controller.MoveLeft(weight);
+            Controller.MoveLeft(weight, tetris.MESH);
             if (form.a.getX() == 0) {
                 System.out.println(form.a.getX());
-                Controller.MoveLeft(form);
+                Controller.MoveLeft(form, tetris.MESH);
                 System.out.println(form.a.getX());
                 assertEquals(form.a.getX(),0.0);
                 break;
             }else if(form.b.getX() == 0){
                 System.out.println(form.b.getX());
-                Controller.MoveLeft(form);
+                Controller.MoveLeft(form, tetris.MESH);
                 System.out.println(form.b.getX());
                 assertEquals(form.b.getX(),0.0);
                 break;
             }else  if(form.c.getX() == 0){
                 System.out.println(form.c.getX());
-                Controller.MoveLeft(form);
+                Controller.MoveLeft(form, tetris.MESH);
                 System.out.println(form.c.getX());
                 assertEquals(form.c.getX(),0.0);
                 break;
             }else if(form.d.getX() == 0){
                 System.out.println(form.d.getX());
-                Controller.MoveLeft(form);
+                Controller.MoveLeft(form, tetris.MESH);
                 System.out.println(form.d.getX());
                 assertEquals(form.d.getX(),0.0);
                 break;
             }
         }
+        tetris.deleteOldGame();
     }
 
     @Test
