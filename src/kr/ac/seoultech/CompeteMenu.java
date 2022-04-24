@@ -1,6 +1,7 @@
 package kr.ac.seoultech;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
@@ -35,6 +36,11 @@ public class CompeteMenu extends Application {
     public static Integer menu_max = select.size();
     public static Integer count = select.size() - 1;
     public static Stage window;
+    private Tetris tetris;
+
+    public CompeteMenu(Tetris _tetris){
+        tetris = _tetris;
+    }
 
     public void competeMenuSetting(){
 
@@ -101,9 +107,9 @@ public class CompeteMenu extends Application {
     }
     public void menuPress(Form form){
         Setting settingMenu = new Setting();
-        Tetris tetris = new Tetris();
+        //Tetris tetris = new Tetris();
         LeaderBoard_menu leaderboard = new LeaderBoard_menu();
-        CompeteMenu competeMenu = new CompeteMenu();
+        //CompeteMenu competeMenu = new CompeteMenu();
         scene.setOnKeyPressed((new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
@@ -145,6 +151,37 @@ public class CompeteMenu extends Application {
                             case "STANDARD":
                                 System.out.println(menuSelected);
                                 //TODO 대전모드 ItemMode boolean false;
+                                if(!StartMenu.isGameOn){
+                                    try{
+                                        StartMenu.isGameOn = true;
+                                        Tetris.itemModeBool = false;
+                                        Tetris.cp = true;
+                                        tetris.createTetrisThread();
+                                        tetris.createInputThread();
+                                        tetris.start(window);
+                                    }catch (Exception e){
+                                        e.printStackTrace();
+                                    }
+                                }else {
+                                    Tetris.itemModeBool = false;
+                                    Tetris.cp = true;
+                                    if(tetris.player2 == null){
+                                        tetris.createTetrisThread();
+                                        tetris.player2.setPid(2);
+                                        Platform.runLater(new Runnable() {
+                                            @Override
+                                            public void run(){
+                                                tetris.player2.deleteOldGame();
+                                                tetris.player2.continueGame("Restart");
+                                            }
+                                        });
+                                    }else {
+                                        tetris.player2.continueGame("Restart");
+                                        tetris.player2.window.show();
+                                    }
+                                    tetris.continueGame("Restart");
+                                    window.setScene(tetris.scene);
+                                }
                                 break;
 
                             case "ITEM":

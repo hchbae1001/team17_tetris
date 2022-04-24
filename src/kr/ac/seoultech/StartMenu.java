@@ -36,7 +36,7 @@ public class StartMenu extends Application {
     final public static Text menu1_scoreBoard = new Text("Score Board");
     final public static Text menu0_Exit = new Text("Exit");
     final public static Text menu5_comepete = new Text("COMPETE MODE START");
-    private static boolean isGameOn = false;
+    public static boolean isGameOn = false;
     private static boolean isSettingOn = false;
     public static boolean isLeaderboardOn = false;
     public static boolean isBoardSelectOn = false;
@@ -151,7 +151,8 @@ public class StartMenu extends Application {
         Setting settingMenu = new Setting();
         Tetris tetris = new Tetris();
         LeaderBoard_menu leaderboard = new LeaderBoard_menu();
-        CompeteMenu competeMenu = new CompeteMenu();
+        CompeteMenu competeMenu = new CompeteMenu(tetris);
+
         scene.setOnKeyPressed((new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
@@ -201,14 +202,16 @@ public class StartMenu extends Application {
                                     try{
                                         isGameOn = true;
                                         Tetris.itemModeBool = false;
+                                        Tetris.cp = false;
                                         tetris.start(window);
                                     }catch (Exception e){
                                         e.printStackTrace();
                                     }
                                 }else {
                                     Tetris.itemModeBool = false;
+                                    Tetris.cp = false;
                                     tetris.continueGame("Restart");
-                                    window.setScene(Tetris.scene);
+                                    window.setScene(tetris.scene);
                                 }
                                 break;
                             case "itemstart":
@@ -223,7 +226,7 @@ public class StartMenu extends Application {
                                 }else {
                                     Tetris.itemModeBool = true;
                                     tetris.continueGame("Restart");
-                                    window.setScene(Tetris.scene);
+                                    window.setScene(tetris.scene);
                                 }
                                 break;
                             case "setting":

@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CompeteMenuTest {
     private JFXPanel panel = new JFXPanel();
-    CompeteMenu competeMenu = new CompeteMenu();
+    CompeteMenu competeMenu = new CompeteMenu(new Tetris());
     @DisplayName("메뉴 초기 세팅")
     @Test
     void competeMenuSetting() {

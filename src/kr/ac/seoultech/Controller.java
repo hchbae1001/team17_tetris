@@ -1,6 +1,7 @@
 package kr.ac.seoultech;
 
 //import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Mesh;
 import javafx.scene.shape.Shape;
 //import javafx.scene.text.Text;
 import javafx.scene.text.Font;
@@ -15,18 +16,18 @@ public class Controller {
     //public static int YMAX = Tetris.YMAX;
     //public static int[][] Tetris.MESH = Tetris.MESH;
 
-    public static void MoveRight(Form form) {
+    public static void MoveRight(Form form, int[][] mesh) {
         if (form.a.getX() + Tetris.MOVE <= Tetris.XMAX - Tetris.SIZE && form.b.getX() + Tetris.MOVE <= Tetris.XMAX - Tetris.SIZE
                 && form.c.getX() + Tetris.MOVE <= Tetris.XMAX - Tetris.SIZE && form.d.getX() + Tetris.MOVE <= Tetris.XMAX - Tetris.SIZE) {
-            int movea = Tetris.MESH[((int) form.a.getX() / Tetris.SIZE) + 1][((int) form.a.getY() / Tetris.SIZE)];
-            int moveb = Tetris.MESH[((int) form.b.getX() / Tetris.SIZE) + 1][((int) form.b.getY() / Tetris.SIZE)];
-            int movec = Tetris.MESH[((int) form.c.getX() / Tetris.SIZE) + 1][((int) form.c.getY() / Tetris.SIZE)];
-            int moved = Tetris.MESH[((int) form.d.getX() / Tetris.SIZE) + 1][((int) form.d.getY() / Tetris.SIZE)];
+            int movea = mesh[((int) form.a.getX() / Tetris.SIZE) + 1][((int) form.a.getY() / Tetris.SIZE)];
+            int moveb = mesh[((int) form.b.getX() / Tetris.SIZE) + 1][((int) form.b.getY() / Tetris.SIZE)];
+            int movec = mesh[((int) form.c.getX() / Tetris.SIZE) + 1][((int) form.c.getY() / Tetris.SIZE)];
+            int moved = mesh[((int) form.d.getX() / Tetris.SIZE) + 1][((int) form.d.getY() / Tetris.SIZE)];
             if (movea == 0 && movea == moveb && moveb == movec && movec == moved) {
                 if(form instanceof FormSix){
                     if(((FormSix) form).e.getX() + Tetris.MOVE <= Tetris.XMAX - Tetris.SIZE && ((FormSix) form).f.getX() + Tetris.MOVE <= Tetris.XMAX - Tetris.SIZE) {
-                        int movee = Tetris.MESH[((int) ((FormSix) form).e.getX() / Tetris.SIZE) + 1][((int) ((FormSix) form).e.getY() / Tetris.SIZE)];
-                        int movef = Tetris.MESH[((int) ((FormSix) form).f.getX() / Tetris.SIZE) + 1][((int) ((FormSix) form).f.getY() / Tetris.SIZE)];
+                        int movee = mesh[((int) ((FormSix) form).e.getX() / Tetris.SIZE) + 1][((int) ((FormSix) form).e.getY() / Tetris.SIZE)];
+                        int movef = mesh[((int) ((FormSix) form).f.getX() / Tetris.SIZE) + 1][((int) ((FormSix) form).f.getY() / Tetris.SIZE)];
                         if (movee == 0 && movef == 0) {
                             ((FormSix) form).e.setX(((FormSix) form).e.getX() + Tetris.MOVE);
                             ((FormSix) form).f.setX(((FormSix) form).f.getX() + Tetris.MOVE);
@@ -50,18 +51,18 @@ public class Controller {
         }
     }
 
-    public static void MoveLeft(Form form) {
+    public static void MoveLeft(Form form, int[][] mesh) {
         if (form.a.getX() - Tetris.MOVE >= 0 && form.b.getX() - Tetris.MOVE >= 0 && form.c.getX() - Tetris.MOVE >= 0
                 && form.d.getX() - Tetris.MOVE >= 0) {
-            int movea = Tetris.MESH[((int) form.a.getX() / Tetris.SIZE) - 1][((int) form.a.getY() / Tetris.SIZE)];
-            int moveb = Tetris.MESH[((int) form.b.getX() / Tetris.SIZE) - 1][((int) form.b.getY() / Tetris.SIZE)];
-            int movec = Tetris.MESH[((int) form.c.getX() / Tetris.SIZE) - 1][((int) form.c.getY() / Tetris.SIZE)];
-            int moved = Tetris.MESH[((int) form.d.getX() / Tetris.SIZE) - 1][((int) form.d.getY() / Tetris.SIZE)];
+            int movea = mesh[((int) form.a.getX() / Tetris.SIZE) - 1][((int) form.a.getY() / Tetris.SIZE)];
+            int moveb = mesh[((int) form.b.getX() / Tetris.SIZE) - 1][((int) form.b.getY() / Tetris.SIZE)];
+            int movec = mesh[((int) form.c.getX() / Tetris.SIZE) - 1][((int) form.c.getY() / Tetris.SIZE)];
+            int moved = mesh[((int) form.d.getX() / Tetris.SIZE) - 1][((int) form.d.getY() / Tetris.SIZE)];
             if (movea == 0 && movea == moveb && moveb == movec && movec == moved) {
                 if(form instanceof FormSix) {
                     if (((FormSix) form).e.getX() - Tetris.MOVE >= 0 && ((FormSix) form).f.getX() - Tetris.MOVE >= 0) {
-                        int movee = Tetris.MESH[((int) ((FormSix) form).e.getX() / Tetris.SIZE) - 1][((int) ((FormSix) form).e.getY() / Tetris.SIZE)];
-                        int movef = Tetris.MESH[((int) ((FormSix) form).f.getX() / Tetris.SIZE) - 1][((int) ((FormSix) form).f.getY() / Tetris.SIZE)];
+                        int movee = mesh[((int) ((FormSix) form).e.getX() / Tetris.SIZE) - 1][((int) ((FormSix) form).e.getY() / Tetris.SIZE)];
+                        int movef = mesh[((int) ((FormSix) form).f.getX() / Tetris.SIZE) - 1][((int) ((FormSix) form).f.getY() / Tetris.SIZE)];
                         if (movee == 0 && movef == 0) {
                             ((FormSix) form).e.setX(((FormSix) form).e.getX() - Tetris.MOVE);
                             ((FormSix) form).f.setX(((FormSix) form).f.getX() - Tetris.MOVE);

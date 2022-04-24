@@ -16,79 +16,100 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Mesh;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.Modality;
 
-public class Tetris extends Application {
+public class Tetris extends Application implements Runnable{
     public static boolean isTest = false;
     // The variables
-    // 데드라인은 최소한 2 이상 ,하지만 일자 블럭 생성 직후부터 회전이 가능하려면 4 이상을 사용해야 함
-    public static final int DEADLINEGAP = 4;
+    // 데드라인은 최소한 2 이상 ,하지만 일자 블럭 생성 직후부터 회전이 가능하려면 4 이상을 사용해야 함, 그냥 크게 설정하면 편함.
+    public static final int DEADLINEGAP = 6;
     public static int MOVE = Setting.MOVE;
     public static int SIZE = Setting.SIZE;
     public static int XMAX = SIZE * 10;
     public static int YMAX = SIZE * (20 + DEADLINEGAP);
-    public static int[][] MESH = new int[XMAX / SIZE][YMAX / SIZE];
+    public int[][] MESH;    // = new int[XMAX / SIZE][YMAX / SIZE];
+    public static int[][] P1_MESH;
+    public static int[][] P2_MESH;
     public static final int BonusRate = 10;
     public static final int SpeedUpRate = 50;
 
     public enum Difficulty {Easy, Normal, Hard}
 
     public static Difficulty level = Difficulty.Easy;
-    Timer fall = new Timer();
-    private static Pane animPane = new Pane();
-    private static Pane group = new Pane();
-    private static Form object;
-    public static Scene scene;
+    //Timer fall = new Timer();
+    private Pane animPane = new Pane();
+    private Pane group = new Pane();
+    private Form object;
+    //private static Form P1_object;
+    //private static Form P2_object;
 
-    private static Timer timer = new Timer();
+    private Timer timer = new Timer();
     // 일시 정지 UI
-    private static Pane pausePane = new Pane();
+    private Pane pausePane = new Pane();
     final private static ArrayList<String> pauseSelect = new ArrayList<String>(Arrays.asList(
             "Quit game", "Go To Menu", "Restart", "Continue"));
-    private static String pauseSelected = "";
-    final private static Integer pause_max = pauseSelect.size();
-    private static Integer pauseCount = pauseSelect.size() - 1;
-    final private static Rectangle pauseBox = new Rectangle();
-    final private static Text pauseText = new Text("Pause");
-    final private static Text pause3_continue = new Text("Continue");
-    final private static Text pause2_restart = new Text("Restart");
-    final private static Text pause1_menu = new Text("Go To Menu");
-    final private static Text pause0_quit = new Text("Quit game");
+    private String pauseSelected = "";
+    final private Integer pause_max = pauseSelect.size();
+    private Integer pauseCount = pauseSelect.size() - 1;
+    final private Rectangle pauseBox = new Rectangle();
+    final private Text pauseText = new Text("Pause");
+    final private Text pause3_continue = new Text("Continue");
+    final private Text pause2_restart = new Text("Restart");
+    final private Text pause1_menu = new Text("Go To Menu");
+    final private Text pause0_quit = new Text("Quit game");
     private static boolean timeStop = false;
     //
-    public static int score = 0;
+    public int score = 0;
     private static boolean top = false;
-    private static boolean game = true;
-    private static Form nextObj;
-    private static Pane nextObjPane = new Pane();
-    private static int linesNo = 0;
-    private static Text scoretext = new Text("Score: ");
-    private static Text linetesxt = new Text("Lines: ");
+    static boolean game = true;
+    private Form nextObj;
+    private Pane nextObjPane = new Pane();
+    private int linesNo = 0;
+    private Text scoretext = new Text("Score: ");
+    private Text linetesxt = new Text("Lines: ");
 
-    private static int itemCount = 0;
-    private static int dropPeriod = 1000;
-    private static int bonusScore = 10;
+    private int itemCount = 0;
+    private int dropPeriod = 1000;
+    private int bonusScore = 10;
     private static int limitDropPeriod = 300;
-    private static boolean isPaused = false;
-    private static boolean directKeyPressed = false;
-    public static boolean isWeightBlock = false;
-    private static boolean weightIsLocked = false;
-    private static boolean itemAnim = false;
-    private static boolean rowRemoved = false;
-    private static Text continueCounter = new Text("4");
+    private boolean isPaused = false;
+    private boolean directKeyPressed = false;
+    private boolean isWeightBlock = false;
+    private boolean weightIsLocked = false;
+    private boolean itemAnim = false;
+    private boolean rowRemoved = false;
+    private Text continueCounter = new Text("4");
     LeaderBoard_menu leaderBoard_menu = new LeaderBoard_menu();
+
+    private boolean isFocused = false;
 
     public static void main(String[] args) {
         launch(args);
     }
 
-    public static Stage window;
+    public Scene scene;
+    public Stage window;
     public static String name;
     public static Boolean itemModeBool;
     public static int itemModeInt;
 
+    // 대전 모드 관련 변수들
+    public static Boolean cp = true;
+    private int pid = 1;
+    private boolean isArroyKey;
+    private Thread inputThread;
+    private Thread tetrisThread;
+    public Tetris player2 = null;
+    private static Text winnerText1;
+    private static Text winnerText2;
+    private static Queue<KeyCode> inputQueue = new LinkedList<>();
+
+
     @Override
     public void start(Stage stage) throws Exception {
+
         System.out.println(level);
         System.out.println(itemModeBool);
 
@@ -110,15 +131,76 @@ public class Tetris extends Application {
             window.close();
     }
 
+    @Override
+    public void run() {
+        System.out.println("player2 thread start");
+
+        Platform.runLater(new Runnable() {
+
+            @Override
+
+            public void run(){
+                pid = 2;
+
+                isFocused =  true;
+                // UI 생성 및 변경 코드
+                window = new Stage();
+                window.initModality(Modality.APPLICATION_MODAL);
+                window.setX(Screen.getPrimary().getBounds().getWidth()/2);
+                scene = new Scene(group, XMAX + 150, YMAX - SIZE);
+                //window2.showAndWait();
+
+                setNewGame();
+
+                window.setScene(scene);
+                window.setTitle("T E T R I S 2");
+                window.setResizable(false);
+                window.show();
+                timer = startTimer(dropPeriod);
+
+                //window.setScene(scene2);
+                //stage.setScene(scene);
+                //window2.setTitle("T E T R I S 2");
+                //window2.setResizable(false);
+                //window2.show();
+                //timer = startTimer(dropPeriod);
+
+                if(isTest)
+                    window.close();
+
+            }
+
+        });
+
+
+        //window2.initModality(Modality.APPLICATION_MODAL);
+        //window2.setTitle("T E T R I S 2");
+        //window2.setMinWidth(300);
+
+
+
+        //Pane pane = new Pane();
+        //Scene scene = new Scene(pane, 300, 500);
+        //window2.setScene(scene);
+        //window2.showAndWait();
+        System.out.println("player2 thread Run method end");
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run(){
+                //window.close();
+            }
+        });
+
+    }
 
     // 키입력
-    private void moveOnKeyPressArrow(Form form) {
-        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+    private void moveOnKeyPressArrow(Form form, Scene controlScene) {
+        controlScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                if(itemAnim)
-                    return;
-                if(!timeStop) {
+                cpQueueAdd(event.getCode());
+                if(!timeStop && !itemAnim) {
                     arrowKeyCodeFunc(event.getCode(), form);
                 }
             }
@@ -127,6 +209,8 @@ public class Tetris extends Application {
 
     public void arrowKeyCodeFunc(KeyCode keyCode, Form form){
         if (isPaused) {
+            if(pid == 2)
+                return;
             switch (keyCode) {
                 case ESCAPE:
                     continueGame("Continue");
@@ -188,8 +272,9 @@ public class Tetris extends Application {
         } else {
             switch (keyCode) {
                 case ESCAPE:
-                    //fall.cancel();
-                    //fall.purge();
+                    if(pid==2)
+                        return;
+
                     group.getChildren().add(pausePane);
                     isPaused = true;
                     break;
@@ -200,7 +285,7 @@ public class Tetris extends Application {
                 case RIGHT:
                     if (weightIsLocked)
                         break;
-                    Controller.MoveRight(form);
+                    Controller.MoveRight(form, MESH);
                     break;
                 case DOWN:
                     BlockDown(form);//
@@ -208,7 +293,7 @@ public class Tetris extends Application {
                 case LEFT:
                     if (weightIsLocked)
                         break;
-                    Controller.MoveLeft(form);
+                    Controller.MoveLeft(form, MESH);
                     break;
                 case UP:
                     MoveTurn(form);
@@ -217,14 +302,20 @@ public class Tetris extends Application {
         }
     }
 
+    public void cpQueueAdd(KeyCode keyCode){
+        if(cp) {
+            inputQueue.add(keyCode);
+        }
+    }
+
     // 키입력
-    private void moveOnKeyPressWASD(Form form) {
-        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+    private void moveOnKeyPressWASD(Form form, Scene controlScene) {
+        controlScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                if(itemAnim)
-                    return;
-                if(!timeStop) {
+                //if(cp)
+                //    inputQueue.add(event.getCode());
+                if(!timeStop && !itemAnim) {
                     WASDKeyCodeFunc(event.getCode(), form);
                 }
             }
@@ -235,29 +326,31 @@ public class Tetris extends Application {
         if (isPaused) {
             switch (keyCode) {
                 case ESCAPE:
+                    if(cp)
+                        player2.continueGame("Continue");
                     continueGame("Continue");
                     group.getChildren().remove(pausePane);
                     break;
-                case SPACE:
+                case Z:
                     switch (pauseSelected) {
                         case "Continue":
+                            if(cp)
+                                player2.continueGame("Continue");
                             continueGame("Continue");
                             group.getChildren().remove(pausePane);
                             break;
                         case "Restart":
                             // 초기화 메서드 호출
+                            //???????????????????
+                            if(cp) {
+                                player2.deleteOldGame();
+                                player2.continueGame("Restart");
+                            }
                             deleteOldGame();
                             continueGame("Restart");
                             break;
                         case "Go To Menu":
-                            try {
-                                deleteOldGame();
-                                window.setWidth(440);
-                                window.setHeight(613);
-                                window.setScene(StartMenu.scene);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+                            goToMenu();
                             break;
                         case "Quit game":
                             System.out.println("exit");
@@ -294,19 +387,28 @@ public class Tetris extends Application {
         } else {
             switch (keyCode) {
                 case ESCAPE:
-                    //fall.cancel();
-                    //fall.purge();
-                    group.getChildren().add(pausePane);
-                    isPaused = true;
-                    break;
-                case SPACE:
+                    if(cp){
+                        if(!itemAnim && !player2.getItemAnim()){
+                            group.getChildren().add(pausePane);
+                            isPaused = true;
+                            player2.isPaused = true;
+                            break;
+                        }else {
+                            break;
+                        }
+                    }else {
+                        group.getChildren().add(pausePane);
+                        isPaused = true;
+                        break;
+                    }
+                case Z:
                     directKeyPressed = true;
                     BlockDown(form);
                     break;
                 case D:
                     if (weightIsLocked)
                         break;
-                    Controller.MoveRight(form);
+                    Controller.MoveRight(form, MESH);
                     break;
                 case S:
                     BlockDown(form);//
@@ -314,12 +416,28 @@ public class Tetris extends Application {
                 case A:
                     if (weightIsLocked)
                         break;
-                    Controller.MoveLeft(form);
+                    Controller.MoveLeft(form, MESH);
                     break;
                 case W:
                     MoveTurn(form);
                     break;
             }
+        }
+    }
+
+    public void goToMenu(){
+        try {
+            if(cp) {
+                inputThread.interrupt();
+                player2.window.close();
+                player2.deleteOldGame();
+            }
+            deleteOldGame();
+            window.setWidth(440);
+            window.setHeight(613);
+            window.setScene(StartMenu.scene);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -658,7 +776,7 @@ public class Tetris extends Application {
         ArrayList<Node> newrects = new ArrayList<Node>();
         int full = 0;
         for (int i = 0; i < MESH[0].length; i++) {
-            for (int j = 0; j < MESH.length; j++) {
+            for (int j = MESH.length - 1; j >= 0; j--) {
                 if (MESH[j][i] == 1)
                     full++;
             }
@@ -805,7 +923,8 @@ public class Tetris extends Application {
                 }
                 timer.cancel();
                 RemoveRows(group, 0);
-                checkGameover();
+                if(checkGameover())
+                    showGameover();
                 if (top)
                     return;
                 break;
@@ -832,6 +951,8 @@ public class Tetris extends Application {
     }
 
     public void MakeObject(){
+        if(top)
+            return;
         Form a = nextObj;
         if (itemModeBool.equals(true)) {
             if (linesNo/10 > itemCount) {
@@ -872,9 +993,9 @@ public class Tetris extends Application {
             return;
 
         if (Setting.keySettingBool.getText().equals("Arrow Keys")) {
-            moveOnKeyPressArrow(a);
+            moveOnKeyPressArrow(a, scene);
         } else {
-            moveOnKeyPressWASD(a);
+            moveOnKeyPressWASD(a, scene);
         }
         directKeyPressed = false;
         // 수정 필요성 있음
@@ -932,17 +1053,15 @@ public class Tetris extends Application {
         }
     }
 
-    public void checkGameover() {
+    public boolean checkGameover() {
         // 블럭이 데드라인을 넘어가면 top을 true로 만들어 GAME OVER 판정
         for (int i = 0; i < XMAX / SIZE; i++) {
             if (MESH[i][DEADLINEGAP - 1] == 1) {
                 top = true;
-                if(isTest)
-                    return;
-                showGameover();
-                break;
+                return true;
             }
         }
+        return false;
     }
 
     public void showGameover() {
@@ -950,6 +1069,10 @@ public class Tetris extends Application {
             return;
 
         game = false;
+        if(cp){
+            cpModeEnd();
+            return;
+        }
         updateScoretext();
         Text over = new Text("GAME OVER");
         over.setFill(Color.RED);
@@ -987,8 +1110,10 @@ public class Tetris extends Application {
         Leaderboard.saveScores(Leaderboard.fileName);
 
         deleteOldGame();
-        window.setWidth(440);
-        window.setHeight(613);
+        if(window != null) {
+            window.setWidth(440);
+            window.setHeight(613);
+        }
 
         LeaderBoard_menu leader = new LeaderBoard_menu();
         if (!StartMenu.isLeaderboardOn) {
@@ -1026,7 +1151,6 @@ public class Tetris extends Application {
             public void run() {
                 Platform.runLater(new Runnable() {
                     public void run() {
-
                         if(isPaused || !game){
                             fall.cancel();
                             return;
@@ -1062,33 +1186,58 @@ public class Tetris extends Application {
     }
 
     public void continueGame(String what){
-        XMAX = SIZE * 10;
-        YMAX = SIZE * (20 + DEADLINEGAP);
-        window.setWidth(XMAX + 140 + SIZE*2);
-        window.setHeight(YMAX + 38 - SIZE);
+
+        if(what.equals("Restart")) {
+            XMAX = SIZE * 10;
+            YMAX = SIZE * (20 + DEADLINEGAP);
+            if(window != null) {
+                window.setWidth(XMAX + 140 + SIZE * 2);
+                window.setHeight(YMAX + 38 - SIZE);
+            }
+            if(cp && pid == 1)
+                window.setX(0);
+            if(cp && pid == 1 && inputThread != null)
+                inputThread.interrupt();
+            //if(cp && pid == 2)
+            //    deleteOldGame();
+        }
+
+
 
         timeStop = true;
-        group.getChildren().add(continueCounter);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run(){
+                group.getChildren().add(continueCounter);
+            }
+        });
         Timer fall = new Timer();
         TimerTask task = new TimerTask() {
             public void run() {
                 Platform.runLater(new Runnable() {
                     public void run() {
                         if(continueCounter.getText().equals("4")) {
+                            System.out.println("3");
                             continueCounter.setText("3");
                         }else if(continueCounter.getText().equals("3")) {
+                            System.out.println("2");
                             continueCounter.setText("2");
                         }
                         else if(continueCounter.getText().equals("2")) {
+                            System.out.println("1");
                             continueCounter.setText("1");
                         }
                         else if(continueCounter.getText().equals("1")) {
+                            System.out.println("땅");
                             continueCounter.setText("4");
                             isPaused = false;
                             timeStop = false;
                             group.getChildren().remove(continueCounter);
-                            if(what.equals("Restart"))
+                            if(what.equals("Restart")) {
+                                if(cp && pid == 1)
+                                    createInputThread();
                                 setNewGame();
+                            }
                             timer = startTimer(dropPeriod);
                             fall.cancel();
                         }
@@ -1096,8 +1245,10 @@ public class Tetris extends Application {
                 });
             }
         };
-        window.setWidth(XMAX + 140 + SIZE*2);
-        window.setHeight(YMAX + 38 - SIZE);
+        if(window != null) {
+            window.setWidth(XMAX + 140 + SIZE * 2);
+            window.setHeight(YMAX + 38 - SIZE);
+        }
         fall.scheduleAtFixedRate(task, 0, 1000);
     }
 
@@ -1110,8 +1261,10 @@ public class Tetris extends Application {
 
         XMAX = SIZE * 10;
         YMAX = SIZE * (20 + DEADLINEGAP);
-        window.setWidth(XMAX + 140 + SIZE*2);
-        window.setHeight(YMAX + 38 - SIZE);
+        if(window != null) {
+            window.setWidth(XMAX + 140 + SIZE * 2);
+            window.setHeight(YMAX + 38 - SIZE);
+        }
 
         MESH = new int[XMAX / SIZE][YMAX / SIZE];
         /*
@@ -1121,6 +1274,7 @@ public class Tetris extends Application {
         }
         System.out.println();
          */
+        inputQueue.clear();
         score = 0;
         isPaused = false;
         pauseCount = pause_max - 1;
@@ -1256,21 +1410,39 @@ public class Tetris extends Application {
                 break;
         }
 
-        if (Setting.keySettingBool.getText().equals("Arrow Keys")) {
-            moveOnKeyPressArrow(a);
-        } else {
-            moveOnKeyPressWASD(a);
+        if(cp){
+            if(pid == 1){
+                window.setX(0);
+                isArroyKey = false;
+                moveOnKeyPressWASD(a, scene);
+            }else if(pid == 2){
+                isArroyKey = true;
+                moveOnKeyPressArrow(a, scene);
+            }else {
+                System.out.println("Pid BUG !!!!!!!!!!!!!!!");
+            }
+        }else {
+            if (Setting.keySettingBool.getText().equals("Arrow Keys")) {
+                isArroyKey = true;
+                moveOnKeyPressArrow(a, scene);
+            } else {
+                isArroyKey = false;
+                moveOnKeyPressWASD(a, scene);
+            }
         }
 
 
     }
 
     public void deleteOldGame() {
-        fall.cancel();
-        fall.purge();
-        group.getChildren().clear();
-        nextObjPane.getChildren().clear();
-        pausePane.getChildren().clear();
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run(){
+                group.getChildren().clear();
+                nextObjPane.getChildren().clear();
+                pausePane.getChildren().clear();
+            }
+        });
     }
 
     public void pauseColorReset(){
@@ -1353,6 +1525,103 @@ public class Tetris extends Application {
         fall.schedule(task, 100);
     }
 
+    public void createTetrisThread(){
+        if(cp) {
+            player2 = new Tetris();
+            tetrisThread = new Thread(player2);
+
+            tetrisThread.start();
+        }
+    }
+
+    public void createInputThread(){
+        if(cp) {
+            inputThread = new Thread(new InputThread(inputQueue, this));
+
+            inputThread.start();
+        }
+    }
+
+    public void cpModeEnd(){
+        //deleteOldGame();
+        timeStop = true;
+        if(pid == 1){
+            String winner = "";
+            if(checkGameover()){
+                winner = "Player 2 WIN";
+            }else {
+                winner = "Player 1 WIN";
+            }
+            /*
+            if(score > player2.score){
+                winner = "Player 1 WIN";
+            }else if(score < player2.score){
+                winner = "Player 2 WIN";
+            }else {
+                winner = "DRAW";
+            }
+            */
+            winnerText1 = new Text(winner);
+            winnerText1.setFill(Color.RED);
+            winnerText1.setStroke(Color.BLACK);
+            winnerText1.setStyle(String.format("-fx-font: %d arial;", XMAX/5 ));
+            winnerText1.setY(YMAX/2);
+            winnerText1.setX(10);
+
+            winnerText2 = new Text(winner);
+            winnerText2.setFill(Color.RED);
+            winnerText2.setStroke(Color.BLACK);
+            winnerText2.setStyle(String.format("-fx-font: %d arial;", XMAX/5 ));
+            winnerText2.setY(YMAX/2);
+            winnerText2.setX(10);
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run(){
+                    group.getChildren().add(winnerText1);
+                    player2.group.getChildren().add(winnerText2);
+                }
+            });
+            System.out.println("p1 cpModeEnd is called");
+        }else if(pid == 2){
+            //window.close();
+            System.out.println("p2 cpModeEnd is called");
+        }else {
+            System.out.println("Pid BUG !!!!!!!!!");
+        }
+
+
+
+        /*
+        if(score > player2.score){
+
+        }else if(score < player2.score){
+
+        }else {
+
+        }
+
+         */
+    }
+
+    public Form getObject(){
+        return object;
+    }
+
+    public boolean getItemAnim() {
+        return itemAnim;
+    }
+
+    public boolean getTimeStop() {
+        return timeStop;
+    }
+
+    public boolean getGame() {
+        return game;
+    }
+
+    public void setPid(int id) {
+        pid = id;
+    }
 
     // 아이템 모드용 메서드들
 

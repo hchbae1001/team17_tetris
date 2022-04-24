@@ -23,6 +23,7 @@ import java.util.Timer;
 
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class TetrisTest {
     static private JFXPanel panel;
@@ -353,13 +354,13 @@ class TetrisTest {
 
             for (int i = 0; i < Tetris.XMAX / Tetris.MOVE; i++) {
                 pane.getChildren().add(new NewShape(i * Tetris.MOVE, 10 * Tetris.MOVE, "o"));
-                Tetris.MESH[i][10] = 1;
+                tetris.MESH[i][10] = 1;
                 pane.getChildren().add(new NewShape(i * Tetris.MOVE, 11 * Tetris.MOVE, "o"));
-                Tetris.MESH[i][11] = 1;
+                tetris.MESH[i][11] = 1;
                 pane.getChildren().add(new NewShape(i * Tetris.MOVE, 12 * Tetris.MOVE, "o"));
-                Tetris.MESH[i][12] = 1;
+                tetris.MESH[i][12] = 1;
                 pane.getChildren().add(new NewShape(i * Tetris.MOVE, 13 * Tetris.MOVE, "o"));
-                Tetris.MESH[i][13] = 1;
+                tetris.MESH[i][13] = 1;
             }
             tetris.RemoveRows(pane, 0);
             tetris.RemoveRows(pane, 1);
@@ -368,13 +369,13 @@ class TetrisTest {
             //pane.getChildren().clear();
             for (int i = 0; i < Tetris.XMAX / Tetris.MOVE; i++) {
                 //System.out.println(Tetris.MESH[i][10]);
-                assertEquals(0, Tetris.MESH[i][10]);
-                assertEquals(0, Tetris.MESH[i][11]);
-                assertEquals(0, Tetris.MESH[i][12]);
-                assertEquals(0, Tetris.MESH[i][13]);
+                assertEquals(0, tetris.MESH[i][10]);
+                assertEquals(0, tetris.MESH[i][11]);
+                assertEquals(0, tetris.MESH[i][12]);
+                assertEquals(0, tetris.MESH[i][13]);
             }
 
-            System.out.println(Tetris.score);
+            System.out.println(tetris.score);
 
 
 
@@ -685,7 +686,7 @@ class TetrisTest {
             Field top = tetris.getClass().getDeclaredField("top");
             top.setAccessible(true);
             assertFalse((Boolean) top.get(tetris));
-            tetris.checkGameover();
+            assertTrue(tetris.checkGameover());
             assertTrue((Boolean) top.get(tetris));
 
             tetris.deleteOldGame();
@@ -1102,6 +1103,9 @@ class TetrisTest {
             Field object = tetris.getClass().getDeclaredField("object");
             object.setAccessible(true);
 
+            Field isWeightBlock = tetris.getClass().getDeclaredField("isWeightBlock");
+            isWeightBlock.setAccessible(true);
+
             Field group = tetris.getClass().getDeclaredField("group");
             group.setAccessible(true);
             Pane _group = (Pane) group.get(tetris);
@@ -1125,7 +1129,7 @@ class TetrisTest {
             _group.getChildren().addAll(weight.a, weight.b, weight.c, weight.d, weight.e, weight.f);
 
             object.set(tetris,weight);
-            Tetris.isWeightBlock = true;
+            isWeightBlock.set(tetris, true);
             Form _object = (Form) object.get(tetris);
 
             for(int i = Tetris.DEADLINEGAP + 3; i < Tetris.YMAX/Tetris.SIZE - 1; i++) {
@@ -1146,7 +1150,8 @@ class TetrisTest {
                 }
                 System.out.println("끝");
                  */
-                if(!tetris.isWeightBlock)
+                boolean isWB = (boolean)isWeightBlock.get(tetris);
+                if(!isWB)
                     break;
             }
 
@@ -1186,19 +1191,19 @@ class TetrisTest {
 
             tetris.setNewGame();
             pane.getChildren().add(new NewShape(Tetris.MOVE,Tetris.MOVE*10,"L"));
-            Tetris.MESH[1][10] = 1;
+            tetris.MESH[1][10] = 1;
             pane.getChildren().add(new NewShape(Tetris.MOVE*3,Tetris.MOVE*10,"o"));
-            Tetris.MESH[3][10] = 1;
+            tetris.MESH[3][10] = 1;
             pane.getChildren().add(new NewShape(Tetris.MOVE*5,Tetris.MOVE*10,"o"));
-            Tetris.MESH[5][10] = 1;
+            tetris.MESH[5][10] = 1;
             pane.getChildren().add(new NewShape(Tetris.MOVE*7,Tetris.MOVE*10,"o"));
-            Tetris.MESH[7][10] = 1;
+            tetris.MESH[7][10] = 1;
 
             tetris.lineClearItem(pane);
 
             for(int i = 0; i < Tetris.XMAX/Tetris.MOVE; i++) {
                 //System.out.println(i + " and " + j);
-                assertEquals(0, Tetris.MESH[i][10]);
+                assertEquals(0, tetris.MESH[i][10]);
             }
 
 
@@ -1228,7 +1233,7 @@ class TetrisTest {
             for(int i = 2; i < 7; i++) {
                 for(int j = 8; j < 13; j++) {
                     pane.getChildren().add(new NewShape(i*Tetris.MOVE, j*Tetris.MOVE, "o"));
-                    Tetris.MESH[i][j] = 1;
+                    tetris.MESH[i][j] = 1;
                 }
             }
             tetris.bombItem(pane);
@@ -1236,7 +1241,7 @@ class TetrisTest {
             for(int i = 2; i < 7; i++) {
                 for(int j = 8; j < 13; j++) {
                     //System.out.println(i + " and " + j);
-                    assertEquals(0, Tetris.MESH[i][j]);
+                    assertEquals(0, tetris.MESH[i][j]);
                 }
             }
 
@@ -1265,15 +1270,15 @@ class TetrisTest {
             pane.getChildren().add(new NewShape(Tetris.MOVE*4,Tetris.MOVE*10,"F"));
 
             tetris.fillItem(pane);
-            assertEquals(1,Tetris.MESH[3][9]);
-            assertEquals(1,Tetris.MESH[3][10]);
-            assertEquals(1,Tetris.MESH[3][11]);
-            assertEquals(1,Tetris.MESH[4][9]);
-            assertEquals(1,Tetris.MESH[4][10]);
-            assertEquals(1,Tetris.MESH[4][11]);
-            assertEquals(1,Tetris.MESH[5][9]);
-            assertEquals(1,Tetris.MESH[5][10]);
-            assertEquals(1,Tetris.MESH[5][11]);
+            assertEquals(1,tetris.MESH[3][9]);
+            assertEquals(1,tetris.MESH[3][10]);
+            assertEquals(1,tetris.MESH[3][11]);
+            assertEquals(1,tetris.MESH[4][9]);
+            assertEquals(1,tetris.MESH[4][10]);
+            assertEquals(1,tetris.MESH[4][11]);
+            assertEquals(1,tetris.MESH[5][9]);
+            assertEquals(1,tetris.MESH[5][10]);
+            assertEquals(1,tetris.MESH[5][11]);
 
 
             tetris.deleteOldGame();
@@ -1301,10 +1306,10 @@ class TetrisTest {
             pane.getChildren().add(new NewShape(0,Tetris.MOVE*2,"S"));
 
             tetris.scoreItem(pane, Tetris.MOVE, 0, 1);
-            assertEquals(100000, Tetris.score);
+            assertEquals(100000, tetris.score);
 
             tetris.scoreItem(pane, Tetris.MOVE, Tetris.MOVE*2, 0, 1);
-            assertEquals(300000, Tetris.score);
+            assertEquals(300000, tetris.score);
 
 
             tetris.deleteOldGame();
