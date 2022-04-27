@@ -30,6 +30,8 @@ public class Tetris extends Application implements Runnable{
     public static int XMAX = SIZE * 10;
     public static int YMAX = SIZE * (20 + DEADLINEGAP);
     public int[][] MESH;    // = new int[XMAX / SIZE][YMAX / SIZE];
+    public int[][] P1_previous_MESH;
+    public int[][] P2_previous_MESH;
     public static int[][] P1_MESH;
     public static int[][] P2_MESH;
     public static final int BonusRate = 10;
@@ -105,6 +107,8 @@ public class Tetris extends Application implements Runnable{
     private static Text winnerText1;
     private static Text winnerText2;
     private static Queue<KeyCode> inputQueue = new LinkedList<>();
+    private Queue<int[]> P1_attackQueue = new LinkedList<>();
+    private Queue<int[]> P2_attackQueue = new LinkedList<>();
 
 
     @Override
@@ -792,6 +796,7 @@ public class Tetris extends Application implements Runnable{
         }
         if (lines != -1) {
             rowRemoved = true;
+            inputDeleteQueue(lines);
             for (Node node : pane.getChildren()) {
                 if (node instanceof NewShape)
                     rects.add(node);
@@ -999,6 +1004,10 @@ public class Tetris extends Application implements Runnable{
         }
         directKeyPressed = false;
         // 수정 필요성 있음
+
+        //블럭이 생성될떄마다 (블럭이 바닥에 닿은 직후) MESH를 refresh
+        refreshPreviousMESH();
+        System.out.println("refreshPreviousMESH");
     }
 
     public boolean moveA(Form form) {
@@ -1100,7 +1109,11 @@ public class Tetris extends Application implements Runnable{
                     if(result.isPresent()){
                         name = result.get();
                     }
-                    else break;
+                    else{
+                        name="___";
+                        score=0;
+                        break;
+                    }
                 }
                 System.out.println("name length :" + name.length());
                 Leaderboard.addScore(score, name,level.ordinal()+itemModeInt*3);
@@ -1267,6 +1280,9 @@ public class Tetris extends Application implements Runnable{
         }
 
         MESH = new int[XMAX / SIZE][YMAX / SIZE];
+        //P1,P2 공격확인용 MESH 초기화
+        P1_previous_MESH = new int[XMAX / SIZE][YMAX / SIZE];
+        P2_previous_MESH = new int[XMAX / SIZE][YMAX / SIZE];
         /*
         for(int i = 0; i < YMAX/SIZE; i++){
             System.out.println(String.format("%02d 번째 줄 : ", i) + MESH[0][i] + MESH[1][i] + MESH[2][i] + MESH[3][i] + MESH[4][i] + MESH[5][i] + MESH[6][i]
@@ -1889,4 +1905,48 @@ public class Tetris extends Application implements Runnable{
             }
         }
     }
+    //이번 블럭이 바닥에 닿음으로써 줄이 없어지는지 확인
+
+    //없어진다면
+    //지워지는 줄 (i) 확인
+    //(i)줄을 queue에 저장
+    
+    //아니라면 놓음으로써 변화한 MESH를 update
+
+    //블럭이 바닥에 닿기전 MESH를 따로 저장 (기존 MESH는 바닥에 블럭이 닿았을때 줄이 제거 되는지 확인해야함)
+
+    //줄 없어지는 바로 밑에 line받아서 queue에 저장하는 inputQueue함수
+    //다끝나고 나서(줄이 지워지거나 블럭이 바닥에 닿거나) 뒤늦게 MESH를 카피하는 refresh_previous_MESH함수
+
+
+    //새로 만든 변수
+    //public int[][] previous_MESH => 기존의 MESH는 줄 없앨지 판단여부로 사용하기 때문에 그전의 상태를 보관하기 위한 MESH 필요 (대전모드이므로 2개 만들어야함)
+    //private Queue<int[]> attackQueue => 삭제한 줄을 보관할 큐 (대전모드 이므로 2개 만들어야함)
+
+    public void inputDeleteQueue(int line)
+    {
+        int[] delete_line = new int[XMAX / SIZE];
+        for(int i=0;i<delete_line.length;i++)
+        {
+            delete_line[i]=P1_previous_MESH[i][line];   //기존MESH의 첫번째 인덱스가 X, 두번째 인덱스가 Y인데 같은 Y축을 통째로 넣어야 하므로 값을 복사하여 큐에 추가
+        }
+        P1_attackQueue.add(delete_line);
+        for(int i=0;i<delete_line.length;i++)
+        {
+            System.out.println(delete_line[i]);
+        }
+    }
+
+    public void refreshPreviousMESH()
+    {
+        for(int i=0;i<XMAX/SIZE;i++)
+        {
+            for(int j=0;j<YMAX/SIZE;j++)
+            {
+                P1_previous_MESH[i][j]=MESH[i][j];
+            }
+        }
+    }
+
+
 }

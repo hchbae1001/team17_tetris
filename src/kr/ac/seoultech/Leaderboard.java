@@ -25,6 +25,10 @@ public class Leaderboard {
     public static int RankingColor = -1;
 
     public static void addScore(int score, String name, int difficulty){
+        if(score==0&&name=="___")
+        {
+            return;
+        }
         switch (difficulty)
         {
             case 0:
