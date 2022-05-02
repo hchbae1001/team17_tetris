@@ -13,7 +13,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Mesh;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
@@ -107,8 +106,8 @@ public class Tetris extends Application implements Runnable{
     private static Text winnerText1;
     private static Text winnerText2;
     private static Queue<KeyCode> inputQueue = new LinkedList<>();
-    private Queue<int[]> P1_attackQueue = new LinkedList<>();
-    private Queue<int[]> P2_attackQueue = new LinkedList<>();
+    private static Queue<int[]> P1_attackQueue = new LinkedList<>();
+    private static Queue<int[]> P2_attackQueue = new LinkedList<>();
 
 
     @Override
@@ -796,7 +795,7 @@ public class Tetris extends Application implements Runnable{
         }
         if (lines != -1) {
             rowRemoved = true;
-            inputDeleteQueue(lines);
+            inputDeleteQueue(lines, pid);
             for (Node node : pane.getChildren()) {
                 if (node instanceof NewShape)
                     rects.add(node);
@@ -956,8 +955,24 @@ public class Tetris extends Application implements Runnable{
     }
 
     public void MakeObject(){
+        //블럭이 생성될떄마다 (블럭이 바닥에 닿은 직후) MESH를 refresh
         if(top)
             return;
+
+        refreshPreviousMESH(pid);
+        System.out.println("player : "+pid+" refreshPreviousMESH"); //CheckRefresh
+        switch(pid)
+        {
+            case 1:
+                if(!P2_attackQueue.isEmpty())
+                    generateAttackLine(pid);    //1P는 2P의 공격이 차있으면 공격 줄 생성
+                break;
+            case 2:
+                if(!P1_attackQueue.isEmpty())
+                    generateAttackLine(pid);    //2P는 1P의 공격이 차있으면 공격 줄 생성
+                break;
+        }
+
         Form a = nextObj;
         if (itemModeBool.equals(true)) {
             if (linesNo/10 > itemCount) {
@@ -1005,9 +1020,6 @@ public class Tetris extends Application implements Runnable{
         directKeyPressed = false;
         // 수정 필요성 있음
 
-        //블럭이 생성될떄마다 (블럭이 바닥에 닿은 직후) MESH를 refresh
-        refreshPreviousMESH();
-        System.out.println("refreshPreviousMESH");
     }
 
     public boolean moveA(Form form) {
@@ -1922,31 +1934,111 @@ public class Tetris extends Application implements Runnable{
     //새로 만든 변수
     //public int[][] previous_MESH => 기존의 MESH는 줄 없앨지 판단여부로 사용하기 때문에 그전의 상태를 보관하기 위한 MESH 필요 (대전모드이므로 2개 만들어야함)
     //private Queue<int[]> attackQueue => 삭제한 줄을 보관할 큐 (대전모드 이므로 2개 만들어야함)
+    //일단은 P1만 사용해서 싱글플레이로 테스트
 
-    public void inputDeleteQueue(int line)
+    public void inputDeleteQueue(int line, int pid)
     {
         int[] delete_line = new int[XMAX / SIZE];
-        for(int i=0;i<delete_line.length;i++)
+        switch(pid)
         {
-            delete_line[i]=P1_previous_MESH[i][line];   //기존MESH의 첫번째 인덱스가 X, 두번째 인덱스가 Y인데 같은 Y축을 통째로 넣어야 하므로 값을 복사하여 큐에 추가
-        }
-        P1_attackQueue.add(delete_line);
-        for(int i=0;i<delete_line.length;i++)
-        {
-            System.out.println(delete_line[i]);
+            case 1:
+                for(int i=0;i<delete_line.length;i++)
+                {
+                    delete_line[i]=P1_previous_MESH[i][line];   //기존MESH의 첫번째 인덱스가 X, 두번째 인덱스가 Y인데 같은 Y축을 통째로 넣어야 하므로 값을 복사하여 큐에 추가
+                }
+                P1_attackQueue.add(delete_line);
+
+                //TEST
+                for(int i=0;i<delete_line.length;i++)
+                {
+                    System.out.println("Player : "+pid + "Delete line"+delete_line[i]);
+                }
+                break;
+            case 2:
+                for(int i=0;i<delete_line.length;i++)
+                {
+                    delete_line[i]=P2_previous_MESH[i][line];   //기존MESH의 첫번째 인덱스가 X, 두번째 인덱스가 Y인데 같은 Y축을 통째로 넣어야 하므로 값을 복사하여 큐에 추가
+                }
+                P2_attackQueue.add(delete_line);
+
+                //TEST
+                for(int i=0;i<delete_line.length;i++)
+                {
+                    System.out.println("Player : "+pid + "Delete line"+delete_line[i]);
+                }
+                break;
         }
     }
 
-    public void refreshPreviousMESH()
+    public void refreshPreviousMESH(int pid)
     {
-        for(int i=0;i<XMAX/SIZE;i++)
+        switch(pid)
         {
-            for(int j=0;j<YMAX/SIZE;j++)
-            {
-                P1_previous_MESH[i][j]=MESH[i][j];
-            }
+            case 1:
+                for(int i=0;i<XMAX/SIZE;i++)
+                {
+                    for(int j=0;j<YMAX/SIZE;j++)
+                    {
+                        P1_previous_MESH[i][j]=MESH[i][j];
+                    }
+                }
+                break;
+            case 2:
+                for(int i=0;i<XMAX/SIZE;i++)
+                {
+                    for(int j=0;j<YMAX/SIZE;j++)
+                    {
+                        P2_previous_MESH[i][j]=MESH[i][j];
+                    }
+                }
+                break;
         }
     }
 
-
+    //큐가 비어있는지는 바닥에 블럭이 닿을때 마다 판단 => 판단은 실행중인 코드 내에서
+    //큐가 비어있지 않으면 큐안에 들어있는 원소의 갯수를 구해서 원소 갯수만큼 MESH를 위로 올림 => 1
+    //(Y축이 20칸 이므로 큐에 5칸이 차있으면 19~5를 14~0으로 옮김)
+    //이후 윗공간부터 차례대로 한줄씩 채우며 팝 => 2
+    public void generateAttackLine(int pid)
+    {
+        switch(pid)
+        {
+            case 1:
+                int queueCount1 = P2_attackQueue.size();
+                for(int i=queueCount1;i<YMAX/SIZE;i++)
+                {
+                    for(int j=0;j<XMAX/SIZE;j++)
+                    {
+                        MESH[j][i-queueCount1]=MESH[j][i];   //1
+                    }
+                }
+                for(int i=YMAX/SIZE-queueCount1;i<YMAX/SIZE;i++)
+                {
+                    for(int j=0;j<XMAX/SIZE;j++)
+                    {
+                        MESH[j][i]=P2_attackQueue.peek()[j];    //2
+                    }
+                    P2_attackQueue.remove();
+                }
+                break;
+            case 2:
+                int queueCount2 = P1_attackQueue.size();
+                for(int i=queueCount2;i<YMAX/SIZE;i++)
+                {
+                    for(int j=0;j<XMAX/SIZE;j++)
+                    {
+                        MESH[j][i-queueCount2]=MESH[j][i];   //1
+                    }
+                }
+                for(int i=YMAX/SIZE-queueCount2;i<YMAX/SIZE;i++)
+                {
+                    for(int j=0;j<XMAX/SIZE;j++)
+                    {
+                        MESH[j][i]=P1_attackQueue.peek()[j];    //2
+                    }
+                    P1_attackQueue.remove();
+                }
+                break;
+        }
+    }
 }
