@@ -795,7 +795,9 @@ public class Tetris extends Application implements Runnable{
         }
         if (lines != -1) {
             rowRemoved = true;
-            inputDeleteQueue(lines, pid);
+            //inputDeleteQueue(lines, pid);
+            //TEST
+            inputDeleteQueue(lines,2);
             for (Node node : pane.getChildren()) {
                 if (node instanceof NewShape)
                     rects.add(node);
@@ -1951,13 +1953,14 @@ public class Tetris extends Application implements Runnable{
                 //TEST
                 for(int i=0;i<delete_line.length;i++)
                 {
-                    System.out.println("Player : "+pid + "Delete line"+delete_line[i]);
+                    System.out.println("Player : "+pid + " Delete line"+delete_line[i]);
                 }
                 break;
             case 2:
                 for(int i=0;i<delete_line.length;i++)
                 {
-                    delete_line[i]=P2_previous_MESH[i][line];   //기존MESH의 첫번째 인덱스가 X, 두번째 인덱스가 Y인데 같은 Y축을 통째로 넣어야 하므로 값을 복사하여 큐에 추가
+                    //TEST P2->P1
+                    delete_line[i]=P1_previous_MESH[i][line];   //기존MESH의 첫번째 인덱스가 X, 두번째 인덱스가 Y인데 같은 Y축을 통째로 넣어야 하므로 값을 복사하여 큐에 추가
                 }
                 P2_attackQueue.add(delete_line);
 
@@ -1999,12 +2002,14 @@ public class Tetris extends Application implements Runnable{
     //큐가 비어있지 않으면 큐안에 들어있는 원소의 갯수를 구해서 원소 갯수만큼 MESH를 위로 올림 => 1
     //(Y축이 20칸 이므로 큐에 5칸이 차있으면 19~5를 14~0으로 옮김)
     //이후 윗공간부터 차례대로 한줄씩 채우며 팝 => 2
+    //MESH는 MESH[X][Y]순서 이고 왼쪽상단이 0,0
     public void generateAttackLine(int pid)
     {
         switch(pid)
         {
             case 1:
                 int queueCount1 = P2_attackQueue.size();
+                ArrayList<Node> rects = new ArrayList<Node>();
                 for(int i=queueCount1;i<YMAX/SIZE;i++)
                 {
                     for(int j=0;j<XMAX/SIZE;j++)
@@ -2012,11 +2017,34 @@ public class Tetris extends Application implements Runnable{
                         MESH[j][i-queueCount1]=MESH[j][i];   //1
                     }
                 }
-                for(int i=YMAX/SIZE-queueCount1;i<YMAX/SIZE;i++)
+                //블럭을 그래픽적으로 이동
+
+                for (Node node : group.getChildren()) {
+                    if (node instanceof NewShape)
+                        rects.add(node);
+                }
+                for (Node node : rects) {
+                    NewShape a = (NewShape) node;
+                    a.setY(a.getY() - SIZE * queueCount1);
+                }
+
+               for(int i=YMAX/SIZE-queueCount1;i<YMAX/SIZE;i++)
                 {
                     for(int j=0;j<XMAX/SIZE;j++)
                     {
                         MESH[j][i]=P2_attackQueue.peek()[j];    //2
+
+                        //블럭을 그래픽적으로 생성
+                        //1872번 줄 아이템 부분을 참고하여 블럭 줄을 생성하는 함수를 구현
+
+                        if(MESH[j][i]==1)
+                        {
+                            NewShape SingleNewShape = new NewShape(0,0,"o");
+                            SingleNewShape.setX(j*SIZE);
+                            SingleNewShape.setY(i*SIZE);
+                            SingleNewShape.setFill(Color.DARKGRAY);
+                            group.getChildren().add(SingleNewShape);
+                        }
                     }
                     P2_attackQueue.remove();
                 }
