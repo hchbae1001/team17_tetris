@@ -1428,7 +1428,7 @@ public class Tetris extends Application implements Runnable{
         group.getChildren().add(animPane);
 
         showQueuePane.setLayoutY(200);
-        showQueuePane.setLayoutX(XMAX/2+SIZE*5);
+        showQueuePane.setLayoutX(XMAX/2+SIZE*6);
         group.getChildren().add(showQueuePane);
 
 
