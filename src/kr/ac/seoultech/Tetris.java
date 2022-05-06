@@ -156,6 +156,7 @@ public class Tetris extends Application implements Runnable{
                 window = new Stage();
                 window.initModality(Modality.APPLICATION_MODAL);
                 window.setX(Screen.getPrimary().getBounds().getWidth()/2);
+                window.setY(0);
                 scene = new Scene(group, XMAX + 150, YMAX - SIZE);
                 //window2.showAndWait();
 
@@ -1229,12 +1230,16 @@ public class Tetris extends Application implements Runnable{
                 window.setWidth(XMAX + 140 + SIZE * 2);
                 window.setHeight(YMAX + 38 - SIZE);
             }
-            if(cp && pid == 1)
+            if(cp && pid == 1) {
                 window.setX(0);
+                window.setY(0);
+            }
             if(cp && pid == 1 && inputThread != null)
                 inputThread.interrupt();
-            //if(cp && pid == 2)
-            //    deleteOldGame();
+            if(cp && pid == 2) {
+                window.setX(Screen.getPrimary().getBounds().getWidth()/2);
+                window.setY(0);
+            }
         }
 
 
@@ -1461,6 +1466,7 @@ public class Tetris extends Application implements Runnable{
         if(cp){
             if(pid == 1){
                 window.setX(0);
+                window.setY(0);
                 isArroyKey = false;
                 moveOnKeyPressWASD(a, scene);
             }else if(pid == 2){
