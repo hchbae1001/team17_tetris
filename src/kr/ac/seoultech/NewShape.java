@@ -15,12 +15,19 @@ public class NewShape extends Text{
 
 
     public NewShape(double x, double y, String shape) {
-        super(x,y,shape);
+        super (x,y,shape);
         double fsize = Tetris.MOVE * 1.8;
         setStyle(String.format("-fx-font: %f arial;", fsize));
         setFill(Color.ORANGE);
         //setX(x);
         //setY(y);
+    }
+
+    public NewShape(double x, double y, String shape, double fsize)
+    {
+        super (x,y,shape);
+        setStyle(String.format("-fx-font: %f arial;", fsize));
+        setFill(Color.ORANGE);
     }
 
 }
