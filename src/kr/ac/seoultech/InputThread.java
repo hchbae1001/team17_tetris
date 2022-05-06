@@ -31,7 +31,7 @@ public class InputThread implements Runnable{
                 System.out.println("isWaitESCAPE");
                 if (!inputQueue.isEmpty()) {
                     KeyCode keyCode = inputQueue.poll();
-                    System.out.println(keyCode);
+                    //System.out.println(keyCode);
                     if(keyCode == KeyCode.ESCAPE) {
                         Platform.runLater(new Runnable() {
                             @Override
@@ -49,7 +49,7 @@ public class InputThread implements Runnable{
             }
             if (!inputQueue.isEmpty() && tetris.getGame()) {
                 KeyCode keyCode = inputQueue.poll();
-                System.out.println(keyCode);
+                //System.out.println(keyCode);
                 if (!tetris.getItemAnim() && !tetris.getTimeStop()) {
                     Platform.runLater(new Runnable() {
                         @Override
@@ -61,7 +61,7 @@ public class InputThread implements Runnable{
                     //tetris.arrowKeyCodeFunc(keyCode, tetris.getObject());
                 }
             } else {
-                System.out.println("input Queue is Empty");
+                //System.out.println("input Queue is Empty");
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {

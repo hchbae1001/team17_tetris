@@ -12,6 +12,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -67,6 +68,7 @@ public class Tetris extends Application implements Runnable{
     static boolean game = true;
     private Form nextObj;
     private Pane nextObjPane = new Pane();
+    private Pane showQueuePane = new Pane();
     private int linesNo = 0;
     private Text scoretext = new Text("Score: ");
     private Text linetesxt = new Text("Lines: ");
@@ -106,8 +108,12 @@ public class Tetris extends Application implements Runnable{
     private static Text winnerText1;
     private static Text winnerText2;
     private static Queue<KeyCode> inputQueue = new LinkedList<>();
-    private static Queue<int[]> P1_attackQueue = new LinkedList<>();
-    private static Queue<int[]> P2_attackQueue = new LinkedList<>();
+    private static Queue<int[]> P1_attackQueue;
+    private static Queue<int[]> P2_attackQueue;
+    static int P1_attackArray[][];
+    static int P2_attackArray[][];
+    static boolean P1_showIsChanged;
+    static boolean P2_showIsChanged;
 
 
     @Override
@@ -795,9 +801,10 @@ public class Tetris extends Application implements Runnable{
         }
         if (lines != -1) {
             rowRemoved = true;
-            //inputDeleteQueue(lines, pid);
             //TEST
-            inputDeleteQueue(lines,2);
+            //inputDeleteQueue(lines,2);
+            inputDeleteQueue(lines, pid);
+
             for (Node node : pane.getChildren()) {
                 if (node instanceof NewShape)
                     rects.add(node);
@@ -1195,6 +1202,7 @@ public class Tetris extends Application implements Runnable{
                             } else {
                                 BlockDown(object);//
                                 updateScoretext();
+                                showQueue(pid);
                             }
                         }
                     }
@@ -1297,6 +1305,10 @@ public class Tetris extends Application implements Runnable{
         //P1,P2 공격확인용 MESH 초기화
         P1_previous_MESH = new int[XMAX / SIZE][YMAX / SIZE];
         P2_previous_MESH = new int[XMAX / SIZE][YMAX / SIZE];
+        P1_attackQueue = new LinkedList<>();
+        P2_attackQueue = new LinkedList<>();
+        P1_attackArray=new int [XMAX/SIZE][YMAX/SIZE];
+        P2_attackArray=new int [XMAX/SIZE][YMAX/SIZE];
         /*
         for(int i = 0; i < YMAX/SIZE; i++){
             System.out.println(String.format("%02d 번째 줄 : ", i) + MESH[0][i] + MESH[1][i] + MESH[2][i] + MESH[3][i] + MESH[4][i] + MESH[5][i] + MESH[6][i]
@@ -1321,6 +1333,8 @@ public class Tetris extends Application implements Runnable{
         isWeightBlock = false;
         weightIsLocked = false;
         itemAnim = false;
+        P1_showIsChanged = false;
+        P2_showIsChanged = false;
         updateScoretext();
 
         // 일시 정지 UI 셋팅
@@ -1413,6 +1427,10 @@ public class Tetris extends Application implements Runnable{
 
         group.getChildren().add(animPane);
 
+        showQueuePane.setLayoutY(200);
+        showQueuePane.setLayoutX(XMAX/2+SIZE*5);
+        group.getChildren().add(showQueuePane);
+
 
         if(isTest)
             return;
@@ -1471,6 +1489,7 @@ public class Tetris extends Application implements Runnable{
                 group.getChildren().clear();
                 nextObjPane.getChildren().clear();
                 pausePane.getChildren().clear();
+                showQueuePane.getChildren().clear();
             }
         });
     }
@@ -1938,15 +1957,26 @@ public class Tetris extends Application implements Runnable{
     //private Queue<int[]> attackQueue => 삭제한 줄을 보관할 큐 (대전모드 이므로 2개 만들어야함)
     //일단은 P1만 사용해서 싱글플레이로 테스트
 
+    //새로 만든 함수
+    //public void inputDeleteQueue(int line, int pid)
+    //public void refreshPreviousMESH(int pid)
+    //public void generateAttackLine(int pid)
+    //public void showQueue(int pid ,int[] delete_line)
+    //public void removeShow(int pid)
+
+    //줄을 없앨때 실행됨 => 줄을 없애고 블럭이 생성되기때문에 블럭이 생성되기 전으로 수정
+    //플레이어 1 이 실행 할 경우 P1 attackQueue에 플레이어 1 이 지운 라인 저장
+    //끝날때 ShowQueue함수로 연동
     public void inputDeleteQueue(int line, int pid)
     {
         int[] delete_line = new int[XMAX / SIZE];
         switch(pid)
         {
             case 1:
+                //기존 MESH의 첫번째 인덱스가 X, 두번째 인덱스가 Y인데 같은 Y축을 통째로 넣어야 하므로 값을 복사하여 큐에 추가
                 for(int i=0;i<delete_line.length;i++)
                 {
-                    delete_line[i]=P1_previous_MESH[i][line];   //기존MESH의 첫번째 인덱스가 X, 두번째 인덱스가 Y인데 같은 Y축을 통째로 넣어야 하므로 값을 복사하여 큐에 추가
+                    delete_line[i]=P1_previous_MESH[i][line];
                 }
                 P1_attackQueue.add(delete_line);
 
@@ -1955,12 +1985,41 @@ public class Tetris extends Application implements Runnable{
                 {
                     System.out.println("Player : "+pid + " Delete line"+delete_line[i]);
                 }
+
+                //attackArray 아래에 한줄 공간 만들기
+                for(int i=1;i<YMAX/SIZE-1;i++)
+                {
+                    for(int j=0;j<XMAX/SIZE;j++)
+                    {
+                        P1_attackArray[j][i]=P1_attackArray[j][i+1];
+                    }
+                }
+
+                //방금 삭제한 줄 추가
+                for(int i=0;i<XMAX/SIZE;i++)
+                {
+                    P1_attackArray[i][YMAX/SIZE-1]=delete_line[i];
+                }
+
+                //TEST
+                for(int i=0;i<YMAX/SIZE;i++)
+                {
+                    for(int j=0;j<XMAX/SIZE;j++)
+                    {
+                        System.out.print(P1_attackArray[j][i]+" ");
+                    }
+                    System.out.println();
+                }
+
+                P1_showIsChanged=true;
+                System.out.println("P1_showIsChanged is true");
+
                 break;
             case 2:
+                //기존MESH의 첫번째 인덱스가 X, 두번째 인덱스가 Y인데 같은 Y축을 통째로 넣어야 하므로 값을 복사하여 큐에 추가
                 for(int i=0;i<delete_line.length;i++)
                 {
-                    //TEST P2->P1
-                    delete_line[i]=P1_previous_MESH[i][line];   //기존MESH의 첫번째 인덱스가 X, 두번째 인덱스가 Y인데 같은 Y축을 통째로 넣어야 하므로 값을 복사하여 큐에 추가
+                    delete_line[i]=P2_previous_MESH[i][line];
                 }
                 P2_attackQueue.add(delete_line);
 
@@ -1969,6 +2028,33 @@ public class Tetris extends Application implements Runnable{
                 {
                     System.out.println("Player : "+pid + "Delete line"+delete_line[i]);
                 }
+
+                for(int i=1;i<YMAX/SIZE-1;i++)//attackArray 아래에 한줄 공간 만들기
+                {
+                    for(int j=0;j<XMAX/SIZE;j++)
+                    {
+                        P2_attackArray[j][i]=P2_attackArray[j][i+1];
+                    }
+                }
+
+                for(int i=0;i<XMAX/SIZE;i++)//방금 삭제한 줄 추가
+                {
+                    P2_attackArray[i][YMAX/SIZE-1]=delete_line[i];
+                }
+
+                //TEST
+                for(int i=0;i<YMAX/SIZE;i++)
+                {
+                    for(int j=0;j<XMAX/SIZE;j++)
+                    {
+                        System.out.print(P2_attackArray[j][i]+" ");
+                    }
+                    System.out.println();
+                }
+
+                P2_showIsChanged=true;
+                System.out.println("P2_showIsChanged is true");
+
                 break;
         }
     }
@@ -2051,6 +2137,7 @@ public class Tetris extends Application implements Runnable{
                 break;
             case 2:
                 int queueCount2 = P1_attackQueue.size();
+                ArrayList<Node> rects2 = new ArrayList<Node>();
                 for(int i=queueCount2;i<YMAX/SIZE;i++)
                 {
                     for(int j=0;j<XMAX/SIZE;j++)
@@ -2058,15 +2145,171 @@ public class Tetris extends Application implements Runnable{
                         MESH[j][i-queueCount2]=MESH[j][i];   //1
                     }
                 }
+                //블럭을 그래픽적으로 이동
+
+                for (Node node : group.getChildren()) {
+                    if (node instanceof NewShape)
+                        rects2.add(node);
+                }
+                for (Node node : rects2) {
+                    NewShape a = (NewShape) node;
+                    a.setY(a.getY() - SIZE * queueCount2);
+                }
+
                 for(int i=YMAX/SIZE-queueCount2;i<YMAX/SIZE;i++)
                 {
                     for(int j=0;j<XMAX/SIZE;j++)
                     {
                         MESH[j][i]=P1_attackQueue.peek()[j];    //2
+
+                        //블럭을 그래픽적으로 생성
+                        //1872번 줄 아이템 부분을 참고하여 블럭 줄을 생성하는 함수를 구현
+
+                        if(MESH[j][i]==1)
+                        {
+                            NewShape SingleNewShape = new NewShape(0,0,"o");
+                            SingleNewShape.setX(j*SIZE);
+                            SingleNewShape.setY(i*SIZE);
+                            SingleNewShape.setFill(Color.DARKGRAY);
+                            group.getChildren().add(SingleNewShape);
+                        }
                     }
                     P1_attackQueue.remove();
                 }
                 break;
         }
+        removeShow(pid);
+    }
+
+    //다음블럭 아래쪽 위치에 작은 테트리스 칸을 만들어서 큐 표시
+    //매개변수 pid는 공격을 하는 id(블럭을 지운id)
+    public void showQueue(int pid)
+    {
+        System.out.println("P1_showIsChanged : "+P1_showIsChanged);
+        System.out.println("P2_showIsChanged : "+P2_showIsChanged);
+        switch (pid)
+        {
+            case 1:
+                if(P2_showIsChanged)    //P2가 공격을 하면, P1의 ShowQueue가 실행
+                {
+                    System.out.println("ShowQueue in 1");
+                    //showQueuePane의 모든 블럭을 삭제 하기위해 temp를 만들어서 노드 저장 후 삭제
+                    ArrayList<Node> tempNode = new ArrayList<Node>();
+
+                    for(Node node : showQueuePane.getChildren())
+                    {
+                        tempNode.add(node);
+                    }
+
+                    for(Node node : tempNode)
+                    {
+                        showQueuePane.getChildren().remove(node);
+                    }
+
+                    //P2_AttackArray 그래픽으로 출력
+                    for(int i=0;i<XMAX/SIZE;i++)
+                    {
+                        for(int j=0;j<YMAX/SIZE;j++)
+                        {
+                            if(P2_attackArray[i][j]==1)
+                            {
+                                NewShape SingleNewShape = new NewShape(0,0,"o", MOVE*1.8*0.5);
+                                SingleNewShape.setX(i*SIZE*0.5);
+                                SingleNewShape.setY(j*SIZE*0.5);
+                                SingleNewShape.setFill(Color.DARKGRAY);
+                                showQueuePane.getChildren().add(SingleNewShape);
+                            }
+                        }
+                    }
+                    P2_showIsChanged=false;
+                }
+                break;
+            case 2:
+                if(P1_showIsChanged)
+                {
+                    System.out.println("ShowQueue in 2");
+                    //showQueuePane의 모든 블럭을 삭제 하기위해 temp를 만들어서 노드 저장 후 삭제
+                    ArrayList<Node> tempNode = new ArrayList<Node>();
+
+                    for(Node node : showQueuePane.getChildren())
+                    {
+                        tempNode.add(node);
+                    }
+
+                    for(Node node : tempNode)
+                    {
+                        showQueuePane.getChildren().remove(node);
+                    }
+
+                    //P2_AttackArray 그래픽으로 출력
+                    for(int i=0;i<XMAX/SIZE;i++)
+                    {
+                        for(int j=0;j<YMAX/SIZE;j++)
+                        {
+                            if(P1_attackArray[i][j]==1)
+                            {
+                                NewShape SingleNewShape = new NewShape(0,0,"o", MOVE*1.8*0.5);
+                                SingleNewShape.setX(i*SIZE*0.5);
+                                SingleNewShape.setY(j*SIZE*0.5);
+                                SingleNewShape.setFill(Color.DARKGRAY);
+                                showQueuePane.getChildren().add(SingleNewShape);
+                            }
+                        }
+                    }
+                    P1_showIsChanged=false;
+                }
+                break;
+        }
+
+    }
+
+    public void removeShow(int pid)
+    {
+        switch (pid)
+        {
+            case 1:
+                for(int i=0;i<XMAX/SIZE;i++)
+                {
+                    for(int j=0;j<YMAX/SIZE;j++)
+                    {
+                        P2_attackArray[i][j]=0;
+                    }
+                }
+
+                ArrayList<Node> tempNode = new ArrayList<Node>();
+
+                for(Node node : showQueuePane.getChildren())
+                {
+                    tempNode.add(node);
+                }
+
+                for(Node node : tempNode)
+                {
+                    showQueuePane.getChildren().remove(node);
+                }
+                break;
+            case 2:
+                for(int i=0;i<XMAX/SIZE;i++)
+                {
+                    for(int j=0;j<YMAX/SIZE;j++)
+                    {
+                        P1_attackArray[i][j]=0;
+                    }
+                }
+
+                ArrayList<Node> tempNode2 = new ArrayList<Node>();
+
+                for(Node node : showQueuePane.getChildren())
+                {
+                    tempNode2.add(node);
+                }
+
+                for(Node node : tempNode2)
+                {
+                    showQueuePane.getChildren().remove(node);
+                }
+                break;
+        }
+
     }
 }

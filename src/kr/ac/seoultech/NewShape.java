@@ -23,4 +23,11 @@ public class NewShape extends Text{
         //setY(y);
     }
 
+    public NewShape(double x, double y, String shape, double fsize)
+    {
+        super (x,y,shape);
+        setStyle(String.format("-fx-font: %f arial;", fsize));
+        setFill(Color.ORANGE);
+    }
+
 }
