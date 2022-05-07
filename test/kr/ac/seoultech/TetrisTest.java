@@ -1320,7 +1320,116 @@ class TetrisTest {
         }
     }
 
+    @Test
+    void inputDeleteQueue(){
+        Tetris test = new Tetris();
 
+        test.P1_previous_MESH=new int[Tetris.XMAX/Tetris.SIZE][Tetris.YMAX/Tetris.SIZE];
+        test.P2_previous_MESH=new int[Tetris.XMAX/Tetris.SIZE][Tetris.YMAX/Tetris.SIZE];
+
+        /*
+        0 0 0 0 0 0 0 0 0 0
+        0 0 0 0 0 0 0 0 0 0
+        0 0 0 0 0 0 0 0 0 0
+        0 0 0 0 0 0 0 0 0 0
+        0 0 0 0 0 0 0 0 0 0
+        0 0 0 0 0 0 0 0 0 0
+        0 0 0 0 0 0 0 0 0 0
+        0 0 0 0 0 0 0 0 0 0
+        0 0 0 0 0 0 0 0 0 0
+        0 0 0 0 0 0 0 0 0 0
+        0 0 0 0 0 0 0 0 0 0
+        0 0 0 0 0 0 0 0 0 0
+        0 0 0 0 0 0 0 0 0 0
+        0 0 0 0 0 0 0 0 0 0
+        0 0 0 0 0 0 0 0 0 0
+        0 0 0 0 0 0 0 0 0 0
+        0 0 0 0 0 0 0 0 0 0
+        0 0 1 0 0 0 0 0 1 0
+        1 1 1 1 1 0 0 0 1 1
+        1 1 1 1 1 1 0 1 1 1
+         */
+
+        //player 1
+        for(int i=Tetris.YMAX/Tetris.SIZE-1;i<Tetris.YMAX/Tetris.SIZE-3;i++)
+        {
+            for(int j=0;j<Tetris.XMAX/Tetris.SIZE;j++)
+            {
+                test.P1_previous_MESH[j][i]=1;
+            }
+        }
+        test.P1_previous_MESH[6][Tetris.YMAX/Tetris.SIZE-1]=0;
+        test.P1_previous_MESH[5][Tetris.YMAX/Tetris.SIZE-2]=0;
+        test.P1_previous_MESH[6][Tetris.YMAX/Tetris.SIZE-2]=0;
+        test.P1_previous_MESH[7][Tetris.YMAX/Tetris.SIZE-2]=0;
+        test.P1_previous_MESH[2][Tetris.YMAX/Tetris.SIZE-3]=1;
+        test.P1_previous_MESH[8][Tetris.YMAX/Tetris.SIZE-3]=1;
+
+        Tetris.P1_attackQueue = new LinkedList<>();
+        //TESTLINE
+        int TESTLINE1[] = new int[Tetris.XMAX/Tetris.SIZE];
+        for(int i=0;i<TESTLINE1.length;i++)
+        {
+            TESTLINE1[i]=test.P1_previous_MESH[i][Tetris.YMAX/Tetris.SIZE-2];
+        }
+        test.inputDeleteQueue(Tetris.YMAX/Tetris.SIZE-2,1);
+        test.inputDeleteQueue(Tetris.YMAX/Tetris.SIZE-1,1);
+        for(int i=0;i<TESTLINE1.length;i++)
+        {
+            assertEquals(TESTLINE1[i],Tetris.P1_attackQueue.peek()[i]);
+        }
+
+        //player 2
+        for(int i=Tetris.YMAX/Tetris.SIZE-1;i<Tetris.YMAX/Tetris.SIZE-3;i++)
+        {
+            for(int j=0;j<Tetris.XMAX/Tetris.SIZE;j++)
+            {
+                test.P2_previous_MESH[j][i]=1;
+            }
+        }
+        Tetris.P2_attackQueue = new LinkedList<>();
+
+        test.P2_previous_MESH[6][Tetris.YMAX/Tetris.SIZE-1]=0;
+        test.P2_previous_MESH[5][Tetris.YMAX/Tetris.SIZE-2]=0;
+        test.P2_previous_MESH[6][Tetris.YMAX/Tetris.SIZE-2]=0;
+        test.P2_previous_MESH[7][Tetris.YMAX/Tetris.SIZE-2]=0;
+        test.P2_previous_MESH[2][Tetris.YMAX/Tetris.SIZE-3]=1;
+        test.P2_previous_MESH[8][Tetris.YMAX/Tetris.SIZE-3]=1;
+
+        int TESTLINE2[] = new int[Tetris.XMAX/Tetris.SIZE];
+        for(int i=0;i<TESTLINE2.length;i++)
+        {
+            TESTLINE2[i]=test.P1_previous_MESH[i][Tetris.YMAX/Tetris.SIZE-2];
+        }
+
+        test.inputDeleteQueue(Tetris.YMAX/Tetris.SIZE-2,2);
+        test.inputDeleteQueue(Tetris.YMAX/Tetris.SIZE-1,2);
+        for(int i=0;i<TESTLINE2.length;i++)
+        {
+            assertEquals(TESTLINE2[i],Tetris.P2_attackQueue.peek()[i]);
+        }
+
+    }
+
+    @Test
+    void refreshPreviousMESH(){
+
+    }
+
+    @Test
+    void generateAttackLine(){
+
+    }
+
+    @Test
+    void showQueue(){
+
+    }
+
+    @Test
+    void removeShow(){
+
+    }
 
 
 
