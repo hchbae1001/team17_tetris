@@ -1413,7 +1413,16 @@ class TetrisTest {
 
     @Test
     void refreshPreviousMESH(){
+        Tetris test = new Tetris();
+        test.MESH=new int[Tetris.XMAX/Tetris.SIZE][Tetris.YMAX/Tetris.SIZE];
 
+        //player1
+        test.P1_previous_MESH=new int[Tetris.XMAX/Tetris.SIZE][Tetris.YMAX/Tetris.SIZE];
+        test.refreshPreviousMESH(1);
+
+        //player2
+        test.P2_previous_MESH=new int[Tetris.XMAX/Tetris.SIZE][Tetris.YMAX/Tetris.SIZE];
+        test.refreshPreviousMESH(2);
     }
 
     @Test

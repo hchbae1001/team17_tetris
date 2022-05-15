@@ -1968,93 +1968,57 @@ public class Tetris extends Application implements Runnable{
         {
             case 1:
                 //기존 MESH의 첫번째 인덱스가 X, 두번째 인덱스가 Y인데 같은 Y축을 통째로 넣어야 하므로 값을 복사하여 큐에 추가
-                for(int i=0;i<delete_line.length;i++)
+                if(P1_attackQueue.size()<11)
                 {
-                    delete_line[i]=P1_previous_MESH[i][line];
-                }
-                P1_attackQueue.add(delete_line);
-
-                /*
-                //TEST
-                for(int i=0;i<delete_line.length;i++)
-                {
-                    System.out.println("Player : "+pid + " Delete line"+delete_line[i]);
-                }
-                 */
-
-                //attackArray 아래에 한줄 공간 만들기
-                for(int i=1;i<YMAX/SIZE-1;i++)
-                {
-                    for(int j=0;j<XMAX/SIZE;j++)
+                    for(int i=0;i<delete_line.length;i++)
                     {
-                        P1_attackArray[j][i]=P1_attackArray[j][i+1];
+                        delete_line[i]=P1_previous_MESH[i][line];
                     }
-                }
+                    P1_attackQueue.add(delete_line);
 
-                //방금 삭제한 줄 추가
-                for(int i=0;i<XMAX/SIZE;i++)
-                {
-                    P1_attackArray[i][YMAX/SIZE-1]=delete_line[i];
-                }
-
-                /*
-                //TEST
-                for(int i=0;i<YMAX/SIZE;i++)
-                {
-                    for(int j=0;j<XMAX/SIZE;j++)
+                    //attackArray 아래에 한줄 공간 만들기
+                    for(int i=1;i<YMAX/SIZE-1;i++)
                     {
-                        System.out.print(P1_attackArray[j][i]+" ");
+                        for(int j=0;j<XMAX/SIZE;j++)
+                        {
+                            P1_attackArray[j][i]=P1_attackArray[j][i+1];
+                        }
                     }
-                    System.out.println();
-                }
-                 */
 
-                P1_showIsChanged=true;
-                //System.out.println("P1_showIsChanged is true");
+                    //방금 삭제한 줄 추가
+                    for(int i=0;i<XMAX/SIZE;i++)
+                    {
+                        P1_attackArray[i][YMAX/SIZE-1]=delete_line[i];
+                    }
+
+                    P1_showIsChanged=true;
+                }
                 break;
             case 2:
                 //기존MESH의 첫번째 인덱스가 X, 두번째 인덱스가 Y인데 같은 Y축을 통째로 넣어야 하므로 값을 복사하여 큐에 추가
-                for(int i=0;i<delete_line.length;i++)
+                if(P2_attackQueue.size()<11)
                 {
-                    delete_line[i]=P2_previous_MESH[i][line];
-                }
-                P2_attackQueue.add(delete_line);
-                /*
-                //TEST
-                for(int i=0;i<delete_line.length;i++)
-                {
-                    System.out.println("Player : "+pid + "Delete line"+delete_line[i]);
-                }
-                 */
-
-
-                for(int i=1;i<YMAX/SIZE-1;i++)//attackArray 아래에 한줄 공간 만들기
-                {
-                    for(int j=0;j<XMAX/SIZE;j++)
+                    for(int i=0;i<delete_line.length;i++)
                     {
-                        P2_attackArray[j][i]=P2_attackArray[j][i+1];
+                        delete_line[i]=P2_previous_MESH[i][line];
                     }
-                }
+                    P2_attackQueue.add(delete_line);
 
-                for(int i=0;i<XMAX/SIZE;i++)//방금 삭제한 줄 추가
-                {
-                    P2_attackArray[i][YMAX/SIZE-1]=delete_line[i];
-                }
-                /*
-                //TEST
-                for(int i=0;i<YMAX/SIZE;i++)
-                {
-                    for(int j=0;j<XMAX/SIZE;j++)
+                    for(int i=1;i<YMAX/SIZE-1;i++)//attackArray 아래에 한줄 공간 만들기
                     {
-                        System.out.print(P2_attackArray[j][i]+" ");
+                        for(int j=0;j<XMAX/SIZE;j++)
+                        {
+                            P2_attackArray[j][i]=P2_attackArray[j][i+1];
+                        }
                     }
-                    System.out.println();
+
+                    for(int i=0;i<XMAX/SIZE;i++)//방금 삭제한 줄 추가
+                    {
+                        P2_attackArray[i][YMAX / SIZE - 1] = delete_line[i];
+                    }
+
+                    P2_showIsChanged=true;
                 }
-                 */
-
-                P2_showIsChanged=true;
-                System.out.println("P2_showIsChanged is true");
-
                 break;
         }
     }
