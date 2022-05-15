@@ -186,7 +186,7 @@ public class CompeteMenu extends Application {
 
                             case "ITEM":
                                 System.out.println(menuSelected);
-                                //TODO 대전모드 ItemMode Boolean true;
+
                                 if(!StartMenu.isGameOn){
                                     try{
                                         StartMenu.isGameOn = true;
@@ -222,9 +222,39 @@ public class CompeteMenu extends Application {
 
                             case "TIMEOUT":
                                 System.out.println(menuSelected);
-                                /*
-                                *TODO 대전모드 timeoutMode Boolean true;
-                                *  */
+                                if(!StartMenu.isGameOn){
+                                    try{
+                                        StartMenu.isGameOn = true;
+                                        Tetris.itemModeBool = false;
+                                        Tetris.cp = true;
+                                        Tetris.tm = true;
+                                        tetris.createTetrisThread();
+                                        tetris.createInputThread();
+                                        tetris.start(window);
+                                    }catch (Exception e){
+                                        e.printStackTrace();
+                                    }
+                                }else {
+                                    Tetris.itemModeBool = false;
+                                    Tetris.cp = true;
+                                    Tetris.tm = true;
+                                    if(tetris.player2 == null){
+                                        tetris.createTetrisThread();
+                                        tetris.player2.setPid(2);
+                                        Platform.runLater(new Runnable() {
+                                            @Override
+                                            public void run(){
+                                                tetris.player2.deleteOldGame();
+                                                tetris.player2.continueGame("Restart");
+                                            }
+                                        });
+                                    }else {
+                                        tetris.player2.continueGame("Restart");
+                                        tetris.player2.window.show();
+                                    }
+                                    tetris.continueGame("Restart");
+                                    window.setScene(tetris.scene);
+                                }
                                 break;
                         }
                         break;

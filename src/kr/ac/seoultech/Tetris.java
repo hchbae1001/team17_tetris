@@ -48,6 +48,7 @@ public class Tetris extends Application implements Runnable{
     //private static Form P2_object;
 
     private Timer timer = new Timer();
+    public Timer cpTimer = new Timer();
     // 일시 정지 UI
     private Pane pausePane = new Pane();
     final private static ArrayList<String> pauseSelect = new ArrayList<String>(Arrays.asList(
@@ -85,7 +86,7 @@ public class Tetris extends Application implements Runnable{
     private boolean rowRemoved = false;
     private Text continueCounter = new Text("4");
     LeaderBoard_menu leaderBoard_menu = new LeaderBoard_menu();
-
+    public static boolean tm = false;
     private boolean isFocused = false;
 
     public static void main(String[] args) {
@@ -114,7 +115,7 @@ public class Tetris extends Application implements Runnable{
     static int P2_attackArray[][];
     static boolean P1_showIsChanged;
     static boolean P2_showIsChanged;
-
+    private static int cpCounter = 10;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -135,7 +136,11 @@ public class Tetris extends Application implements Runnable{
         stage.setResizable(false);
         stage.show();
         timer = startTimer(dropPeriod);
-
+        if(cp == true && tm == true){
+            //50초 후 10초 카운트 -> 카운트 소진 시, 게임 종료
+            cpTimer = cpTimer(50000);
+            System.out.println("cp timer Mode Start");
+        }
         if(isTest)
             window.close();
     }
@@ -1167,6 +1172,35 @@ public class Tetris extends Application implements Runnable{
         if (dropPeriod < limitDropPeriod)
             dropPeriod = limitDropPeriod;
     }
+    public Timer cpTimer(int delay){
+        Timer cpTimer = new Timer();
+        TimerTask cpTask = new TimerTask() {
+            @Override
+            public void run() {
+                if(isPaused || !game){
+                    cpTimer.cancel();
+                    return;
+                }
+                if(cpCounter > 0){
+                    System.out.println("You have "+cpCounter+" seconds");
+                    cpCounter--;
+                }else{
+                    System.out.print("Game Ends");
+                    showGameover();
+                }
+            }
+
+        };
+        if(isPaused){
+            cpTimer.cancel();
+            cpTask.cancel();
+            cpTimer.purge();
+        }else{
+            cpTimer.schedule(cpTask,delay, 1000);
+        }
+        return cpTimer;
+    }
+
 
     public Timer startTimer(int delay) {
         Timer fall = new Timer();
