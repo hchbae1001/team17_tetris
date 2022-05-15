@@ -2002,7 +2002,7 @@ public class Tetris extends Application implements Runnable{
         {
             case 1:
                 //기존 MESH의 첫번째 인덱스가 X, 두번째 인덱스가 Y인데 같은 Y축을 통째로 넣어야 하므로 값을 복사하여 큐에 추가
-                if(P1_attackQueue.size()<11)
+                if(P1_attackQueue.size()<10)
                 {
                     for(int i=0;i<delete_line.length;i++)
                     {
@@ -2030,7 +2030,7 @@ public class Tetris extends Application implements Runnable{
                 break;
             case 2:
                 //기존MESH의 첫번째 인덱스가 X, 두번째 인덱스가 Y인데 같은 Y축을 통째로 넣어야 하므로 값을 복사하여 큐에 추가
-                if(P2_attackQueue.size()<11)
+                if(P2_attackQueue.size()<10)
                 {
                     for(int i=0;i<delete_line.length;i++)
                     {
@@ -2183,14 +2183,11 @@ public class Tetris extends Application implements Runnable{
     //매개변수 pid는 공격을 하는 id(블럭을 지운id)
     public void showQueue(int pid)
     {
-        System.out.println("P1_showIsChanged : "+P1_showIsChanged);
-        System.out.println("P2_showIsChanged : "+P2_showIsChanged);
         switch (pid)
         {
             case 1:
                 if(P2_showIsChanged)    //P2가 공격을 하면, P1의 ShowQueue가 실행
                 {
-                    System.out.println("ShowQueue in 1");
                     //showQueuePane의 모든 블럭을 삭제 하기위해 temp를 만들어서 노드 저장 후 삭제
                     ArrayList<Node> tempNode = new ArrayList<Node>();
 
@@ -2225,7 +2222,6 @@ public class Tetris extends Application implements Runnable{
             case 2:
                 if(P1_showIsChanged)
                 {
-                    System.out.println("ShowQueue in 2");
                     //showQueuePane의 모든 블럭을 삭제 하기위해 temp를 만들어서 노드 저장 후 삭제
                     ArrayList<Node> tempNode = new ArrayList<Node>();
 
@@ -2325,6 +2321,5 @@ public class Tetris extends Application implements Runnable{
                 break;
         }
         refreshPreviousMESH(pid);
-        System.out.println("player : "+pid+" refreshPreviousMESH"); //CheckRefresh
     }
 }
