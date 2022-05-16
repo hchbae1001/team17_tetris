@@ -1274,6 +1274,7 @@ public class Tetris extends Application implements Runnable{
             }
         });
         Timer fall = new Timer();
+
         TimerTask task = new TimerTask() {
             public void run() {
                 Platform.runLater(new Runnable() {
