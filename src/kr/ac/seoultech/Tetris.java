@@ -86,7 +86,7 @@ public class Tetris extends Application implements Runnable{
     private boolean rowRemoved = false;
     private Text continueCounter = new Text("4");
     LeaderBoard_menu leaderBoard_menu = new LeaderBoard_menu();
-    public static boolean tm = false;
+
     private boolean isFocused = false;
 
     public static void main(String[] args) {
@@ -116,7 +116,7 @@ public class Tetris extends Application implements Runnable{
     static boolean P1_showIsChanged;
     static boolean P2_showIsChanged;
     private static int cpCounter = 10;
-
+    public static boolean tm = false;
     @Override
     public void start(Stage stage) throws Exception {
 
@@ -138,7 +138,7 @@ public class Tetris extends Application implements Runnable{
         timer = startTimer(dropPeriod);
         if(cp == true && tm == true){
             //50초 후 10초 카운트 -> 카운트 소진 시, 게임 종료
-            cpTimer = cpTimer(50000);
+            cpTimer = cpTimer(5000);
             System.out.println("cp timer Mode Start");
         }
         if(isTest)
@@ -1622,22 +1622,27 @@ public class Tetris extends Application implements Runnable{
     public void cpModeEnd(){
         //deleteOldGame();
         timeStop = true;
+        System.out.println("cpModeEnd");
         if(pid == 1){
             String winner = "";
-            if(checkGameover()){
-                winner = "Player 2 WIN";
-            }else {
-                winner = "Player 1 WIN";
+
+            if(tm == true){
+                System.out.println("Timer MOde Ends");
+                System.out.println("score1 :" + score + "player2.score :" + player2.score);
+                if(score > player2.score){
+                    winner = "Player 1 WIN";
+                }else if(score < player2.score){
+                    winner = "Player 2 WIN";
+                }else {
+                    winner = "DRAW";
+                }
+            }else{
+                if(checkGameover()){
+                    winner = "Player 2 WIN";
+                }else {
+                    winner = "Player 1 WIN";
+                }
             }
-            /*
-            if(score > player2.score){
-                winner = "Player 1 WIN";
-            }else if(score < player2.score){
-                winner = "Player 2 WIN";
-            }else {
-                winner = "DRAW";
-            }
-            */
             winnerText1 = new Text(winner);
             winnerText1.setFill(Color.RED);
             winnerText1.setStroke(Color.BLACK);
