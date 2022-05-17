@@ -115,8 +115,14 @@ public class Tetris extends Application implements Runnable{
     static int P2_attackArray[][];
     static boolean P1_showIsChanged;
     static boolean P2_showIsChanged;
-    private static int cpCounter = 10;
+
+    private Rectangle nextObjectEdge = new Rectangle();
+    private Rectangle attackShowEdge = new Rectangle();
+
+    private static int cpMaxCounter = 10;
+    private static int cpCounter = cpMaxCounter;
     public static boolean tm = false;
+
     @Override
     public void start(Stage stage) throws Exception {
 
@@ -136,11 +142,6 @@ public class Tetris extends Application implements Runnable{
         stage.setResizable(false);
         stage.show();
         timer = startTimer(dropPeriod);
-        if(cp == true && tm == true){
-            //50초 후 10초 카운트 -> 카운트 소진 시, 게임 종료
-            cpTimer = cpTimer(5000);
-            System.out.println("cp timer Mode Start");
-        }
         if(isTest)
             window.close();
     }
@@ -1094,7 +1095,7 @@ public class Tetris extends Application implements Runnable{
 
         game = false;
         if(cp){
-            cpModeEnd();
+            //cpModeEnd();
             return;
         }
         updateScoretext();
@@ -1251,17 +1252,17 @@ public class Tetris extends Application implements Runnable{
             if(window != null) {
                 window.setWidth(XMAX + 140 + SIZE * 2);
                 window.setHeight(YMAX + 38 - SIZE);
-            }
-            if(cp && pid == 1) {
-                window.setX(0);
-                window.setY(0);
+                if(cp && pid == 1) {
+                    window.setX(0);
+                    window.setY(0);
+                }
+                if(cp && pid == 2) {
+                    window.setX(Screen.getPrimary().getBounds().getWidth()/2);
+                    window.setY(0);
+                }
             }
             if(cp && pid == 1 && inputThread != null)
                 inputThread.interrupt();
-            if(cp && pid == 2) {
-                window.setX(Screen.getPrimary().getBounds().getWidth()/2);
-                window.setY(0);
-            }
         }
 
 
@@ -1440,7 +1441,14 @@ public class Tetris extends Application implements Runnable{
         nextText.setY(150);
         nextText.setX(XMAX + 5);
         nextText.setFill(Color.GREEN);
-        group.getChildren().addAll(scoretext, line, deadLine, linetesxt, nextText);
+        nextObjectEdge.setWidth(SIZE * 4);
+        nextObjectEdge.setHeight(SIZE * 4);
+        nextObjectEdge.setFill(Color.WHITE);
+        //nextObjectEdge.setOpacity(0.5);
+        nextObjectEdge.setStroke(Color.BLACK);
+        nextObjectEdge.setY(220 + SIZE*2);
+        nextObjectEdge.setX(XMAX / 2 + SIZE * 5);
+        group.getChildren().addAll(nextObjectEdge, scoretext, line, deadLine, linetesxt, nextText);
 
 
         Form a = nextObj;
@@ -1455,9 +1463,16 @@ public class Tetris extends Application implements Runnable{
 
         group.getChildren().add(animPane);
 
+        attackShowEdge.setWidth(SIZE * 5);
+        attackShowEdge.setHeight(SIZE * 5);
+        attackShowEdge.setFill(Color.WHITE);
+        //attackShowEdge.setOpacity(0.5);
+        attackShowEdge.setStroke(Color.BLACK);
+        attackShowEdge.setY(200 + SIZE * 7.5);
+        attackShowEdge.setX(XMAX / 2 + SIZE * 5);
         showQueuePane.setLayoutY(200);
-        showQueuePane.setLayoutX(XMAX/2+SIZE*6);
-        group.getChildren().add(showQueuePane);
+        showQueuePane.setLayoutX(XMAX/2+SIZE*5);
+        group.getChildren().addAll(attackShowEdge, showQueuePane);
 
 
         if(isTest)
@@ -1492,6 +1507,14 @@ public class Tetris extends Application implements Runnable{
                 window.setY(0);
                 isArroyKey = false;
                 moveOnKeyPressWASD(a, scene);
+
+                if(cp == true && tm == true){
+                    cpCounter = cpMaxCounter;
+                    //50초 후 10초 카운트 -> 카운트 소진 시, 게임 종료
+                    cpTimer = cpTimer(5000);
+                    System.out.println("cp timer Mode Start");
+                }
+
             }else if(pid == 2){
                 isArroyKey = true;
                 moveOnKeyPressArrow(a, scene);
@@ -1521,6 +1544,13 @@ public class Tetris extends Application implements Runnable{
                 showQueuePane.getChildren().clear();
             }
         });
+    }
+
+    public void deleteOldGame_NoFX() {
+            group.getChildren().clear();
+            nextObjPane.getChildren().clear();
+            pausePane.getChildren().clear();
+            showQueuePane.getChildren().clear();
     }
 
     public void pauseColorReset(){

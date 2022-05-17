@@ -64,6 +64,7 @@ class TetrisTest {
     void arrayKeyCodeFunc() {
         try {
             Tetris tetris = new Tetris();
+            Tetris.cp = false;
             Field isTest = tetris.getClass().getDeclaredField("isTest");
             isTest.setAccessible(true);
             isTest.set(tetris, true);
@@ -180,6 +181,7 @@ class TetrisTest {
     void WASDKeyCodeFunc() {
         try {
             Tetris tetris = new Tetris();
+            Tetris.cp = false;
             Field isTest = tetris.getClass().getDeclaredField("isTest");
             isTest.setAccessible(true);
             isTest.set(tetris, true);
@@ -761,6 +763,7 @@ class TetrisTest {
             // 노말
             level.set(tetris, Tetris.Difficulty.Normal);
             tetris.deleteOldGame();
+            tetris = new Tetris();
             tetris.setNewGame();
             while(true){
                 int tempSpeed = (int)dropPeriod.get(tetris);
@@ -780,6 +783,7 @@ class TetrisTest {
             // 하드
             level.set(tetris, Tetris.Difficulty.Hard);
             tetris.deleteOldGame();
+            tetris = new Tetris();
             tetris.setNewGame();
             while(true){
                 int tempSpeed = (int)dropPeriod.get(tetris);
@@ -900,7 +904,7 @@ class TetrisTest {
 
 
             tetris.setNewGame();
-            tetris.deleteOldGame();
+            tetris.deleteOldGame_NoFX();
 
             Pane _group = (Pane)group.get(tetris);
             Pane _nextObjPane = (Pane)nextObjPane.get(tetris);
