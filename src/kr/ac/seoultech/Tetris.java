@@ -119,7 +119,8 @@ public class Tetris extends Application implements Runnable{
     private Rectangle nextObjectEdge = new Rectangle();
     private Rectangle attackShowEdge = new Rectangle();
 
-    private static int cpCounter = 10;
+    private static int cpMaxCounter = 10;
+    private static int cpCounter = cpMaxCounter;
     public static boolean tm = false;
 
     @Override
@@ -141,11 +142,6 @@ public class Tetris extends Application implements Runnable{
         stage.setResizable(false);
         stage.show();
         timer = startTimer(dropPeriod);
-        if(cp == true && tm == true){
-            //50초 후 10초 카운트 -> 카운트 소진 시, 게임 종료
-            cpTimer = cpTimer(5000);
-            System.out.println("cp timer Mode Start");
-        }
         if(isTest)
             window.close();
     }
@@ -1099,7 +1095,7 @@ public class Tetris extends Application implements Runnable{
 
         game = false;
         if(cp){
-            cpModeEnd();
+            //cpModeEnd();
             return;
         }
         updateScoretext();
@@ -1511,6 +1507,14 @@ public class Tetris extends Application implements Runnable{
                 window.setY(0);
                 isArroyKey = false;
                 moveOnKeyPressWASD(a, scene);
+
+                if(cp == true && tm == true){
+                    cpCounter = cpMaxCounter;
+                    //50초 후 10초 카운트 -> 카운트 소진 시, 게임 종료
+                    cpTimer = cpTimer(5000);
+                    System.out.println("cp timer Mode Start");
+                }
+
             }else if(pid == 2){
                 isArroyKey = true;
                 moveOnKeyPressArrow(a, scene);
