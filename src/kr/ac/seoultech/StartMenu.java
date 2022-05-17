@@ -219,12 +219,14 @@ public class StartMenu extends Application {
                                     try {
                                         isGameOn = true;
                                         Tetris.itemModeBool = true;
+                                        Tetris.cp = false;
                                         tetris.start(window);
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
                                 }else {
                                     Tetris.itemModeBool = true;
+                                    Tetris.cp = false;
                                     tetris.continueGame("Restart");
                                     window.setScene(tetris.scene);
                                 }

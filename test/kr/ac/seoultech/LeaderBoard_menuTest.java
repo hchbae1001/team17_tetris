@@ -2,6 +2,7 @@ package kr.ac.seoultech;
 
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -28,7 +29,11 @@ class LeaderBoard_menuTest {
 
     @Test
     void rankingRefresh() {
+        //초기화
+        Leaderboard.createSaveData("Scores");
+
         Leaderboard.loadScores("Scores");
+
         Leaderboard.addScore(10000000,"AAA",0);
         Leaderboard.addScore(20000000,"BBB",1);
         Leaderboard.addScore(30000000,"CCC",2);
@@ -60,11 +65,13 @@ class LeaderBoard_menuTest {
         LeaderBoard_menu.RankingRefresh(5);
         assertEquals("60000000",LeaderBoard_menu.Ranking_score[0].getText());
         assertEquals("FFF",LeaderBoard_menu.Ranking_user[0].getText());
+
+        Leaderboard.createSaveData("Scores");
     }
 
     @Test
     void leaderBoard() {
-        Leaderboard.loadScores("Scores");
+        Leaderboard.loadScores("TestScore");
         //EASE STANDARD
         LeaderBoard_menu.difficulty="EASY";
         LeaderBoard_menu.mode="STANDARD";

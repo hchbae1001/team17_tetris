@@ -11,6 +11,8 @@ class LeaderboardTest {
 
     @Test
     void addScore() {
+
+        Leaderboard.createSaveData("TestScore");
         Leaderboard.loadScores("TestScore");
 
         //Case 0 (EASY, STANDARD)

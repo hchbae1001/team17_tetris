@@ -48,6 +48,7 @@ public class Tetris extends Application implements Runnable{
     //private static Form P2_object;
 
     private Timer timer = new Timer();
+    public Timer cpTimer = new Timer();
     // 일시 정지 UI
     private Pane pausePane = new Pane();
     final private static ArrayList<String> pauseSelect = new ArrayList<String>(Arrays.asList(
@@ -108,15 +109,18 @@ public class Tetris extends Application implements Runnable{
     private static Text winnerText1;
     private static Text winnerText2;
     private static Queue<KeyCode> inputQueue = new LinkedList<>();
-    private static Queue<int[]> P1_attackQueue;
-    private static Queue<int[]> P2_attackQueue;
+    public static Queue<int[]> P1_attackQueue;
+    public static Queue<int[]> P2_attackQueue;
     static int P1_attackArray[][];
     static int P2_attackArray[][];
     static boolean P1_showIsChanged;
     static boolean P2_showIsChanged;
+
     private Rectangle nextObjectEdge = new Rectangle();
     private Rectangle attackShowEdge = new Rectangle();
 
+    private static int cpCounter = 10;
+    public static boolean tm = false;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -137,7 +141,11 @@ public class Tetris extends Application implements Runnable{
         stage.setResizable(false);
         stage.show();
         timer = startTimer(dropPeriod);
-
+        if(cp == true && tm == true){
+            //50초 후 10초 카운트 -> 카운트 소진 시, 게임 종료
+            cpTimer = cpTimer(5000);
+            System.out.println("cp timer Mode Start");
+        }
         if(isTest)
             window.close();
     }
@@ -881,6 +889,7 @@ public class Tetris extends Application implements Runnable{
                                 //
                                 rowRemoved = false;
                                 itemAnim = false;
+                                GenerateLine();
                                 MakeObject();
                                 timer = startTimer(dropPeriod);
 
@@ -890,6 +899,7 @@ public class Tetris extends Application implements Runnable{
                 };
                 fall1.schedule(task1, 1000);
             }else {
+                GenerateLine();
                 MakeObject();
                 timer = startTimer(dropPeriod);
             }
@@ -970,20 +980,6 @@ public class Tetris extends Application implements Runnable{
         //블럭이 생성될떄마다 (블럭이 바닥에 닿은 직후) MESH를 refresh
         if(top)
             return;
-
-        refreshPreviousMESH(pid);
-        System.out.println("player : "+pid+" refreshPreviousMESH"); //CheckRefresh
-        switch(pid)
-        {
-            case 1:
-                if(!P2_attackQueue.isEmpty())
-                    generateAttackLine(pid);    //1P는 2P의 공격이 차있으면 공격 줄 생성
-                break;
-            case 2:
-                if(!P1_attackQueue.isEmpty())
-                    generateAttackLine(pid);    //2P는 1P의 공격이 차있으면 공격 줄 생성
-                break;
-        }
 
         Form a = nextObj;
         if (itemModeBool.equals(true)) {
@@ -1181,6 +1177,35 @@ public class Tetris extends Application implements Runnable{
         if (dropPeriod < limitDropPeriod)
             dropPeriod = limitDropPeriod;
     }
+    public Timer cpTimer(int delay){
+        Timer cpTimer = new Timer();
+        TimerTask cpTask = new TimerTask() {
+            @Override
+            public void run() {
+                if(isPaused || !game){
+                    cpTimer.cancel();
+                    return;
+                }
+                if(cpCounter > 0){
+                    System.out.println("You have "+cpCounter+" seconds");
+                    cpCounter--;
+                }else{
+                    System.out.print("Game Ends");
+                    showGameover();
+                }
+            }
+
+        };
+        if(isPaused){
+            cpTimer.cancel();
+            cpTask.cancel();
+            cpTimer.purge();
+        }else{
+            cpTimer.schedule(cpTask,delay, 1000);
+        }
+        return cpTimer;
+    }
+
 
     public Timer startTimer(int delay) {
         Timer fall = new Timer();
@@ -1254,6 +1279,7 @@ public class Tetris extends Application implements Runnable{
             }
         });
         Timer fall = new Timer();
+
         TimerTask task = new TimerTask() {
             public void run() {
                 Platform.runLater(new Runnable() {
@@ -1623,22 +1649,27 @@ public class Tetris extends Application implements Runnable{
     public void cpModeEnd(){
         //deleteOldGame();
         timeStop = true;
+        System.out.println("cpModeEnd");
         if(pid == 1){
             String winner = "";
-            if(checkGameover()){
-                winner = "Player 2 WIN";
-            }else {
-                winner = "Player 1 WIN";
+
+            if(tm == true){
+                System.out.println("Timer MOde Ends");
+                System.out.println("score1 :" + score + "player2.score :" + player2.score);
+                if(score > player2.score){
+                    winner = "Player 1 WIN";
+                }else if(score < player2.score){
+                    winner = "Player 2 WIN";
+                }else {
+                    winner = "DRAW";
+                }
+            }else{
+                if(checkGameover()){
+                    winner = "Player 2 WIN";
+                }else {
+                    winner = "Player 1 WIN";
+                }
             }
-            /*
-            if(score > player2.score){
-                winner = "Player 1 WIN";
-            }else if(score < player2.score){
-                winner = "Player 2 WIN";
-            }else {
-                winner = "DRAW";
-            }
-            */
             winnerText1 = new Text(winner);
             winnerText1.setFill(Color.RED);
             winnerText1.setStroke(Color.BLACK);
@@ -2003,87 +2034,57 @@ public class Tetris extends Application implements Runnable{
         {
             case 1:
                 //기존 MESH의 첫번째 인덱스가 X, 두번째 인덱스가 Y인데 같은 Y축을 통째로 넣어야 하므로 값을 복사하여 큐에 추가
-                for(int i=0;i<delete_line.length;i++)
+                if(P1_attackQueue.size()<10)
                 {
-                    delete_line[i]=P1_previous_MESH[i][line];
-                }
-                P1_attackQueue.add(delete_line);
-
-                //TEST
-                for(int i=0;i<delete_line.length;i++)
-                {
-                    System.out.println("Player : "+pid + " Delete line"+delete_line[i]);
-                }
-
-                //attackArray 아래에 한줄 공간 만들기
-                for(int i=1;i<YMAX/SIZE-1;i++)
-                {
-                    for(int j=0;j<XMAX/SIZE;j++)
+                    for(int i=0;i<delete_line.length;i++)
                     {
-                        P1_attackArray[j][i]=P1_attackArray[j][i+1];
+                        delete_line[i]=P1_previous_MESH[i][line];
                     }
-                }
+                    P1_attackQueue.add(delete_line);
 
-                //방금 삭제한 줄 추가
-                for(int i=0;i<XMAX/SIZE;i++)
-                {
-                    P1_attackArray[i][YMAX/SIZE-1]=delete_line[i];
-                }
-
-                //TEST
-                for(int i=0;i<YMAX/SIZE;i++)
-                {
-                    for(int j=0;j<XMAX/SIZE;j++)
+                    //attackArray 아래에 한줄 공간 만들기
+                    for(int i=1;i<YMAX/SIZE-1;i++)
                     {
-                        System.out.print(P1_attackArray[j][i]+" ");
+                        for(int j=0;j<XMAX/SIZE;j++)
+                        {
+                            P1_attackArray[j][i]=P1_attackArray[j][i+1];
+                        }
                     }
-                    System.out.println();
+
+                    //방금 삭제한 줄 추가
+                    for(int i=0;i<XMAX/SIZE;i++)
+                    {
+                        P1_attackArray[i][YMAX/SIZE-1]=delete_line[i];
+                    }
+
+                    P1_showIsChanged=true;
                 }
-
-                P1_showIsChanged=true;
-                System.out.println("P1_showIsChanged is true");
-
                 break;
             case 2:
                 //기존MESH의 첫번째 인덱스가 X, 두번째 인덱스가 Y인데 같은 Y축을 통째로 넣어야 하므로 값을 복사하여 큐에 추가
-                for(int i=0;i<delete_line.length;i++)
+                if(P2_attackQueue.size()<10)
                 {
-                    delete_line[i]=P2_previous_MESH[i][line];
-                }
-                P2_attackQueue.add(delete_line);
-
-                //TEST
-                for(int i=0;i<delete_line.length;i++)
-                {
-                    System.out.println("Player : "+pid + "Delete line"+delete_line[i]);
-                }
-
-                for(int i=1;i<YMAX/SIZE-1;i++)//attackArray 아래에 한줄 공간 만들기
-                {
-                    for(int j=0;j<XMAX/SIZE;j++)
+                    for(int i=0;i<delete_line.length;i++)
                     {
-                        P2_attackArray[j][i]=P2_attackArray[j][i+1];
+                        delete_line[i]=P2_previous_MESH[i][line];
                     }
-                }
+                    P2_attackQueue.add(delete_line);
 
-                for(int i=0;i<XMAX/SIZE;i++)//방금 삭제한 줄 추가
-                {
-                    P2_attackArray[i][YMAX/SIZE-1]=delete_line[i];
-                }
-
-                //TEST
-                for(int i=0;i<YMAX/SIZE;i++)
-                {
-                    for(int j=0;j<XMAX/SIZE;j++)
+                    for(int i=1;i<YMAX/SIZE-1;i++)//attackArray 아래에 한줄 공간 만들기
                     {
-                        System.out.print(P2_attackArray[j][i]+" ");
+                        for(int j=0;j<XMAX/SIZE;j++)
+                        {
+                            P2_attackArray[j][i]=P2_attackArray[j][i+1];
+                        }
                     }
-                    System.out.println();
+
+                    for(int i=0;i<XMAX/SIZE;i++)//방금 삭제한 줄 추가
+                    {
+                        P2_attackArray[i][YMAX / SIZE - 1] = delete_line[i];
+                    }
+
+                    P2_showIsChanged=true;
                 }
-
-                P2_showIsChanged=true;
-                System.out.println("P2_showIsChanged is true");
-
                 break;
         }
     }
@@ -2214,14 +2215,11 @@ public class Tetris extends Application implements Runnable{
     //매개변수 pid는 공격을 하는 id(블럭을 지운id)
     public void showQueue(int pid)
     {
-        System.out.println("P1_showIsChanged : "+P1_showIsChanged);
-        System.out.println("P2_showIsChanged : "+P2_showIsChanged);
         switch (pid)
         {
             case 1:
                 if(P2_showIsChanged)    //P2가 공격을 하면, P1의 ShowQueue가 실행
                 {
-                    System.out.println("ShowQueue in 1");
                     //showQueuePane의 모든 블럭을 삭제 하기위해 temp를 만들어서 노드 저장 후 삭제
                     ArrayList<Node> tempNode = new ArrayList<Node>();
 
@@ -2256,7 +2254,6 @@ public class Tetris extends Application implements Runnable{
             case 2:
                 if(P1_showIsChanged)
                 {
-                    System.out.println("ShowQueue in 2");
                     //showQueuePane의 모든 블럭을 삭제 하기위해 temp를 만들어서 노드 저장 후 삭제
                     ArrayList<Node> tempNode = new ArrayList<Node>();
 
@@ -2340,5 +2337,21 @@ public class Tetris extends Application implements Runnable{
                 break;
         }
 
+    }
+
+    public void GenerateLine()
+    {
+        switch(pid)
+        {
+            case 1:
+                if(!P2_attackQueue.isEmpty())
+                    generateAttackLine(pid);    //1P는 2P의 공격이 차있으면 공격 줄 생성
+                break;
+            case 2:
+                if(!P1_attackQueue.isEmpty())
+                    generateAttackLine(pid);    //2P는 1P의 공격이 차있으면 공격 줄 생성
+                break;
+        }
+        refreshPreviousMESH(pid);
     }
 }
