@@ -17,6 +17,7 @@ class InputThreadTest {
         try {
             panel = new JFXPanel();
             Tetris.itemModeBool = false;
+            Tetris.cp = true;
             Tetris.isTest = true;
             Tetris tetris = new Tetris();
             tetris.createTetrisThread();
