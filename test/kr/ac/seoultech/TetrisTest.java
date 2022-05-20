@@ -1523,6 +1523,8 @@ class TetrisTest {
 
     @Test
     void showQueue(){
+        NewShape a = new NewShape(0, 0, "o", Tetris.MOVE*1.8*0.5);
+
         Tetris test= new Tetris();
         Tetris.P1_showIsChanged=true;
         Tetris.P2_showIsChanged=true;
