@@ -16,7 +16,7 @@ public class LeaderBoard_menu extends Application {
     public static final int SIZE = 25;
     public static final int XMAX = SIZE * 10;
     public static final int YMAX = SIZE * (20 + DEADLINEGAP);
-    final private static Pane group = new Pane();
+    final public static Pane group = new Pane();
     public static Scene scene = new Scene(group, XMAX + 150, YMAX - SIZE);
 
     public static Text Title = new Text("Leaderboard");
