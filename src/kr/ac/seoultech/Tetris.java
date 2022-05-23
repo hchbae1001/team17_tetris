@@ -1483,16 +1483,6 @@ public class Tetris extends Application implements Runnable{
 
         group.getChildren().add(animPane);
 
-        attackShowEdge.setWidth(SIZE * 5);
-        attackShowEdge.setHeight(SIZE * 5);
-        attackShowEdge.setFill(Color.WHITE);
-        //attackShowEdge.setOpacity(0.5);
-        attackShowEdge.setStroke(Color.BLACK);
-        attackShowEdge.setY(200 + SIZE * 7.5);
-        attackShowEdge.setX(XMAX / 2 + SIZE * 5);
-        showQueuePane.setLayoutY(200);
-        showQueuePane.setLayoutX(XMAX/2+SIZE*5);
-        group.getChildren().addAll(attackShowEdge, showQueuePane);
 
 
         if(isTest)
@@ -1521,6 +1511,17 @@ public class Tetris extends Application implements Runnable{
                 break;
         }
         if(cp){
+            attackShowEdge.setWidth(SIZE * 5);
+            attackShowEdge.setHeight(SIZE * 5);
+            attackShowEdge.setFill(Color.WHITE);
+            //attackShowEdge.setOpacity(0.5);
+            attackShowEdge.setStroke(Color.BLACK);
+            attackShowEdge.setY(200 + SIZE * 7.5);
+            attackShowEdge.setX(XMAX / 2 + SIZE * 5);
+            showQueuePane.setLayoutY(200);
+            showQueuePane.setLayoutX(XMAX/2+SIZE*5);
+            group.getChildren().addAll(attackShowEdge, showQueuePane);
+
             if(pid == 1){
                 window.setX(0);
                 window.setY(0);

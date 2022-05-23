@@ -240,7 +240,12 @@ public class LeaderBoard_Select extends Application {
                         System.out.println("check start");
                         try{
                             LeaderBoard_menu leaderBoard_menu = new LeaderBoard_menu();
-                            leaderBoard_menu.start(window);
+                            if(window==null)
+                            {
+                                System.out.println("!window");
+                            }
+                            else
+                                leaderBoard_menu.start(window);
                         }catch (Exception e){
                             e.printStackTrace();
                         }
