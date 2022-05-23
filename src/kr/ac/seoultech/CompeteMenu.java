@@ -186,7 +186,6 @@ public class CompeteMenu extends Application {
 
                             case "ITEM":
                                 System.out.println(menuSelected);
-
                                 if(!StartMenu.isGameOn){
                                     try{
                                         StartMenu.isGameOn = true;
@@ -222,12 +221,13 @@ public class CompeteMenu extends Application {
 
                             case "TIMEOUT":
                                 System.out.println(menuSelected);
+
                                 if(!StartMenu.isGameOn){
+                                    Tetris.itemModeBool = false;
+                                    Tetris.cp = true;
+                                    Tetris.tm = true;
                                     try{
                                         StartMenu.isGameOn = true;
-                                        Tetris.itemModeBool = false;
-                                        Tetris.cp = true;
-                                        Tetris.tm = true;
                                         tetris.createTetrisThread();
                                         tetris.createInputThread();
                                         tetris.start(window);

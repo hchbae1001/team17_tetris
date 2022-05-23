@@ -62,6 +62,7 @@ public class Tetris extends Application implements Runnable{
     final private Text pause2_restart = new Text("Restart");
     final private Text pause1_menu = new Text("Go To Menu");
     final private Text pause0_quit = new Text("Quit game");
+    public static Text timerText = new Text("");
     private static boolean timeStop = false;
     //
     public int score = 0;
@@ -115,11 +116,11 @@ public class Tetris extends Application implements Runnable{
     static int P2_attackArray[][];
     static boolean P1_showIsChanged;
     static boolean P2_showIsChanged;
-
+    public static int cpTime = 60000;
     private Rectangle nextObjectEdge = new Rectangle();
     private Rectangle attackShowEdge = new Rectangle();
 
-    private static int cpMaxCounter = 10;
+    private static int cpMaxCounter = cpTime / 1000;
     private static int cpCounter = cpMaxCounter;
     public static boolean tm = false;
 
@@ -1182,10 +1183,19 @@ public class Tetris extends Application implements Runnable{
                     cpTimer.cancel();
                     return;
                 }
-                if(cpCounter > 0){
+                if(cpCounter >= 10){
+                    timerText.setFill(Color.BLACK);
+                    String time = Integer.toString(cpCounter);
+                    timerText.setText(time);
+                    cpCounter--;
+                }
+                else if(cpCounter < 10 && cpCounter > 0){
+                    timerText.setFill(Color.RED);
+                    String time = Integer.toString(cpCounter);
+                    timerText.setText(time);
                     System.out.println("You have "+cpCounter+" seconds");
                     cpCounter--;
-                }else{
+                }else if(cpCounter <= 0){
                     System.out.print("Game Ends");
                     showGameover();
                 }
@@ -1197,7 +1207,7 @@ public class Tetris extends Application implements Runnable{
             cpTask.cancel();
             cpTimer.purge();
         }else{
-            cpTimer.schedule(cpTask,delay, 1000);
+            cpTimer.schedule(cpTask,0, 1000);
         }
         return cpTimer;
     }
@@ -1441,6 +1451,13 @@ public class Tetris extends Application implements Runnable{
         nextText.setY(150);
         nextText.setX(XMAX + 5);
         nextText.setFill(Color.GREEN);
+        // tmsec / 1000 && tostring
+        timerText.setText(Integer.toString(cpTime/1000));
+        timerText.setStyle(String.format("-fx-font: %d arial;", 50 ));
+        timerText.setX(XMAX + 5);
+        timerText.setY(200);
+        timerText.setFill(Color.BLACK);
+
         nextObjectEdge.setWidth(SIZE * 4);
         nextObjectEdge.setHeight(SIZE * 4);
         nextObjectEdge.setFill(Color.WHITE);
@@ -1448,8 +1465,11 @@ public class Tetris extends Application implements Runnable{
         nextObjectEdge.setStroke(Color.BLACK);
         nextObjectEdge.setY(220 + SIZE*2);
         nextObjectEdge.setX(XMAX / 2 + SIZE * 5);
-        group.getChildren().addAll(nextObjectEdge, scoretext, line, deadLine, linetesxt, nextText);
-
+        if(cp == true && tm == true){
+            group.getChildren().addAll(nextObjectEdge, scoretext, line, deadLine, linetesxt, nextText, timerText);
+        }else{
+            group.getChildren().addAll(nextObjectEdge, scoretext, line, deadLine, linetesxt, nextText);
+        }
 
         Form a = nextObj;
         group.getChildren().addAll(a.a, a.b, a.c, a.d);
@@ -1500,18 +1520,17 @@ public class Tetris extends Application implements Runnable{
                 LeaderBoard_menu.difficulty="HARD";
                 break;
         }
-
         if(cp){
             if(pid == 1){
                 window.setX(0);
                 window.setY(0);
                 isArroyKey = false;
                 moveOnKeyPressWASD(a, scene);
-
+                // Timer모드 타이머 돌리기
                 if(cp == true && tm == true){
                     cpCounter = cpMaxCounter;
                     //50초 후 10초 카운트 -> 카운트 소진 시, 게임 종료
-                    cpTimer = cpTimer(5000);
+                    cpTimer = cpTimer(cpTime);
                     System.out.println("cp timer Mode Start");
                 }
 
