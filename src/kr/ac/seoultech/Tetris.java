@@ -12,7 +12,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -62,7 +61,7 @@ public class Tetris extends Application implements Runnable{
     final private Text pause2_restart = new Text("Restart");
     final private Text pause1_menu = new Text("Go To Menu");
     final private Text pause0_quit = new Text("Quit game");
-    public static Text timerText = new Text("");
+    public Text timerText = new Text("");
     private static boolean timeStop = false;
     //
     public int score = 0;
@@ -123,6 +122,7 @@ public class Tetris extends Application implements Runnable{
     private static int cpMaxCounter = cpTime / 1000;
     private static int cpCounter = cpMaxCounter;
     public static boolean tm = false;
+    private static boolean wasPaused = false;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -289,9 +289,9 @@ public class Tetris extends Application implements Runnable{
         } else {
             switch (keyCode) {
                 case ESCAPE:
+                    wasPaused = true;
                     if(pid==2)
                         return;
-
                     group.getChildren().add(pausePane);
                     isPaused = true;
                     break;
@@ -1174,41 +1174,76 @@ public class Tetris extends Application implements Runnable{
         if (dropPeriod < limitDropPeriod)
             dropPeriod = limitDropPeriod;
     }
-    public Timer cpTimer(int delay){
+    public void countDown(){
+        if(cpCounter >= 10){
+            String time = Integer.toString(cpCounter);
+            timerText.setText(time);
+            player2.timerText.setText(time);
+        }
+        else if(cpCounter < 10 && cpCounter > 0){
+            String time = Integer.toString(cpCounter);
+            timerText.setFill(Color.RED);
+            timerText.setText(time);
+            player2.timerText.setText(time);
+            player2.timerText.setFill(Color.RED);
+        }
+        if(cpCounter <= 0){
+            System.out.print("Game Ends");
+            showGameover();
+        }else{
+            System.out.println("You have "+cpCounter+" seconds");
+        }
+        cpCounter--;
+    }
+
+    public void countDownWithPaused(){
+        if(cpCounter >= 10){
+            String time = Integer.toString(cpCounter);
+            timerText.setText(time);
+        }
+        else if(cpCounter < 10 && cpCounter > 0){
+            String time = Integer.toString(cpCounter);
+            timerText.setFill(Color.RED);
+            timerText.setText(time);
+        }
+        if(cpCounter <= 0){
+            System.out.print("Game Ends");
+            showGameover();
+        }else{
+            System.out.println("You have "+cpCounter+" seconds");
+        }
+        cpCounter--;
+    }
+
+    public Timer cpTimer(){
         Timer cpTimer = new Timer();
         TimerTask cpTask = new TimerTask() {
-            @Override
             public void run() {
-                if(isPaused || !game){
-                    cpTimer.cancel();
-                    return;
-                }
-                if(cpCounter >= 10){
-                    timerText.setFill(Color.BLACK);
-                    String time = Integer.toString(cpCounter);
-                    timerText.setText(time);
-                    cpCounter--;
-                }
-                else if(cpCounter < 10 && cpCounter > 0){
-                    timerText.setFill(Color.RED);
-                    String time = Integer.toString(cpCounter);
-                    timerText.setText(time);
-                    System.out.println("You have "+cpCounter+" seconds");
-                    cpCounter--;
-                }else if(cpCounter <= 0){
-                    System.out.print("Game Ends");
-                    showGameover();
-                }
+                Platform.runLater(new Runnable() {
+                    public void run() {
+                        if(isPaused || !game){
+                            cpTimer.cancel();
+                            return;
+                        }
+                        countDown();
+                        //Null Pointer Exception 오류는 나지않도록 하지만 검토 필요
+//                        if(wasPaused){
+//                            countDownWithPaused();
+//                        }else{
+//                            countDown();
+//                        }
+                    }
+                });
             }
-
         };
         if(isPaused){
             cpTimer.cancel();
             cpTask.cancel();
             cpTimer.purge();
         }else{
-            cpTimer.schedule(cpTask,0, 1000);
+            cpTimer.schedule(cpTask,0,1000);
         }
+
         return cpTimer;
     }
 
@@ -1218,12 +1253,12 @@ public class Tetris extends Application implements Runnable{
         TimerTask task = new TimerTask() {
             public void run() {
                 Platform.runLater(new Runnable() {
+
                     public void run() {
                         if(isPaused || !game){
                             fall.cancel();
                             return;
                         }
-
                         if (!top && game) {
                             if (score / 5000 >= bonusScore / BonusRate && dropPeriod != limitDropPeriod) {
                                 if (dropPeriod > limitDropPeriod) {
@@ -1284,8 +1319,8 @@ public class Tetris extends Application implements Runnable{
                 group.getChildren().add(continueCounter);
             }
         });
-        Timer fall = new Timer();
 
+        Timer fall = new Timer();
         TimerTask task = new TimerTask() {
             public void run() {
                 Platform.runLater(new Runnable() {
@@ -1319,11 +1354,27 @@ public class Tetris extends Application implements Runnable{
                 });
             }
         };
+        if(tm){
+            Timer cpTimer2 = new Timer();
+            TimerTask cpTask2 = new TimerTask() {
+                public void run() {
+                    Platform.runLater(new Runnable() {
+                        public void run() {
+                                cpTimer = cpTimer();
+                                cpTimer2.cancel();
+                        }
+                    });
+                }
+            };
+            cpTimer2.schedule(cpTask2,4000,1000);
+        }
+
         if(window != null) {
             window.setWidth(XMAX + 140 + SIZE * 2);
             window.setHeight(YMAX + 38 - SIZE);
         }
         fall.scheduleAtFixedRate(task, 0, 1000);
+
     }
 
     public void updateScoretext() {
@@ -1531,7 +1582,7 @@ public class Tetris extends Application implements Runnable{
                 if(cp == true && tm == true){
                     cpCounter = cpMaxCounter;
                     //50초 후 10초 카운트 -> 카운트 소진 시, 게임 종료
-                    cpTimer = cpTimer(cpTime);
+                    cpTimer = cpTimer();
                     System.out.println("cp timer Mode Start");
                 }
 
