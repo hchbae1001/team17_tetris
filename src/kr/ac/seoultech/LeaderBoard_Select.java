@@ -218,6 +218,7 @@ public class LeaderBoard_Select extends Application {
                 }
                 menuColoring();
                 break;
+
             case SPACE:
                 if(modeSelected){
                     LeaderBoard_menu.mode = menuSelected1;

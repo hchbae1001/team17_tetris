@@ -115,21 +115,20 @@ public class Tetris extends Application implements Runnable{
     static int P2_attackArray[][];
     static boolean P1_showIsChanged;
     static boolean P2_showIsChanged;
-    public static int cpTime = 60000;
     private Rectangle nextObjectEdge = new Rectangle();
     private Rectangle attackShowEdge = new Rectangle();
 
-    private static int cpMaxCounter = cpTime / 1000;
-    private static int cpCounter = cpMaxCounter;
+    public static int cpTime;
+    public static int cpCounter = cpTime / 1000;
     public static boolean tm = false;
 //    private static boolean wasPaused = false;
 
     @Override
     public void start(Stage stage) throws Exception {
-
+        System.out.println("cpTIme :"+cpTime);
+        System.out.println("cpCounter :"+cpCounter);
         System.out.println(level);
         System.out.println(itemModeBool);
-
         window = stage;
         XMAX = SIZE * 10;
         YMAX = SIZE * (20 + DEADLINEGAP);
@@ -239,7 +238,7 @@ public class Tetris extends Application implements Runnable{
                             continueGame("Continue");
                             group.getChildren().remove(pausePane);
                             break;
-                        case "Restart":
+                        case "ㅇ":
                             // 초기화 메서드 호출
                             deleteOldGame();
                             continueGame("Restart");
@@ -1175,13 +1174,12 @@ public class Tetris extends Application implements Runnable{
             dropPeriod = limitDropPeriod;
     }
     public void countDown(){
+        String time = Integer.toString(cpCounter);
         if(cpCounter >= 10){
-            String time = Integer.toString(cpCounter);
             timerText.setText(time);
             player2.timerText.setText(time);
         }
         else if(cpCounter < 10 && cpCounter > 0){
-            String time = Integer.toString(cpCounter);
             timerText.setFill(Color.RED);
             timerText.setText(time);
             player2.timerText.setText(time);
@@ -1226,12 +1224,6 @@ public class Tetris extends Application implements Runnable{
                             return;
                         }
                         countDown();
-                        //Null Pointer Exception 오류는 나지않도록 하지만 검토 필요
-//                        if(wasPaused){
-//                            countDownWithPaused();
-//                        }else{
-//                            countDown();
-//                        }
                     }
                 });
             }
@@ -1247,13 +1239,11 @@ public class Tetris extends Application implements Runnable{
         return cpTimer;
     }
 
-
     public Timer startTimer(int delay) {
         Timer fall = new Timer();
         TimerTask task = new TimerTask() {
             public void run() {
                 Platform.runLater(new Runnable() {
-
                     public void run() {
                         if(isPaused || !game){
                             fall.cancel();
@@ -1309,9 +1299,6 @@ public class Tetris extends Application implements Runnable{
             if(cp && pid == 1 && inputThread != null)
                 inputThread.interrupt();
         }
-
-
-
         timeStop = true;
         Platform.runLater(new Runnable() {
             @Override
@@ -1346,6 +1333,22 @@ public class Tetris extends Application implements Runnable{
                                 if(cp && pid == 1)
                                     createInputThread();
                                 setNewGame();
+                            }else{
+                                if(tm && pid == 1){
+                                    Timer cpTimer2 = new Timer();
+                                    TimerTask cpTask2 = new TimerTask() {
+                                        public void run() {
+                                            Platform.runLater(new Runnable() {
+                                                public void run() {
+                                                    cpTimer = cpTimer();
+                                                    cpTimer2.cancel();
+                                                }
+                                            });
+                                        }
+                                    };
+                                    cpTimer2.schedule(cpTask2,1000,1000);
+                                }
+
                             }
                             timer = startTimer(dropPeriod);
                             fall.cancel();
@@ -1354,20 +1357,7 @@ public class Tetris extends Application implements Runnable{
                 });
             }
         };
-        if(tm){
-            Timer cpTimer2 = new Timer();
-            TimerTask cpTask2 = new TimerTask() {
-                public void run() {
-                    Platform.runLater(new Runnable() {
-                        public void run() {
-                                cpTimer = cpTimer();
-                                cpTimer2.cancel();
-                        }
-                    });
-                }
-            };
-            cpTimer2.schedule(cpTask2,4000,1000);
-        }
+
 
         if(window != null) {
             window.setWidth(XMAX + 140 + SIZE * 2);
@@ -1383,6 +1373,7 @@ public class Tetris extends Application implements Runnable{
     }
 
     public void setNewGame() {
+        cpCounter = cpTime / 1000;
         XMAX = SIZE * 10;
         YMAX = SIZE * (20 + DEADLINEGAP);
         if(window != null) {
@@ -1579,7 +1570,8 @@ public class Tetris extends Application implements Runnable{
                 moveOnKeyPressWASD(a, scene);
                 // Timer모드 타이머 돌리기
                 if(cp == true && tm == true){
-                    cpCounter = cpMaxCounter;
+//                    cpCounter = cpMaxCounter;
+                    cpCounter = cpTime /1000;
                     //50초 후 10초 카운트 -> 카운트 소진 시, 게임 종료
                     cpTimer = cpTimer();
                     System.out.println("cp timer Mode Start");
