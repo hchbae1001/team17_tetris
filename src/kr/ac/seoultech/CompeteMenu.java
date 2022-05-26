@@ -1,9 +1,11 @@
 package kr.ac.seoultech;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -41,7 +43,7 @@ public class CompeteMenu extends Application {
        "3min", "2min","1min"
     ));
     public static Boolean timeOutSelected = false;
-    final private static Integer time_Arr_max = timeSelect.size();
+    public final static Integer time_Arr_max = timeSelect.size();
     public static String timeSelected;
     public static Integer count2 = null;
     public static Text oneMin = new Text("1Min");
@@ -51,6 +53,8 @@ public class CompeteMenu extends Application {
         tetris = _tetris;
     }
 
+    public Boolean tm = false;
+    public Boolean cp = false;
     public void competeMenuSetting(){
 
         gameTitle.setStyle("-fx-font-size: 20px");
@@ -154,244 +158,219 @@ public class CompeteMenu extends Application {
         }
 
     }
-    public void menuPress(Form form){
-        Setting settingMenu = new Setting();
-//        Tetris tetris = new Tetris();
-        LeaderBoard_menu leaderboard = new LeaderBoard_menu();
-        //CompeteMenu competeMenu = new CompeteMenu();
-        scene.setOnKeyPressed((new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                switch (event.getCode()){
-//                    case UP:
-//                        if(count >= 0 && count < menu_max -1){
-//                            ++count;
-//                            menuSelected = select.get(count);
-//                            System.out.println(menuSelected);
-//                        }else{
-//                            count = 0;
-//                            menuSelected = select.get(count);
-//                            System.out.println(menuSelected);
-//                        }
-//                        menuColoring(count);
-//                        break;
-//
-//                    case DOWN:
-//                        if(count >= 1 && count < menu_max){
-//                            --count;
-//                            menuSelected = select.get(count);
-//                            System.out.println(menuSelected);
-//                        }else{
-//                            count = menu_max - 1;
-//                            menuSelected = select.get(count);
-//                            System.out.println(menuSelected);
-//                        }
-//                        menuColoring(count);
-//                        break;
+    public void competeSelect(KeyCode k){
+        switch (k){
+            case UP:
+                System.out.println(timeOutSelected);
+                if(!timeOutSelected){
+                    if(count >= 0 && count < menu_max -1){
+                        ++count;
+                        menuSelected = select.get(count);
+                        System.out.println(menuSelected);
+                    }else{
+                        count = 0;
+                        menuSelected = select.get(count);
+                        System.out.println(menuSelected);
+                    }
+                }else{
+                    if(count2 >= 0 && count2 < time_Arr_max -1){
+                        ++count2;
+                        timeSelected = timeSelect.get(count2);
+                        System.out.println(timeSelected);
+                    }else{
+                        count2 = 0;
+                        timeSelected = timeSelect.get(count2);
+                        System.out.println(timeSelected);
+                    }
+                }
+                menuColoring(count);
+                break;
 
-                    case UP:
-                        System.out.println(timeOutSelected);
-                        if(!timeOutSelected){
-                            if(count >= 0 && count < menu_max -1){
-                                ++count;
-                                menuSelected = select.get(count);
-                                System.out.println(menuSelected);
-                            }else{
-                                count = 0;
-                                menuSelected = select.get(count);
-                                System.out.println(menuSelected);
-                            }
-                        }else{
-                            if(count2 >= 0 && count2 < time_Arr_max -1){
-                                ++count2;
-                                timeSelected = timeSelect.get(count2);
-                                System.out.println(timeSelected);
-                            }else{
-                                count2 = 0;
-                                timeSelected = timeSelect.get(count2);
-                                System.out.println(timeSelected);
-                            }
-                        }
-                        menuColoring(count);
-                        break;
+            case DOWN:
+                System.out.println(timeOutSelected);
+                if(!timeOutSelected){
+                    if(count >= 1 && count < menu_max){
+                        --count;
+                        menuSelected = select.get(count);
+                        System.out.println(menuSelected);
+                    }else{
+                        count = menu_max - 1;
+                        menuSelected = select.get(count);
+                        System.out.println(menuSelected);
+                    }
+                }else{
+                    if(count2 >= 1 && count2 < time_Arr_max){
+                        --count2;
+                        timeSelected = timeSelect.get(count2);
+                        System.out.println(timeSelected);
+                    }else{
+                        count2 = time_Arr_max - 1;
+                        timeSelected = timeSelect.get(count2);
+                        System.out.println(timeSelected);
+                    }
+                }
+                menuColoring(count);
+                break;
 
-                    case DOWN:
-                        System.out.println(timeOutSelected);
-                        if(!timeOutSelected){
-                            if(count >= 1 && count < menu_max){
-                                --count;
-                                menuSelected = select.get(count);
-                                System.out.println(menuSelected);
-                            }else{
-                                count = menu_max - 1;
-                                menuSelected = select.get(count);
-                                System.out.println(menuSelected);
-                            }
-                        }else{
-                            if(count2 >= 1 && count2 < time_Arr_max){
-                                --count2;
-                                timeSelected = timeSelect.get(count2);
-                                System.out.println(timeSelected);
-                            }else{
-                                count2 = time_Arr_max - 1;
-                                timeSelected = timeSelect.get(count2);
-                                System.out.println(timeSelected);
-                            }
-                        }
-                        menuColoring(count);
-                        break;
+            case BACK_SPACE:
+                if(timeOutSelected){
+                    timeOutSelected = false;
+                    count2 = null;
+                    menuColoring(count);
+                }else{
+                    try{
+                        window.setScene(StartMenu.scene);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+                break;
 
-                    case BACK_SPACE:
-                        if(timeOutSelected){
-                            timeOutSelected = false;
-                            count2 = null;
-                            menuColoring(count);
-                        }else{
+            case SPACE:
+                switch (menuSelected){
+                    case "STANDARD":
+                        tm = false;
+                        Tetris.tm = false;
+                        System.out.println(menuSelected);
+                        //TODO 대전모드 ItemMode boolean false;
+                        if(!StartMenu.isGameOn){
                             try{
-                                window.setScene(StartMenu.scene);
+                                StartMenu.isGameOn = true;
+                                Tetris.itemModeBool = false;
+                                Tetris.cp = true;
+                                tetris.createTetrisThread();
+                                tetris.createInputThread();
+                                tetris.start(window);
                             }catch (Exception e){
                                 e.printStackTrace();
                             }
+                        }else {
+                            Tetris.itemModeBool = false;
+                            Tetris.cp = true;
+                            cp = true;
+                            if(tetris.player2 == null){
+                                tetris.createTetrisThread();
+                                tetris.player2.setPid(2);
+                                Platform.runLater(new Runnable() {
+                                    @Override
+                                    public void run(){
+                                        tetris.player2.deleteOldGame();
+                                        tetris.player2.continueGame("Restart");
+                                    }
+                                });
+                            }else {
+                                tetris.player2.continueGame("Restart");
+                                tetris.player2.window.show();
+                            }
+                            tetris.continueGame("Restart");
+                            window.setScene(tetris.scene);
                         }
                         break;
 
-                    case SPACE:
-                        switch (menuSelected){
-                            case "STANDARD":
-                                Tetris.tm = false;
-                                System.out.println(menuSelected);
-                                //TODO 대전모드 ItemMode boolean false;
-                                if(!StartMenu.isGameOn){
-                                    try{
-                                        StartMenu.isGameOn = true;
-                                        Tetris.itemModeBool = false;
-                                        Tetris.cp = true;
-                                        tetris.createTetrisThread();
-                                        tetris.createInputThread();
-                                        tetris.start(window);
-                                    }catch (Exception e){
-                                        e.printStackTrace();
-                                    }
-                                }else {
-                                    Tetris.itemModeBool = false;
-                                    Tetris.cp = true;
-                                    if(tetris.player2 == null){
-                                        tetris.createTetrisThread();
-                                        tetris.player2.setPid(2);
-                                        Platform.runLater(new Runnable() {
-                                            @Override
-                                            public void run(){
-                                                tetris.player2.deleteOldGame();
-                                                tetris.player2.continueGame("Restart");
-                                            }
-                                        });
-                                    }else {
+                    case "ITEM":
+                        Tetris.tm = false;
+                        System.out.println(menuSelected);
+                        if(!StartMenu.isGameOn){
+                            try{
+                                StartMenu.isGameOn = true;
+                                Tetris.itemModeBool = true;
+                                Tetris.cp = true;
+                                tetris.createTetrisThread();
+                                tetris.createInputThread();
+                                tetris.start(window);
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }else {
+                            Tetris.itemModeBool = true;
+                            Tetris.cp = true;
+                            if(tetris.player2 == null){
+                                tetris.createTetrisThread();
+                                tetris.player2.setPid(2);
+                                Platform.runLater(new Runnable() {
+                                    @Override
+                                    public void run(){
+                                        tetris.player2.deleteOldGame();
                                         tetris.player2.continueGame("Restart");
-                                        tetris.player2.window.show();
                                     }
-                                    tetris.continueGame("Restart");
-                                    window.setScene(tetris.scene);
-                                }
-                                break;
+                                });
+                            }else {
+                                tetris.player2.continueGame("Restart");
+                                tetris.player2.window.show();
+                            }
+                            tetris.continueGame("Restart");
+                            window.setScene(tetris.scene);
+                        }
+                        break;
 
-                            case "ITEM":
-                                Tetris.tm = false;
-                                System.out.println(menuSelected);
-                                if(!StartMenu.isGameOn){
-                                    try{
-                                        StartMenu.isGameOn = true;
-                                        Tetris.itemModeBool = true;
-                                        Tetris.cp = true;
-                                        tetris.createTetrisThread();
-                                        tetris.createInputThread();
-                                        tetris.start(window);
-                                    }catch (Exception e){
-                                        e.printStackTrace();
-                                    }
-                                }else {
-                                    Tetris.itemModeBool = true;
-                                    Tetris.cp = true;
-                                    if(tetris.player2 == null){
-                                        tetris.createTetrisThread();
-                                        tetris.player2.setPid(2);
-                                        Platform.runLater(new Runnable() {
-                                            @Override
-                                            public void run(){
-                                                tetris.player2.deleteOldGame();
-                                                tetris.player2.continueGame("Restart");
-                                            }
-                                        });
-                                    }else {
-                                        tetris.player2.continueGame("Restart");
-                                        tetris.player2.window.show();
-                                    }
-                                    tetris.continueGame("Restart");
-                                    window.setScene(tetris.scene);
+                    case "TIMEOUT":
+                        if(timeOutSelected){
+                            switch (timeSelected){
+                                case "1min":
+                                    Tetris.cpTime = 60000;
+                                    break;
+                                case "2min":
+                                    Tetris.cpTime = 120000;
+                                    break;
+                                case "3min":
+                                    Tetris.cpTime = 180000;
+                                    break;
+                            }
+                            System.out.println(menuSelected);
+                            if(!StartMenu.isGameOn){
+                                Tetris.itemModeBool = false;
+                                Tetris.cp = true;
+                                Tetris.tm = true;
+                                try{
+                                    StartMenu.isGameOn = true;
+                                    tetris.createTetrisThread();
+                                    tetris.createInputThread();
+                                    tetris.start(window);
+                                }catch (Exception e){
+                                    e.printStackTrace();
                                 }
-                                break;
-
-                            case "TIMEOUT":
-                                if(timeOutSelected){
-                                    switch (timeSelected){
-                                        case "1min":
-                                            Tetris.cpTime = 60000;
-                                            break;
-                                        case "2min":
-                                            Tetris.cpTime = 120000;
-                                            break;
-                                        case "3min":
-                                            Tetris.cpTime = 180000;
-                                            break;
-                                    }
-                                    System.out.println(menuSelected);
-                                    if(!StartMenu.isGameOn){
-                                        Tetris.itemModeBool = false;
-                                        Tetris.cp = true;
-                                        Tetris.tm = true;
-                                        try{
-                                            StartMenu.isGameOn = true;
-                                            tetris.createTetrisThread();
-                                            tetris.createInputThread();
-                                            tetris.start(window);
-                                        }catch (Exception e){
-                                            e.printStackTrace();
-                                        }
-                                    }else {
-                                        Tetris.itemModeBool = false;
-                                        Tetris.cp = true;
-                                        Tetris.tm = true;
-                                        if(tetris.player2 == null){
-                                            tetris.createTetrisThread();
-                                            tetris.player2.setPid(2);
-                                            Platform.runLater(new Runnable() {
-                                                @Override
-                                                public void run(){
-                                                    tetris.player2.deleteOldGame();
-                                                    tetris.player2.continueGame("Restart");
-                                                }
-                                            });
-                                        }else {
+                            }else {
+                                Tetris.itemModeBool = false;
+                                Tetris.cp = true;
+                                Tetris.tm = true;
+                                if(tetris.player2 == null){
+                                    tetris.createTetrisThread();
+                                    tetris.player2.setPid(2);
+                                    Platform.runLater(new Runnable() {
+                                        @Override
+                                        public void run(){
+                                            tetris.player2.deleteOldGame();
                                             tetris.player2.continueGame("Restart");
-                                            tetris.player2.window.show();
                                         }
-                                        tetris.continueGame("Restart");
-                                        window.setScene(tetris.scene);
-                                    }
-                                }else{
-                                    timeOutSelected = true;
-                                    System.out.println(timeOutSelected);
-                                    count2 = time_Arr_max -1;
-                                    timeSelected = timeSelect.get(count2);
-                                    System.out.println(timeSelected);
-                                    menuColoring(count);
+                                    });
+                                }else {
+                                    tetris.player2.continueGame("Restart");
+                                    tetris.player2.window.show();
                                 }
-
-
-                                break;
+                                tetris.continueGame("Restart");
+                                window.setScene(tetris.scene);
+                            }
+                        }else{
+                            timeOutSelected = true;
+                            System.out.println(timeOutSelected);
+                            count2 = time_Arr_max -1;
+                            timeSelected = timeSelect.get(count2);
+                            System.out.println(timeSelected);
+                            menuColoring(count);
                         }
-                        break;
 
+
+                        break;
                 }
+                break;
+
+        }
+    }
+    public void menuPress(Form form){
+        scene.setOnKeyPressed((new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                competeSelect(event.getCode());
             }
         }));
     }
