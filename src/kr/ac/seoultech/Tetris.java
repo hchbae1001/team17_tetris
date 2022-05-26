@@ -122,7 +122,7 @@ public class Tetris extends Application implements Runnable{
     private static int cpMaxCounter = cpTime / 1000;
     private static int cpCounter = cpMaxCounter;
     public static boolean tm = false;
-    private static boolean wasPaused = false;
+//    private static boolean wasPaused = false;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -289,7 +289,7 @@ public class Tetris extends Application implements Runnable{
         } else {
             switch (keyCode) {
                 case ESCAPE:
-                    wasPaused = true;
+//                    wasPaused = true;
                     if(pid==2)
                         return;
                     group.getChildren().add(pausePane);
@@ -1196,24 +1196,24 @@ public class Tetris extends Application implements Runnable{
         cpCounter--;
     }
 
-    public void countDownWithPaused(){
-        if(cpCounter >= 10){
-            String time = Integer.toString(cpCounter);
-            timerText.setText(time);
-        }
-        else if(cpCounter < 10 && cpCounter > 0){
-            String time = Integer.toString(cpCounter);
-            timerText.setFill(Color.RED);
-            timerText.setText(time);
-        }
-        if(cpCounter <= 0){
-            System.out.print("Game Ends");
-            showGameover();
-        }else{
-            System.out.println("You have "+cpCounter+" seconds");
-        }
-        cpCounter--;
-    }
+//    public void countDownWithPaused(){
+//        if(cpCounter >= 10){
+//            String time = Integer.toString(cpCounter);
+//            timerText.setText(time);
+//        }
+//        else if(cpCounter < 10 && cpCounter > 0){
+//            String time = Integer.toString(cpCounter);
+//            timerText.setFill(Color.RED);
+//            timerText.setText(time);
+//        }
+//        if(cpCounter <= 0){
+//            System.out.print("Game Ends");
+//            showGameover();
+//        }else{
+//            System.out.println("You have "+cpCounter+" seconds");
+//        }
+//        cpCounter--;
+//    }
 
     public Timer cpTimer(){
         Timer cpTimer = new Timer();
@@ -1383,7 +1383,6 @@ public class Tetris extends Application implements Runnable{
     }
 
     public void setNewGame() {
-
         XMAX = SIZE * 10;
         YMAX = SIZE * (20 + DEADLINEGAP);
         if(window != null) {

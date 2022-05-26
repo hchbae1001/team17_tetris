@@ -149,6 +149,7 @@ public class CompeteMenu extends Application {
                     case SPACE:
                         switch (menuSelected){
                             case "STANDARD":
+                                Tetris.tm = false;
                                 System.out.println(menuSelected);
                                 //TODO 대전모드 ItemMode boolean false;
                                 if(!StartMenu.isGameOn){
@@ -185,6 +186,7 @@ public class CompeteMenu extends Application {
                                 break;
 
                             case "ITEM":
+                                Tetris.tm = false;
                                 System.out.println(menuSelected);
                                 if(!StartMenu.isGameOn){
                                     try{
@@ -221,7 +223,6 @@ public class CompeteMenu extends Application {
 
                             case "TIMEOUT":
                                 System.out.println(menuSelected);
-
                                 if(!StartMenu.isGameOn){
                                     Tetris.itemModeBool = false;
                                     Tetris.cp = true;
